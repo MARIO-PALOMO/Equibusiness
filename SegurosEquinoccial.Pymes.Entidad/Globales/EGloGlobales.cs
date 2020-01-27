@@ -16,18 +16,17 @@ namespace SegurosEquinoccial.Pymes.Entidad.Globales
             EAdmCatalogoCredenciales reCredenciales = new EAdmCatalogoCredenciales();
             if (ambiente == "DESARROLLO")
             {
-                reCredenciales.HostDB = "LAPTOP-KQMLMSKQ\\SQLEXPRESS";
+                /*reCredenciales.HostDB = "LAPTOP-KQMLMSKQ\\SQLEXPRESS";
                 reCredenciales.NameDB = "CotizadorPymes";
                 reCredenciales.UserDB = "sa";
-                reCredenciales.PasswordDB = "123";
-
+                reCredenciales.PasswordDB = "123";*/
+                reCredenciales.HostDB = "equinoccialpymesproduccionsrv.database.windows.net";
+                reCredenciales.NameDB = "EquinoccialPymesProduccionDB";
+                reCredenciales.UserDB = "pymes_admin";
+                reCredenciales.PasswordDB = "pym3s_adm1n";
             }
             else if (ambiente == "PRUEBAS")
             {
-                /* reCredenciales.HostDB = "MARIOPP33\\SQLEXPRESS";
-                 reCredenciales.NameDB = "Pymes";
-                 reCredenciales.UserDB = "sa";
-                 reCredenciales.PasswordDB = "123";*/
                 reCredenciales.HostDB = "equinoccialpymesproduccionsrv.database.windows.net";
                 reCredenciales.NameDB = "EquinoccialPymesProduccionDB";
                 reCredenciales.UserDB = "pymes_admin";

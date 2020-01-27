@@ -3893,7 +3893,9 @@ export class CotizacionComponent implements OnInit {
       "Fecha": this.FormaPago.Fecha,
       "Cotizacion": { "IdCotizacion": this.codigoCotizacion.idCotizacion }
     };
-    console.log(datos)
+    
+    console.log(datos);
+
     this.conexion.post("Broker/SBroker.svc/cotizacion/forma/pago/gestion", datos, this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
