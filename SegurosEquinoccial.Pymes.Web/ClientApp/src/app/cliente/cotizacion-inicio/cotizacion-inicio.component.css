@@ -1,0 +1,61 @@
+.contenedor {
+  padding-top: 95px;
+  color: white;
+}
+
+.titulo {
+  width: 100%;
+  text-align: center;
+  position: fixed;
+  z-index: 1030;
+  top: 61px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+
+thead {
+  background-color: rgba(48, 48, 48, 1);
+  color: #ffffff;
+  border: 0px;
+  text-align: center;
+}
+
+tbody {
+  background-color: rgba(250, 250, 250, 1);
+  color: #000000;
+  border: 0px;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 5px;
+}
+
+.titulo-tabla {
+  color: #ffffff;
+  text-align: center;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.subtitulo-tabla {
+  color: #ffffff;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.texto-tabla{
+  padding-left: 70px;
+  padding-right: 70px;
+  text-align: justify !important
+}

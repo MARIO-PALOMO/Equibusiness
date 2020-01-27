@@ -1,0 +1,78 @@
+<nav class="contenedor-web" (mouseleave)="gestionPanelMenu('menu')">
+  <div class="row">
+    <div class="contenedor-logo-web contenido-movil-logo" [routerLink]="['/gerencia/inicio']" style="cursor: pointer">
+      <img src="{{ usuario.broker.Foto }}" alt="broker" style="width: 60%; height: 50px" />
+    </div>
+    <div id="barra" class="col contenedor-opciones-web fondo-movil" (window:resize)="estilo($event)">
+      <ul>
+        <img class="logo-broker" src="{{ usuario.broker.Foto }}" alt="broker" width="190"
+          style="padding-top: 6px; cursor: pointer" [routerLink]="['/gerencia/inicio']" />
+        <li *ngIf="panelMenu.menu" class="contenido-movil">
+          <a>
+            &nbsp;
+          </a>
+        </li>
+        <li *ngIf="panelMenu.menu" class="contenido-web"
+          [ngStyle]="{'background-color': url == '/gerencia/inicio' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
+            [routerLink]="['/gerencia/inicio']">
+            <i class="mdi mdi-home eicon"></i>Inicio</a>
+        </li>
+        <li *ngIf="panelMenu.menu" class="contenido-web"
+          [ngStyle]="{'background-color': url == '/gerencia/resumen' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
+            [routerLink]="['/gerencia/resumen']">
+            <i class="mdi mdi-file eicon"></i>Resumen</a>
+        </li>
+        <li *ngIf="panelMenu.menu" class="contenido-web"
+          [ngStyle]="{'background-color': url == '/gerencia/usuario' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
+            [routerLink]="['/gerencia/usuario']">
+            <i class="mdi mdi-account"></i> Usuario</a>
+        </li>
+
+        <li class="abrir-menu contenido-movil" (click)="gestionPanelSideNav()">
+          <i id="apps" class="mdi mdi-apps"></i>
+        </li>
+        <li class="imagen-usuario contenido-web" (mouseenter)="gestionPanelMenu('lista')">
+          <i class="mdi mdi-chevron-left eicon" style="font-size: 16px"></i><img class="img-xs rounded-circle"
+            src="{{usuario.Foto}}" alt="PYMES">
+        </li>
+        <li *ngIf="panelMenu.lista" (click)="cerrarSesion()" style="float: right">
+          <a><i class="mdi mdi-logout eicon"></i><span class="contenido-movil-opciones">Cerrar Sesión</span></a>
+        </li>
+        <li *ngIf="panelMenu.lista" style="float: right"
+          [ngStyle]="{'background-color': url == '/gerencia/perfil' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
+            [routerLink]="['/gerencia/perfil']">
+            <i class="mdi mdi-account eicon"></i><span class="contenido-movil-opciones">Perfil</span></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div *ngIf="panelMenu.sidenav" class="sidenav">
+  <a style="background-color: #F0F0F0">&nbsp;</a>
+  <a (click)="cerrarPanelSideNav()" style="background-color: #F0F0F0; text-align: right">
+    <span style="color: #E1E1E1">Cerrar Menú</span> <i class="mdi mdi-chevron-left" style="font-size: 20px"></i>
+  </a>
+  <a class="espaciado-sidenav-cerrar" style="text-align: center">
+    <img class="img-xs rounded-circle" src="{{usuario.Foto}}" alt="profile image"><br>
+    <span>{{ usuario.Usuario }}</span>
+  </a>
+  <a [routerLink]="['/gerencia/inicio']"
+    [ngStyle]="{'background-color': url == '/gerencia/inicio' ? 'rgba(8, 8, 8, 0.2)': ''}">
+    <i class="mdi mdi-home eicon-sidebar"></i>Inicio
+  </a>
+  <a [routerLink]="['/gerencia/resumen']"
+    [ngStyle]="{'background-color': url == '/gerencia/resumen' ? 'rgba(8, 8, 8, 0.2)': ''}">
+    <i class="mdi mdi-file eicon-sidebar"></i>Resumen
+  </a>
+
+  <a>
+    <hr></a>
+  <a [routerLink]="['/gerencia/perfil']"
+    [ngStyle]="{'background-color': url == '/gerencia/perfil' ? 'rgba(8, 8, 8, 0.2)': ''}">
+    <i class="mdi mdi-account eicon-sidebar"></i>Perfil
+  </a>
+  <a (click)="cerrarSesion()">
+    <i class="mdi mdi-logout eicon-sidebar"></i>Cerrar Sesión
+  </a>
+</div>

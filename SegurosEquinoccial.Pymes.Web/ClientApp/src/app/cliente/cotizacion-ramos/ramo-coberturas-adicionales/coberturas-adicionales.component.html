@@ -1,0 +1,95 @@
+<!--INICIO RAMO Y SUBRAMOS COBERTURAS ADICIONALES WEB -->
+<table id="tablaCoberturasAdicionales" class=" subramo-valores-escritorio" border="1" style="width: 100%">
+  <thead>
+    <tr>
+      <th colspan="3" style="text-align: center; color: white; background-color: #303030">
+        {{listaCoberturasAdicionalesMR[0].Datos.Ramo.Nombre.toUpperCase()}}</th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyCoberturasAdicionales">
+    <tr>
+      <td style="width: 80%; padding-right: 6px"><b>Amparos Adicionales</b></td>
+      <td style="width: 50%"><b>Límite Máximo Otorgado</b></td>
+      <td style="width: 2%"><small>SELECCIONAR</small></td>
+    </tr>
+    <tr *ngFor="let subramosCA of listaCoberturasAdicionalesMR">
+      <td style="padding-right: 6px"><span [innerHTML]="subramosCA.Datos.Nombre"></span></td>
+      <td>
+        <span tooltip="{{subramosCA.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <input id="{{subramosCA.Valores.ValorU1.Texto}}" [(ngModel)]="subramosCA.Valores.ValorU1.Valor" type="number"
+            step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoCoberturasAdicionales(subramosCA.Valores.ValorU1.Texto, subramosCA.Datos.Codigo, 1)"
+            disabled>
+        </span>
+      </td>
+      <td style="background-color: #9E9E9E; text-align: center">
+        <kendo-switch id="S_{{subramosCA.Datos.Codigo}}" [(ngModel)]="subramosCA.Valores.EAdicionales" [onLabel]="'I'"
+          [offLabel]="'O'"
+          (ngModelChange)="gestionSeleccionCoberturasAdicionales(subramosCA.Valores.EAdicionales, subramosCA.Valores.ValorU1.Texto, subramosCA.Valores.ValorU1.TextoMovil)">
+        </kendo-switch>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <th style="text-align: right; color: white; background-color: #303030">
+      Prima Neta Multiriesgo &nbsp;&nbsp;
+    </th>
+    <th>
+      <span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalNetaMultiriesgo">{{globales.formatearNumero(primalNetaMultiriesgo(),2)}}</span></span>
+    </th>
+    <th>&nbsp;</th>
+  </tfoot>
+</table>
+<!--FIN RAMO Y SUBRAMOS COBERTURAS ADICIONALES WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS COBERTURAS ADICIONALES MÓVIL -->
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaCoberturasAdicionalesMR, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaCoberturasAdicionalesMR, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovilCA of listaCoberturasAdicionalesMR">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilCA.Datos.Codigo)">
+      {{subramosMovilCA.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilCA.Datos.Codigo}}">
+      <div>
+        <b>Seleccionar Estado</b><br>
+        <kendo-switch id="S_{{subramosMovilCA.Datos.Codigo}}" [(ngModel)]="subramosMovilCA.Valores.EAdicionales"
+          [onLabel]="'I'" [offLabel]="'O'"
+          (ngModelChange)="gestionSeleccionCoberturasAdicionales(subramosMovilCA.Valores.EAdicionales, subramosMovilCA.Valores.ValorU1.Texto, subramosMovilCA.Valores.ValorU1.TextoMovil)">
+        </kendo-switch>
+        <br>
+      </div>
+      <div>
+        <div tooltip="{{subramosMovilCA.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true"
+          theme="light">
+          <span>
+            <b>Ingresar Valor</b><br>
+            <input id="{{subramosMovilCA.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilCA.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoCoberturasAdicionales(subramosMovilCA.Valores.ValorU1.TextoMovil, subramosMovilCA.Datos.Codigo, 1)"
+              disabled>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Multiriesgo</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span style="float: left">$</span>{{primalNetaMultiriesgo()}}</span>
+    </div>
+  </div>
+</div>
+<!--FIN RAMO Y SUBRAMOS COBERTURAS ADICIONALES MÓVIL -->

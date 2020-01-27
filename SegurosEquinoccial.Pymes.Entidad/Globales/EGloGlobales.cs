@@ -1,0 +1,47 @@
+﻿using SegurosEquinoccial.Pymes.Entidad.Administracion;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SegurosEquinoccial.Pymes.Entidad.Globales
+{
+    public class EGloGlobales
+    {
+        public static string ambiente = "DESARROLLO";
+
+        public static EAdmCatalogoCredenciales obtenerCredenciales()
+        {
+            EAdmCatalogoCredenciales reCredenciales = new EAdmCatalogoCredenciales();
+            if (ambiente == "DESARROLLO")
+            {
+                reCredenciales.HostDB = "LAPTOP-KQMLMSKQ\\SQLEXPRESS";
+                reCredenciales.NameDB = "CotizadorPymes";
+                reCredenciales.UserDB = "sa";
+                reCredenciales.PasswordDB = "123";
+
+            }
+            else if (ambiente == "PRUEBAS")
+            {
+                /* reCredenciales.HostDB = "MARIOPP33\\SQLEXPRESS";
+                 reCredenciales.NameDB = "Pymes";
+                 reCredenciales.UserDB = "sa";
+                 reCredenciales.PasswordDB = "123";*/
+                reCredenciales.HostDB = "equinoccialpymesproduccionsrv.database.windows.net";
+                reCredenciales.NameDB = "EquinoccialPymesProduccionDB";
+                reCredenciales.UserDB = "pymes_admin";
+                reCredenciales.PasswordDB = "pym3s_adm1n";
+            }
+            else if (ambiente == "PRODUCCION")
+            {
+                reCredenciales.HostDB = "pymesproduccionsvr.database.windows.net";
+                reCredenciales.NameDB = "PymesProduccion";
+                reCredenciales.UserDB = "pymes";
+                reCredenciales.PasswordDB = "cot1zad0rpym3s_01";
+            }
+
+            return reCredenciales;
+        }
+    }
+}

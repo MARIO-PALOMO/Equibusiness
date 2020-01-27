@@ -1,0 +1,65 @@
+<div class="container-scroller">
+  <div class="container-fluid page-body-wrapper full-page-wrapper auth-page">
+    <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+      <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+        type="ball-atom">
+      </ngx-spinner>
+      <div class="row w-100">
+        <div class="col-lg-3 mx-auto">
+          <div class="auto-form-wrapper" style="background-color: rgba(255, 255, 255, 0.8)">
+            <form [formGroup]="fmrInicioSesion" (ngSubmit)="verificarUsuario(fmrInicioSesion.value)">
+              <div>
+                <img src="assets/images/LogoPymesOscuro.png" alt="COTIZADO PYMES" style="width: 100%">
+                <br><br>
+              </div>
+              <div *ngIf="estadoMensajeValidacion">
+                <div [(ngClass)]="estiloMensajeValidacion" role="alert">
+                  {{ textoMensajeValidacion }}
+                </div>
+                <br>
+              </div>
+              <div class="form-group">
+                <label class="label">Correo Electrónico</label>
+                <div class="input-group">
+                  <input type="email" class="form-control" formControlName="Email"
+                    placeholder="Ingresar Correo Electrónico">
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i class="mdi mdi-account"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="label">Contraseña</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" formControlName="Contrasena"
+                    placeholder="Ingresar Contraseña">
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                      <i class="mdi mdi-key"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary submit-btn btn-block boton">Ingresa</button>
+              </div>
+              <br>
+              <!--<div class="form-group d-flex justify-content-between">
+                <a href="#" class="text-small forgot-password text-black"><i class="mdi mdi-key-change"></i> Recuperar
+                  Contraseña</a>
+              </div>-->
+              <!--<div class="form-group">
+                <button class="btn btn-outline-primary submit-btn btn-block">Solicitar Cuenta</button>
+              </div>-->
+            </form>
+          </div>
+          <br>
+          <p class="footer-text text-center">Copyright © 2019 Innovacloud. Todos los Derechos Reservados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

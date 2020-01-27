@@ -1,0 +1,223 @@
+<app-top-bar-gerente></app-top-bar-gerente>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+
+
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="nav nav-pills mb-3 justify-content-end" id="pills-tab" role="tablist">
+          <li class="nav-item" (click)="mostrarGrafico(1)">
+            <a class="nav-link active" id="tab-operadores-id" data-toggle="pill" href="#tab-operadores" role="tab"
+              aria-controls="tab-operadores" aria-selected="true" style="color: #fff">N° Operadores</a>
+          </li>
+          <li class="nav-item" (click)="mostrarGrafico(2)">
+            <a class="nav-link" id="tab-total-id" data-toggle="pill" href="#tab-total" role="tab"
+              aria-controls="tab-total" aria-selected="false" style="color: #fff">Total Recaudación Cotizaciones</a>
+          </li>
+          <li class="nav-item" (click)="mostrarGrafico(3)">
+            <a class="nav-link" id="tab-emitidas-id" data-toggle="pill" href="#tab-emitidas" role="tab"
+              aria-controls="tab-emitidas" aria-selected="false" style="color: #fff">Cotizaciones Emitidas</a>
+          </li>
+          <li class="nav-item" (click)="mostrarGrafico(4)">
+            <a class="nav-link" id="tab-sinEmitir-id" data-toggle="pill" href="#tab-sinEmitir" role="tab"
+              aria-controls="tab-sinEmitir" aria-selected="false" style="color: #fff">Cotizaciones Sin Emitir</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+          <div class="tab-pane fade show active" id="tab-operadores" role="tabpanel"
+            aria-labelledby="tab-operadores-id">
+            <div class="row" style="color: black">
+              <div *ngFor="let resumenSupervision of lstUsuariosDependientesSupervisoresResumen"
+                class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                  <div class="card-body">
+                    <div class="clearfix">
+                      <div class="float-left">
+                        <i class="mdi mdi-account-location text-info icon-lg"></i>
+                      </div>
+                      <div class="float-right">
+                        <p class="mb-0 text-right">
+                          <span
+                            tooltip="{{obtenerNombresUsuarios(resumenSupervision.IdPadre, lstUsuarioDependientesSupervisores)}}"
+                            placement="top" show-delay="200" display-mobile="true">
+                            {{separador(obtenerNombresUsuarios(resumenSupervision.IdPadre, lstUsuarioDependientesSupervisores))}}
+                          </span>
+                        </p>
+                        <div class="fluid-container">
+                          <h3 class="font-weight-medium text-right mb-0"><small>N°</small> {{resumenSupervision.Total}}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-muted mt-3 mb-0" style="text-align: center; color: black !important">
+                      <i class="mdi mdi-map-marker mr-1" aria-hidden="true"></i>{{resumenSupervision.Ciudad}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tab-total" role="tabpanel" aria-labelledby="tab-total-id">
+            <div class="row" style="color: black">
+              <div *ngFor="let resumenDatosSupervision of lstCotizacionesSupervisoresResumen"
+                class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                  <div class="card-body">
+                    <div class="clearfix">
+                      <div class="float-left">
+                        <i class="mdi mdi-cube text-danger icon-lg"></i>
+                      </div>
+                      <div class="float-right">
+                        <p class="mb-0 text-right">
+                          <span
+                            tooltip="{{obtenerNombresUsuarios(resumenDatosSupervision.IdPadre, lstUsuarioDependientesSupervisores)}}"
+                            placement="top" show-delay="200" display-mobile="true">
+                            {{separador(obtenerNombresUsuarios(resumenDatosSupervision.IdPadre, lstUsuarioDependientesSupervisores))}}
+                          </span>
+                        </p>
+                        <div class="fluid-container">
+                          <h3 class="font-weight-medium text-right mb-0"><small>$</small>
+                            {{ globales.formatearNumero(resumenDatosSupervision.Total,2) }}</h3>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-muted mt-3 mb-0" style="text-align: center; color: black !important">
+                      <i class="mdi mdi-map-marker mr-1" aria-hidden="true"></i>{{resumenDatosSupervision.Ciudad}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tab-emitidas" role="tabpanel" aria-labelledby="tab-emitidas-id">
+            <div class="row" style="color: black">
+              <div *ngFor="let resumenDatosSupervision of lstCotizacionesSupervisoresResumen"
+                class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                  <div class="card-body">
+                    <div class="clearfix">
+                      <div class="float-left">
+                        <i class="mdi mdi-poll-box text-success icon-lg"></i>
+                      </div>
+                      <div class="float-right">
+                        <p class="mb-0 text-right">
+                          <span
+                            tooltip="{{obtenerNombresUsuarios(resumenDatosSupervision.IdPadre, lstUsuarioDependientesSupervisores)}}"
+                            placement="top" show-delay="200" display-mobile="true">
+                            {{separador(obtenerNombresUsuarios(resumenDatosSupervision.IdPadre, lstUsuarioDependientesSupervisores))}}
+                          </span>
+                        </p>
+                        <div class="fluid-container">
+                          <h3 class="font-weight-medium text-right mb-0"><small>N°</small>
+                            {{resumenDatosSupervision.Emitidas}}</h3>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-muted mt-3 mb-0" style="text-align: center; color: black !important">
+                      <i class="mdi mdi-map-marker mr-1" aria-hidden="true"></i>{{resumenDatosSupervision.Ciudad}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="tab-sinEmitir" role="tabpanel" aria-labelledby="tab-sinEmitir-id">
+            <div class="row" style="color: black">
+              <div *ngFor="let resumenDatosSupervision of lstCotizacionesSupervisoresResumen"
+                class="col-xl-2 col-lg-2 col-md-2 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                  <div class="card-body">
+                    <div class="clearfix">
+                      <div class="float-left">
+                        <i class="mdi mdi-receipt text-warning icon-lg"></i>
+                      </div>
+                      <div class="float-right">
+                        <p class="mb-0 text-right">
+                          <span
+                            tooltip="{{obtenerNombresUsuarios(resumenDatosSupervision.IdPadre, lstUsuarioDependientesSupervisores)}}"
+                            placement="top" show-delay="200" display-mobile="true">
+                            {{separador(obtenerNombresUsuarios(resumenDatosSupervision.IdPadre, lstUsuarioDependientesSupervisores))}}
+                          </span>
+                        </p>
+                        <div class="fluid-container">
+                          <h3 class="font-weight-medium text-right mb-0"><small>N°</small>
+                            {{resumenDatosSupervision.SinEmitir}}</h3>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-muted mt-3 mb-0" style="text-align: center; color: black !important">
+                      <i class="mdi mdi-map-marker mr-1" aria-hidden="true"></i>{{resumenDatosSupervision.Ciudad}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <canvas id="canvas" height="70">{{ chartResumenSupervision }}</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body" style="color: black">
+            <h5>Lista de Operadores por Supervisor/Sucursal</h5>
+            <kendo-combobox [data]="lstUsuarioDependientesSupervisores" [(ngModel)]="supervisorSeleccionado"
+              [textField]="'Usuario'" [valueField]="'IdUsuario'" [valuePrimitive]="true"
+              (ngModelChange)="obtenerSupervisorSeleccionado()" style="width: 100%">
+              <ng-template kendoComboBoxItemTemplate let-dataItem>
+                <img alt="PYMES" class="img-xs rounded-circle" src="{{ dataItem.Foto }}" width="50">
+                <span style="padding: 15px">{{ dataItem.Usuario }}</span>
+              </ng-template>
+            </kendo-combobox>
+            <br><br>
+            <div class="table-responsive">
+              <table style="width: 100%" border="1">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Usuario</th>
+                    <th>N° Cotizaciones<br>Sin Emitir</th>
+                    <th>N° Cotizaciones<br>Emitidas</th>
+                    <th>Ingresos Generados<br>Cotizaciones Emitidas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="lstResumenOperadores.length == 0">
+                    <td colspan="5">No se encontró ningún operador.</td>
+                  </tr>
+                  <tr *ngFor="let resumenOperadores of lstResumenOperadores">
+                    <td>
+                      <img alt="PYMES" class="img-xs rounded-circle" src="{{ resumenOperadores.Foto }}">
+                    </td>
+                    <td>{{ resumenOperadores.Usuario }}</td>
+                    <td>{{ resumenOperadores.Estado.SinEmitir }}</td>
+                    <td>{{ resumenOperadores.Estado.Emitidas }}</td>
+                    <td>$ {{ globales.formatearNumero(resumenOperadores.Total, 2) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

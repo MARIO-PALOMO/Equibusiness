@@ -1,0 +1,96 @@
+<app-top-bar-cliente></app-top-bar-cliente>
+<div class="titulo">
+  <div style="padding-top: 10px">
+    <h3>Garantías <img src="assets/images/LogoBlanco.png" alt="Cotizador Pymes" width="48"></h3>
+  </div>
+</div>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+    <div class="row">
+      <div class="col-md-10 offset-md-1">
+        <br>
+        <div class="table-responsive">
+          <table style="text-align: justify">
+            <thead>
+              <tr>
+                <th colspan="3" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}">
+                  <span style="float: left">
+                    <b>COTIZACIÓN: &nbsp;&nbsp;&nbsp;{{cotizacion.codigoCotizacion}}</b>
+                  </span>
+
+                  <button *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" class="btn btn-light"
+                    style="float: right" (click)="continuarCondiciones()">
+                    <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar | Condiciones
+                  </button>
+
+                  <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" class="btn btn-light"
+                    style="float: right" (click)="guardarComplementoGarantias()">
+                    <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Guardar y Continuar | Condiciones
+                  </button>
+
+                </th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let global of lstRamos">
+              <tr *ngFor="let ramo_ of global.ramo">
+                <td *ngIf="ramo_.Ramo.Titulo == 1" class="titulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}" colspan="3">
+                  <b>{{ramo_.Ramo.Descripcion}}</b>
+                </td>
+                <td *ngIf="ramo_.Ramo.Subtitulo == 1" class="subtitulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +', 0.5)'}" colspan="3">
+                  <b>{{ramo_.Ramo.Descripcion}}</b>
+                </td>
+                <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0" style="padding-left: 60px;">
+                  <i class="mdi mdi-check"></i>
+                </td>
+                <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0" class="texto-tabla">
+                  <span *ngIf="ramo_.Bloqueo != 1">{{ limpiarDatos(ramo_.Ramo.Descripcion, '*', '') }}</span>
+                  <b *ngIf="ramo_.Bloqueo == 1">{{ limpiarDatos(ramo_.Ramo.Descripcion, '*', '') }}</b>
+                </td>
+                <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0" style="background-color: #9E9E9E">
+                  <div *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5">
+                    <kendo-switch [(ngModel)]="ramo_.Valor" [onLabel]="'I'" [offLabel]="'O'" [disabled]="true">
+                    </kendo-switch>
+                  </div>
+                  <div *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
+                    <kendo-switch [(ngModel)]="ramo_.Valor" [onLabel]="'I'" [offLabel]="'O'"
+                      [disabled]="ramo_.Bloqueo == 1 ? true: false"></kendo-switch>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="global.ramo.length != 0">
+                <td></td>
+                <td colspan="2" class="texto-tabla">
+                  <b>Tiempo de Cumplimiento</b><br>
+                  <select [(ngModel)]="global.cumplimiento" class="form-control">
+                    <option value="30">30 días</option>
+                    <option value="60">60 días</option>
+                    <option value="90">90 días</option>
+                  </select>
+                </td>
+              </tr>
+              <tr *ngIf="global.ramo.length != 0">
+                <td></td>
+                <td colspan="2" class="texto-tabla"> 
+                  El incumplimiento parcial o total de las garantías antes indicadas libera de
+                  responsabilidad a la aseguradora en caso de siniestros.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+      </div>
+      <div class="contenedor2">
+        <div class="botonF1" (click)="guardarComplementoGarantias()">
+          <i class="mdi mdi-arrow-right-bold-circle-outline"
+            [ngStyle]="{'color': 'rgb(' + usuario.broker.Color + ')'}"></i><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

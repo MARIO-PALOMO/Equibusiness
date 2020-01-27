@@ -1,0 +1,1509 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..." type="ball-atom">
+</ngx-spinner>
+<div class="row">
+  <div class="col-md-12">
+    <button class="btn btn-light" (click)="imprimirCotizacion()">
+      <i class="mdi mdi-printer"></i> IMPRIMIR/EXPORTAR COTIZACIÓN
+    </button>
+  </div>
+  <br><br>
+  <div class="col-md-12">
+    <div id="reporte" class="table-responsive" (window:resize)="gestionEstilos()">
+      <table id="tablaReporte" style="text-align: justify" border="1" style="width: 100%">
+        <tbody>
+          <tr>
+            <th class="separacion">
+              <div style="display: inline-block">
+                <img src="../../../assets/images/brokers/segurosequinoccial.png" alt="" width="220">
+                <span style="padding: 5px;"></span>
+                <img src="../../../assets/images/line.png" alt="" width="1" height="52">
+                <span style="padding: 7px;"></span>
+                <img src="../../../{{parametros.BrokerFoto}}" alt="" width="220">
+              </div>
+            </th>
+            <th class="separacion" style="text-align: right">
+              <h3>Cotizador de Pólizas para Pymes</h3>
+            </th>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table id="tablaDatosEmpresa" border="1" style="width: 100%">
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Razon Social</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.RazonSocial}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>RUC</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.Ruc}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Teléfono</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.Telefono}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Correo Electrónico</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.Email}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Fecha Cotización</b></td>
+                  <td class="separacion">{{datosCotizacion.Fecha}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Giro del Negocio</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.GiroNegocio}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Sector Económico</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.SectorEconomico}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Direcciones Aseguradas</b></td>
+                  <td class="separacion">{{ datosDireccion.length }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr class="paginacion">
+            <td colspan="2">
+
+              <!-- INICIO RESUMEN RAMO INCENDIO -->
+              <table border="1" style="width: 100%" *ngIf="calcularPrimaTotal(datosCotizador.listaIncendio) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Incendio y Líneas Aliadas</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturasIncendio of datosCotizador.listaIncendio">
+                    <tr
+                      *ngIf="sumarValores(coberturasIncendio.Valores.ValorU1.Valor, coberturasIncendio.Valores.ValorU2.Valor, coberturasIncendio.Valores.ValorU3.Valor, coberturasIncendio.Valores.ValorU4.Valor, coberturasIncendio.Valores.ValorU5.Valor, '') != 0">
+                      <td id="referenciaNombre" class="separacion" style="width: 300px !important">
+                        {{ coberturasIncendio.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturasIncendio.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1"
+                        class="separacion-r" [colSpan]="datosDireccion.length" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturasIncendio.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td id="referenciaValorU1"
+                        *ngIf="coberturasIncendio.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1"
+                        class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturasIncendio.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturasIncendio.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2"
+                        class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturasIncendio.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturasIncendio.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3"
+                        class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturasIncendio.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturasIncendio.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4"
+                        class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturasIncendio.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturasIncendio.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5"
+                        class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturasIncendio.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td id="referenciaTasa" class="separacion-r" style="width: 120px !important">
+                        {{formatearValores(coberturasIncendio.Valores.Tasa)}}
+                      </td>
+                      <td id="referenciaPrima" class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturasIncendio.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Incendio y Líneas Aliadas</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaIncendio),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO INCENDIO -->
+
+              <!-- INICIO RESUMEN EQUIPO ELECTRONICO -->
+              <table border="1" style="width: 100%"
+                *ngIf="calcularPrimaTotal(datosCotizador.listaEquipoElectronico) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Equipo Electrónico</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaEquipoElectronico">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" style="width: 300px !important">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Equipo Electrónico</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaEquipoElectronico),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO EQUIPO ELECTRONICO -->
+
+              <!-- INICIO RESUMEN ROTURA MAQUINARIA -->
+              <table border="1" style="width: 100%"
+                *ngIf="calcularPrimaTotal(datosCotizador.listaRoturaMaquinaria) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Rotura de Maquinaria</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaRoturaMaquinaria">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" style="width: 300px !important">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Rotura de Maquinaria</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaRoturaMaquinaria),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO ROTURA MAQUINARIA -->
+
+              <!-- INICIO RESUMEN ROBO Y ASALTO -->
+              <table border="1" style="width: 100%" *ngIf="calcularPrimaTotal(datosCotizador.listaRoboAsalto) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Robo y Asalto</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaRoboAsalto">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" style="width: 300px !important">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Robo y Asalto</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaRoboAsalto),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO ROBO Y ASALTO -->
+
+              <!-- INICIO RESUMEN COBERTURAS / AMPAROS ADICIONALES -->
+              <table border="1" style="width: 100%"
+                *ngIf="validarCoberturasAdicionales(datosCotizador.listaCoberturasAdicionalesMR) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="2">
+                      <span style="font-size: 17px;"><b>Amparos Adicionales</b></span>
+                    </td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaCoberturasAdicionalesMR">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="datosDireccion.length >= 1" class="separacion-r"
+                        [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td class="separacion-r">
+                      <b>Prima Neta Multiriesgo</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{primalNetaMultiriesgo()}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO COBERTURAS / AMPAROS ADICIONALES -->
+
+              <!-- INICIO RESUMEN DINERO Y VALORES -->
+              <table border="1" style="width: 100%" *ngIf="calcularPrimaTotal(datosCotizador.listaDineroValores) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Dinero y Valores</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaDineroValores">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" style="width: 300px !important">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Dinero y Valores</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaDineroValores),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO DINERO Y VALORES -->
+
+              <!-- INICIO RESUMEN EQUIPO Y MAQUINARIA -->
+              <table border="1" style="width: 100%"
+                *ngIf="calcularPrimaTotal(datosCotizador.listaEquipoMaquinaria) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Equipo y Maquinaria</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaEquipoMaquinaria">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" style="width: 300px !important">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Equipo y Maquinaria</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaEquipoMaquinaria),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO EQUIPO Y MAQUINARIA -->
+
+              <!-- INICIO RESUMEN RESPONSABILIDAD CIVIL -->
+              <table border="1" style="width: 100%"
+                *ngIf="calcularPrimaTotal(datosCotizador.listaResponsabilidadCivil) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Responsabilidad Civil</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaResponsabilidadCivil">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+                        <span *ngIf="coberturas.Datos.Codigo != 'SRC2'">
+                          <span class="valores-r">$</span>
+                          {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                        </span>
+                        <span *ngIf="coberturas.Datos.Codigo == 'SRC2'">
+                          <div class="row" style="text-align: left !important">
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span><b>Número de Vehículos:</b></span>
+                            </div>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                              <span>{{ coberturas.Valores.NVehiculos }}</span>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span><b>Valor en exceso:</b></span>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                              <span class="valores-r">$</span>
+                              <span>{{ formatearValores(coberturas.Valores.VResponsabilidad) }}</span>
+                            </div>
+                          </div>
+                        </span>
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Equipo y Maquinaria</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaResponsabilidadCivil),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO RESPONSABILIDAD CIVIL -->
+
+              <!-- INICIO RESUMEN FIDELIDAD -->
+              <table border="1" style="width: 100%" *ngIf="calcularPrimaTotal(datosCotizador.listaFidelidad) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Fidelidad</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaFidelidad">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 1" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 2" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 3" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 4" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0 && datosDireccion.length >= 5" class="separacion-r"
+                        style="width: 120px !important">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Fidelidad</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaFidelidad),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN FIDELIDAD -->
+
+              <!-- INICIO RESUMEN ACCIDENTES PERSONALES -->
+              <table border="1" style="width: 100%"
+                *ngIf="calcularPrimaTotal(datosCotizador.listaAccidentesPersonales) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Accidentes Personales</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <!-- INICIO DIRECTIVO -->
+                  <tr *ngIf="calcularPrimaTotal(listaAccidentesPersonalesDirectivo) != 0">
+                    <td class="separacion" [colSpan]="datosDireccion.length + 3" style="text-align: center !important">
+                      <b>Grupo 1: Personal Directivo</b>
+                    </td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of listaAccidentesPersonalesDirectivo">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+
+                        <span *ngIf="coberturas.Datos.Codigo != 'SAP1'">
+                          <span class="valores-r">$</span>
+                          {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                        </span>
+
+                        <span *ngIf="coberturas.Datos.Codigo == 'SAP1'" style="text-align: left !important">
+                          <div class="row">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                              <span><b>Valor:</b></span>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span>$ {{ coberturas.Valores.VPersonas }}</span>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span><b>Total:</b></span>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                              <span>$ {{ formatearValores(coberturas.Valores.ValorU1.Valor) }}</span>
+                            </div>
+                          </div>
+                        </span>
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr *ngIf="calcularPrimaTotal(listaAccidentesPersonalesDirectivo) != 0">
+                    <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                      <b>Número de Personas</b>
+                    </td>
+                    <td class="separacion-r" [colSpan]="datosDireccion.length">
+                      {{ obtenerPersonasGruposAP('SAP1', listaAccidentesPersonalesDirectivo) }}
+                    </td>
+                    <td colspan="2"></td>
+                  </tr>
+                  <!-- FIN DIRECTIVO -->
+
+                  <!-- INICIO ADMINISTRATIVO -->
+                  <tr *ngIf="calcularPrimaTotal(listaAccidentesPersonalesAdministrativo) != 0">
+                    <td class="separacion" [colSpan]="datosDireccion.length + 3" style="text-align: center !important">
+                      <b>Grupo 2: Personal Administrativo</b>
+                    </td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of listaAccidentesPersonalesAdministrativo">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+
+                        <span *ngIf="coberturas.Datos.Codigo != 'SAP5'">
+                          <span class="valores-r">$</span>
+                          {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                        </span>
+
+                        <span *ngIf="coberturas.Datos.Codigo == 'SAP5'" style="text-align: left !important">
+                          <div class="row">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                              <span><b>Valor:</b></span>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span>$ {{ coberturas.Valores.VPersonas }}</span>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span><b>Total:</b></span>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                              <span>$ {{ formatearValores(coberturas.Valores.ValorU1.Valor) }}</span>
+                            </div>
+                          </div>
+                        </span>
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr *ngIf="calcularPrimaTotal(listaAccidentesPersonalesAdministrativo) != 0">
+                    <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                      <b>Número de Personas</b>
+                    </td>
+                    <td class="separacion-r" [colSpan]="datosDireccion.length">
+                      {{ obtenerPersonasGruposAP('SAP5', listaAccidentesPersonalesAdministrativo) }}
+                    </td>
+                    <td colspan="2"></td>
+                  </tr>
+                  <!-- FIN ADMINISTRATIVO -->
+
+                  <!-- INICIO OPERATIVO -->
+                  <tr *ngIf="calcularPrimaTotal(listaAccidentesPersonalesOperativo) != 0">
+                    <td class="separacion" [colSpan]="datosDireccion.length + 3" style="text-align: center !important">
+                      <b>Grupo 3: Personal Operativo</b>
+                    </td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of listaAccidentesPersonalesOperativo">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+
+                        <span *ngIf="coberturas.Datos.Codigo != 'SAP9'">
+                          <span class="valores-r">$</span>
+                          {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                        </span>
+
+                        <span *ngIf="coberturas.Datos.Codigo == 'SAP9'" style="text-align: left !important">
+                          <div class="row">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                              <span><b>Valor:</b></span>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span>$ {{ coberturas.Valores.VPersonas }}</span>
+                            </div>
+                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                              <span><b>Total:</b></span>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                              <span>$ {{ formatearValores(coberturas.Valores.ValorU1.Valor) }}</span>
+                            </div>
+                          </div>
+                        </span>
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr *ngIf="calcularPrimaTotal(listaAccidentesPersonalesOperativo) != 0">
+                    <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                      <b>Número de Personas</b>
+                    </td>
+                    <td class="separacion-r" [colSpan]="datosDireccion.length">
+                      {{ obtenerPersonasGruposAP('SAP9', listaAccidentesPersonalesOperativo) }}
+                    </td>
+                    <td colspan="2"></td>
+                  </tr>
+                  <!-- FIN OPERATIVO -->
+
+                  <!-- INICIO CATASTROFICO -->
+                  <ng-container *ngFor="let coberturas of listaAccidentesPersonalesGlobal">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        <b style="text-transform: uppercase;">{{ coberturas.Datos.Nombre }}</b>
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td colspan="2"></td>
+                    </tr>
+                  </ng-container>
+                  <!-- FIN CATASTROFICO -->
+
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Accidentes Personales</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaAccidentesPersonales),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN RAMO ACCIDENTES PERSONALES -->
+
+              <!-- INICIO RESUMEN TRANSPORTE INTERNO -->
+              <table border="1" style="width: 100%" *ngIf="calcularPrimaTotal(datosCotizador.listaTransportes) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Transporte Interno</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaTransportes">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+                        <span *ngIf="coberturas.Datos.Codigo != 'STR2'">
+                          <span class="valores-r">$</span>
+                          {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                        </span>
+                        <div *ngIf="coberturas.Datos.Codigo == 'STR2'">
+                          <div style="text-align: left !important">
+                            {{ obtenerInformacioTransportes(coberturas.Valores.ITransporte, listaInformacionTransporte) }}
+                          </div>
+                          <div class="row">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                              <b>Valor: </b>
+                            </div>
+                            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                              $ {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Transporte Interno</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaTransportes),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN TRANSPORTE INTERNO -->
+
+              <!-- INICIO RESUMEN TRANSPORTE IMPORTACIONES -->
+              <table border="1" style="width: 100%"
+                *ngIf="calcularPrimaTotal(datosCotizador.listaTransporteImportaciones) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Transporte Importaciones</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaTransporteImportaciones">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+                        <span *ngIf="coberturas.Datos.Codigo != 'STR4'">
+                          <span class="valores-r">$</span>
+                          {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                        </span>
+                        <div *ngIf="coberturas.Datos.Codigo == 'STR4'">
+                          <div style="text-align: left !important">
+                            {{ obtenerInformacioTransportes(coberturas.Valores.ITransporte, listaInformacionTransporte) }}
+                          </div>
+                          <div class="row">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                              <b>Valor: </b>
+                            </div>
+                            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                              $ {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Transporte Importaciones</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaTransporteImportaciones),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN TRANSPORTE IMPORTACIONES -->
+
+              <!-- INICIO RESUMEN VEHICULOS -->
+              <table border="1" style="width: 100%" *ngIf="calcularPrimaTotal(datosCotizador.listaVehiculos) != 0">
+                <tbody>
+                  <tr class="general">
+                    <td class="separacion" [colSpan]="8">
+                      <span style="font-size: 17px;"><b>Vehículos</b></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="2"></td>
+                  </tr>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 1"></td>
+                    <td class="separacion" style="text-align: center"><b>TASA</b></td>
+                    <td class="separacion" style="text-align: center"><b>PRIMA</b></td>
+                  </tr>
+                  <ng-container *ngFor="let coberturas of datosCotizador.listaVehiculos">
+                    <tr
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, '') != 0">
+                      <td class="separacion" [ngStyle]="{'width': referenciaNombre()}">
+                        {{ coberturas.Datos.Nombre }}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 1 && datosDireccion.length >= 1" class="separacion-r"
+                        [colSpan]="datosDireccion.length" [ngStyle]="{'width': referenciaValorU1()}">
+
+                        <div class="row" style="text-align: left !important">
+                          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"><b>N° Vehículos</b></div>
+                          <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                            {{coberturas.Valores.NVehiculos }}
+                          </div>
+                          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"><b>Valor</b></div>
+                          <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            $ {{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                          </div>
+                        </div>
+
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaTasa()}">
+                        {{formatearValores(coberturas.Valores.Tasa)}}
+                      </td>
+                      <td class="separacion-r" [ngStyle]="{'width': referenciaPrima()}">
+                        <span class="valores-r">$</span>
+                        {{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td [colSpan]="datosDireccion.length + 2" class="separacion-r">
+                      <b>Prima Neta Vehículos</b>
+                    </td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>
+                      {{globales.formatearNumero(calcularPrimaTotal(datosCotizador.listaVehiculos),2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- FIN RESUMEN VEHICULOS -->
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table border="1" style="width: 100%">
+                <tbody>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">Prima IVA 12%</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaNetaIva12,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">Prima IVA 0%</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaNetaIva0,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">Prima Neta Total</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaNetaTotal,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">Impuesto SBS</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.ImpuestoSBS,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">Impuesto Seguro Campesino</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.ImpuestoCampesino,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">Derecho de Emisión</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.DerechosEmision,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">IVA</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.Iva,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="font-weight: bold">Prima Total</td>
+                    <td class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaTotal,2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo2-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor  + ',0.8)'}">
+              <u>DEDUCIBLES</u><br>
+              <span style="font-size: 12px !important">(POR DIRECCIÓN Y EVENTO)</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table *ngFor="let ramo of lstRamos" border="1" style="width: 100%">
+                <tbody *ngIf="ramo.visualizacion != 0">
+                  <tr *ngIf="ramo.ramo.length > 0 ? true : false" class="general">
+                    <td *ngIf="(ramo.identificador != 'RCA14') && (ramo.identificador != 'RAP12')" class="separacion"
+                      colspan="2">
+                      <span style="font-size: 17px;"><b>{{ramo.nombre}}</b></span>
+                    </td>
+                    <td *ngIf="(ramo.identificador == 'RAP12')" class="separacion" colspan="2">
+                      <span style="font-size: 17px;"><b>{{ramo.nombre}}</b></span>
+                    </td>
+                  </tr>
+                  <tr class="general" *ngFor="let coberturas of ramo.ramo; let i = index">
+                    <td
+                      *ngIf="(coberturas.Datos.RiesgoMenor.trim() != '' || coberturas.Datos.RiesgoMayor.trim() != '')
+                  && (sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, coberturas.Datos.Codigo) != 0)
+                  && (ramo.identificador != 'RTR11IN' && ramo.identificador != 'RTR11IM') && (ramo.identificador != 'RAP12')"
+                      class="separacion" style="width: 40%">
+                      {{ coberturas.Datos.Nombre }}
+                    </td>
+                    <ng-container *ngFor="let datosDeducibles of ramo.deducibles">
+                      <td *ngIf="((i + 1) == datosDeducibles.vista) &&
+                    (coberturas.Datos.RiesgoMenor.trim() != '' || coberturas.Datos.RiesgoMayor.trim() != '')
+                    && (sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor, coberturas.Datos.Codigo) != 0)
+                    && (ramo.identificador != 'RAP12')" [rowSpan]="datosDeducibles.union"
+                        style="padding-left: 10px; padding-right: 10px">
+
+                        <pre
+                          style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none'
+                          *ngIf="datosCotizacion.Empresa.Riesgo == 2" [innerHTML]="coberturas.Datos.RiesgoMayor"></pre>
+                        <pre
+                          style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none'
+                          *ngIf="datosCotizacion.Empresa.Riesgo == 1" [innerHTML]="coberturas.Datos.RiesgoMenor"></pre>
+                      </td>
+                    </ng-container>
+                  </tr>
+                  <tr>
+                    <td *ngIf="ramo.identificador == 'RAP12'" class="separacion" colspan="2">
+                      <span *ngIf="datosCotizacion.Empresa.Riesgo == 2">
+                        {{datosCotizador.listaAccidentesPersonales[1].Datos.RiesgoMayor}}
+                      </span>
+                      <span *ngIf="datosCotizacion.Empresa.Riesgo == 1">
+                        {{datosCotizador.listaAccidentesPersonales[1].Datos.RiesgoMenor}}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo2-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor  + ',0.8)'}"><u>GARANTÍAS</u></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table border="1" style="width: 100%">
+                <tbody *ngFor="let global of datosGarantias">
+                  <tr *ngFor="let ramo_ of global.ramo">
+                    <td *ngIf="ramo_.Ramo.Titulo == 1" class="titulo-tabla">
+                      <b>{{ramo_.Ramo.Descripcion}}</b>
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Subtitulo == 1" class="subtitulo-tabla">
+                      <b>{{ramo_.Ramo.Descripcion}}</b>
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0 && ramo_.Valor == 1"
+                      class="separacion">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                  </tr>
+                  <tr *ngIf="global.ramo.length != 0">
+                    <td class="separacion">
+                      <b>Tiempo de Cumplimiento: </b><span>{{ global.cumplimiento }} días</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="global.ramo.length != 0">
+                    <td class="separacion"> 
+                      El incumplimiento parcial o total de las garantías antes indicadas libera de
+                      responsabilidad a la aseguradora en caso de siniestros.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo2-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor  + ',0.8)'}"><u>CONDICIONES</u></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor  + ',0.5)', 'font-weight': 'bold'}">
+              MULTIRIESGO INDUSTRIAL</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table border="1" style="width: 100%">
+                <tbody *ngFor="let global of datosCondiciones">
+                  <tr *ngFor="let ramo_ of global.ramo">
+                    <td *ngIf="ramo_.Ramo.Titulo == 1" class="titulo-tabla">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Subtitulo == 1" class="subtitulo-tabla">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0" class="separacion">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

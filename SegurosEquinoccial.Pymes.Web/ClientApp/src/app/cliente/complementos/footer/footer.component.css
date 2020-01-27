@@ -1,0 +1,24 @@
+.logo-seguros {
+  display: inline-block;
+}
+
+.logo-broker {
+  display: none;
+}
+
+.logo-pymes {
+  display: inline-block;
+}
+
+@media screen and (max-width: 584px) {
+  .logo-seguros {
+    display: none;
+  }
+  .logo-pymes {
+    display: none;
+  }
+  .logo-broker {
+    display: inline-block;
+    filter: hue-rotate(0deg) saturate(0) brightness(100%);
+  }
+}

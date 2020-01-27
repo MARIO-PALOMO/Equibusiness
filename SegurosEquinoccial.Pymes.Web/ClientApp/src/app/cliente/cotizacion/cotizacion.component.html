@@ -1,0 +1,2134 @@
+<app-top-bar-cliente></app-top-bar-cliente>
+<div class="steps" style="cursor: pointer">
+  <ol class="cd-breadcrumb triangle">
+
+    <!-- BOTONES SIN FUNCIONALIDAD -->
+    <li *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" [(ngClass)]="panelesGlobales.empresa.valor">
+      <a style="font-size: 14px"><i class="mdi mdi-bank" style="font-size: 16px"></i>&nbsp; Empresa</a>
+    </li>
+    <li *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" [(ngClass)]="panelesGlobales.direcciones.valor">
+      <a style="font-size: 14px"><i class="mdi mdi-google-maps" style="font-size: 16px"></i>&nbsp; Direcciones</a>
+    </li>
+    <li *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" [(ngClass)]="panelesGlobales.ramos.valor">
+      <a style="font-size: 14px"><i class="mdi mdi-sitemap" style="font-size: 16px"></i>&nbsp; Ramos</a>
+    </li>
+    <li *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" [(ngClass)]="panelesGlobales.valores.valor">
+      <a style="font-size: 14px"><i class="mdi mdi-pencil-box" style="font-size: 16px"></i>&nbsp; Coberturas</a>
+    </li>
+
+    <!-- BOTONES CON FUNCIONALIDAD -->
+    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.empresa.valor"
+      (click)="gestioPanelGlobal('Empresa')">
+      <a style="font-size: 14px"><i class="mdi mdi-bank" style="font-size: 16px"></i>&nbsp; Empresa</a>
+    </li>
+    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.direcciones.valor"
+      (click)="gestioPanelGlobal('Direcciones')">
+      <a style="font-size: 14px"><i class="mdi mdi-google-maps" style="font-size: 16px"></i>&nbsp; Direcciones</a>
+    </li>
+    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.ramos.valor"
+      (click)="gestioPanelGlobal('Ramos')">
+      <a style="font-size: 14px"><i class="mdi mdi-sitemap" style="font-size: 16px"></i>&nbsp; Ramos</a>
+    </li>
+    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.valores.valor"
+      (click)="gestioPanelGlobal('Valores')">
+      <a style="font-size: 14px"><i class="mdi mdi-pencil-box" style="font-size: 16px"></i>&nbsp; Coberturas</a>
+    </li>
+
+    <li [(ngClass)]="panelesGlobales.cotizacion.valor" (click)="gestioPanelGlobal('Cotizacion')">
+      <a style="font-size: 14px"><i class="mdi mdi-file" style="font-size: 16px"></i>&nbsp; Cotizacion</a>
+    </li>
+    <li [(ngClass)]="panelesGlobales.resumen.valor" (click)="gestioPanelGlobal('Resumen')">
+      <a style="font-size: 14px"><i class="mdi mdi-view-grid" style="font-size: 16px"></i>&nbsp; Resumen</a>
+    </li>
+    <li *ngIf="pago && deuda == '0'" [(ngClass)]="panelesGlobales.pago.valor" (click)="gestioPanelGlobal('Pago')">
+      <a style="font-size: 14px"><i class="mdi mdi-credit-card" style="font-size: 16px"></i>&nbsp; Pago</a>
+    </li>
+    <li *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" [(ngClass)]="panelesGlobales.emision.valor"
+      (click)="gestioPanelGlobal('Emision')">
+      <a style="font-size: 14px"><i class="mdi mdi-rotate-right-variant" style="font-size: 16px"></i>&nbsp; Emisión</a>
+    </li>
+  </ol>
+</div>
+<div class="content-wrapper contenido"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);  overflow-y:hidden">
+  <br>
+  <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="{{ textoSpinner }}"
+    type="ball-atom">
+  </ngx-spinner>
+  <div class="row">
+    <div class="col-md-12">
+
+      <!--PANEL EMPRESA-->
+      <div *ngIf="panelesGlobales.empresa.estado" class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 paneles">
+          <div class="row empresa-paneles">
+            <div id="tabEmpresa" class="col-md-4 col-sm-12 col-xs-12"
+              (click)="gestionPanelesEmpresa('Empresa', usuario.broker.Color)">
+              <i class="mdi mdi-bank" style="font-size: 18px"></i> Asegurado
+            </div>
+            <div id="tabContratante" class="col-md-4 col-sm-12 col-xs-12"
+              (click)="valDiseno.gestionPanelesEmpresa('Contratante', usuario.broker.Color)">
+              <i class="mdi mdi-face" style="font-size: 18px"></i> Contratante
+            </div>
+            <div id="tabPagador" class="col-md-4 col-sm-12 col-xs-12"
+              (click)="valDiseno.gestionPanelesEmpresa('Pagadores', usuario.broker.Color)">
+              <i class="mdi mdi-face-profile" style="font-size: 18px"></i> Pagador
+            </div>
+          </div>
+          <br>
+          <!--DATOS EMPRESA-->
+          <div *ngIf="valDiseno.panelesEmpresa.empresa.estado">
+            <h4>Datos del Asegurado</h4>
+            <div class="forms-sample">
+              <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="texto-empresa">R.U.C / C.I</div>
+                  <input type="text" [(ngModel)]="empresa.Ruc" class="form-control texto"
+                    (keyup)="empresa.Ruc = valCotizador.formatoCampo(empresa.Ruc, '0123456789', 13, 2)">
+                  <div *ngIf="empresa.Ruc.length == 13">
+                    <div class="texto-empresa">Razón Social</div>
+                    <input type="text" [(ngModel)]="empresa.PrimerApellido" class="form-control texto"
+                      (keyup)="empresa.PrimerApellido = valCotizador.formatoCampo(empresa.PrimerApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                  </div>
+                  <div *ngIf="empresa.Ruc.length == 10">
+                    <div class="texto-empresa">Nombre</div>
+                    <input type="text" [(ngModel)]="empresa.Nombre" class="form-control texto"
+                      (keyup)="empresa.Nombre = valCotizador.formatoCampo(empresa.Nombre, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                    <div class="texto-empresa">Primer Apellido</div>
+                    <input type="text" [(ngModel)]="empresa.PrimerApellido" class="form-control texto"
+                      (keyup)="empresa.PrimerApellido = valCotizador.formatoCampo(empresa.PrimerApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                    <div class="texto-empresa">Segundo Apellido</div>
+                    <input type="text" [(ngModel)]="empresa.SegundoApellido" class="form-control texto"
+                      (keyup)="empresa.SegundoApellido = valCotizador.formatoCampo(empresa.SegundoApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                  </div>
+                  <div class="texto-empresa">Teléfono</div>
+                  <input type="text" [(ngModel)]="empresa.Telefono" class="form-control texto"
+                    (keyup)="empresa.Telefono = valCotizador.formatoCampo(empresa.Telefono, '0123456789', 10, 2)">
+                  <div class="texto-empresa">Correo Electrónico</div>
+                  <input type="text" [(ngModel)]="empresa.Email" class="form-control texto"
+                    (keyup)="empresa.Email = valCotizador.formatoCampo(empresa.Email, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789_-@.', 100, 2)">
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="texto-empresa">Giro del Negocio</div>
+                  <textarea rows="5" [(ngModel)]="empresa.GiroNegocio" class="form-control texto" style="height: 110px"
+                    (keyup)="empresa.GiroNegocio = valCotizador.formatoCampo(empresa.GiroNegocio, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ,. ', 250, 1)"></textarea>
+                  <div class="texto-empresa">Sector Económico</div>
+                  <kendo-dropdownlist [data]="lstSectorEconomico" [(ngModel)]="empresa.SectorEconomico"
+                    style="width: 100%">
+                  </kendo-dropdownlist>
+                  <div *ngIf="usuario.broker.Riesgo == 1" class="texto-empresa">Tipo de Riesgo</div>
+                  <div *ngIf="usuario.broker.Riesgo == 1">
+                    <kendo-dropdownlist [(ngModel)]="empresa.Riesgo" [data]="listaRiesgo" [textField]="'Nombre'"
+                      [valueField]="'Valor'" [value]="empresa.Riesgo" [valuePrimitive]="true" style="width: 100%">
+                    </kendo-dropdownlist>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="texto-empresa">Dirección de Facturación</div>
+                  <input type="text" [(ngModel)]="empresa.Direccion" class="form-control texto"
+                    (keyup)="empresa.Direccion = valCotizador.formatoCampo(empresa.Direccion, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789- ', 10000, 1)">
+                </div>
+                <div *ngIf="usuario.Corredores == '1'" class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="texto-empresa">Tipo Agente</div>
+                  <kendo-dropdownlist [data]="lstTipoAgente" [(ngModel)]="TipoAgente" textField="text"
+                    valueField="value" (ngModelChange)="listarAgentes()" class="texto">
+                    <ng-template kendoDropDownListItemTemplate let-dataItem>
+                      <span>{{ dataItem.text }}</span>
+                    </ng-template>
+                  </kendo-dropdownlist>
+                </div>
+                <div *ngIf="usuario.Corredores == '1'" class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="texto-empresa">Agente</div>
+                  <kendo-dropdownlist [data]="dataAgente" [(ngModel)]="Agente" [filterable]="true"
+                    textField="nombreAgente" valueField="codigoAgente" (filterChange)="filtrarAgente($event)"
+                    class="texto">
+                    <ng-template kendoDropDownListItemTemplate let-dataItem>
+                      <span>{{ dataItem.nombreAgente }}</span>
+                    </ng-template>
+                  </kendo-dropdownlist>
+                </div>
+                <div *ngIf="usuario.Corredores == '1'" class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="texto-empresa">Punto de Venta - Sucursal</div>
+                  <kendo-dropdownlist [data]="lstSucursal" [(ngModel)]="Sucursal" textField="Nombre" valueField="Union"
+                    class="texto">
+                    <ng-template kendoDropDownListItemTemplate let-dataItem>
+                      <span>{{ dataItem.Nombre }}</span>
+                    </ng-template>
+                  </kendo-dropdownlist>
+                </div>
+              </div>
+            </div>
+            <br>
+          </div>
+
+          <!--DATOS CONTRATANTE-->
+          <div *ngIf="valDiseno.panelesEmpresa.contratante.estado">
+            <h4>Datos del Contratante</h4>
+            <div class="forms-sample" style="text-align: left">
+              <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="form-group">
+                    <label>R.U.C / C.I</label>
+                    <span class="form-control texto">{{ empresa.Ruc }}</span>
+                  </div>
+                  <div *ngIf="empresa.Ruc.length == 13" class="form-group">
+                    <label>Razón Social</label>
+                    <span class="form-control texto">{{ empresa.PrimerApellido }}</span>
+                  </div>
+                  <div *ngIf="empresa.Ruc.length == 10">
+                    <div class="form-group">
+                      <label>Nombre</label>
+                      <span class="form-control texto">{{ empresa.Nombre }}</span>
+                    </div>
+                    <div class="form-group">
+                      <label>Primer Apellido</label>
+                      <span class="form-control texto">{{ empresa.PrimerApellido }}</span>
+                    </div>
+                    <div class="form-group">
+                      <label>Segundo Apellido</label>
+                      <span class="form-control texto">{{ empresa.SegundoApellido }}</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Dirección</label>
+                    <span style="height: 80px" class="form-control texto">{{ empresa.Direccion }}</span>
+                  </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="form-group">
+                    <label>Teléfono</label>
+                    <span class="form-control texto">{{ empresa.Telefono }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <span class="form-control texto">{{ empresa.Email }}</span>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <!--<div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="form-group"
+                    tooltip="Ingresar el N° de cédula y presionar el botón buscar para obtener los datos de la persona."
+                    placement="top" show-delay="1" display-mobile="true" theme="light">
+                    <label>R.U.C / C.I</label>
+                    <div class="input-group">
+                      <input type="text" [(ngModel)]="contratante.Cedula" class="form-control texto" style="width: 7%"
+                        (keyup)="contratante.Cedula = valCotizador.formatoCampo(contratante.Cedula, '0123456789', 13, 2)"
+                        placeholder="Ingresar R.U.C o C.I para obtener datos de la persona">
+                      <div class="input-group-append" style="background-color: #4e4e4e; height: 35px; cursor: pointer;"
+                        (click)="poblarFormulariosContratantePagador(1)">
+                        <span class="input-group-text">
+                          <i class="mdi mdi-search-web" style="color: white"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" [(ngModel)]="contratante.Nombre" class="form-control texto"
+                      (keyup)="contratante.Nombre = valCotizador.formatoCampo(contratante.Nombre, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                  </div>
+                  <div class="form-group">
+                    <label>Dirección</label>
+                    <textarea rows="5" [(ngModel)]="contratante.Direccion" class="form-control texto"
+                      style="height: 80px"
+                      (keyup)="contratante.Direccion = valCotizador.formatoCampo(contratante.Direccion, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 350, 1)"></textarea>
+                  </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" [(ngModel)]="contratante.Telefono" class="form-control texto"
+                      (keyup)="contratante.Telefono = valCotizador.formatoCampo(contratante.Telefono, '0123456789', 10, 2)">
+                  </div>
+                  <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="text" [(ngModel)]="contratante.Email" class="form-control texto"
+                      (keyup)="contratante.Email = valCotizador.formatoCampo(contratante.Email, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789_-@.', 100, 2)">
+                  </div>
+                </div>
+              </div>-->
+            </div>
+          </div>
+
+          <!--DATOS PAGADORES-->
+          <div *ngIf="valDiseno.panelesEmpresa.pagadores.estado">
+            <h4>Datos del Pagador</h4>
+            <div class="forms-sample" style="text-align: left">
+              <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="form-group"
+                    tooltip="Ingresar el N° de cédula y presionar el botón buscar para obtener los datos de la persona."
+                    placement="top" show-delay="1" display-mobile="true" theme="light">
+                    <label>R.U.C / C.I</label>
+                    <div class="input-group">
+                      <input type="text" [(ngModel)]="pagadores.Cedula" class="form-control texto" style="width: 7%"
+                        (keyup)="pagadores.Cedula = valCotizador.formatoCampo(pagadores.Cedula, '0123456789', 13, 2)"
+                        placeholder="Ingresar R.U.C o C.I para obtener datos de la persona">
+                      <div class="input-group-append" style="background-color: #4e4e4e; height: 35px; cursor: pointer;"
+                        (click)="consultarAsegurado(2)">
+                        <span class="input-group-text">
+                          <i class="mdi mdi-search-web" style="color: white"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="activacionCamposPagador == 13" class="form-group">
+                    <label>Razón Social</label>
+                    <input type="text" [(ngModel)]="pagadores.PrimerApellido" class="form-control texto"
+                      (keyup)="pagadores.PrimerApellido = valCotizador.formatoCampo(pagadores.PrimerApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                  </div>
+                  <div *ngIf="activacionCamposPagador == 10">
+                    <div class="form-group">
+                      <label>Nombre</label>
+                      <input type="text" [(ngModel)]="pagadores.Nombre" class="form-control texto"
+                        (keyup)="pagadores.Nombre = valCotizador.formatoCampo(pagadores.Nombre, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                    </div>
+                    <div class="form-group">
+                      <label>Primer Apellido</label>
+                      <input type="text" [(ngModel)]="pagadores.PrimerApellido" class="form-control texto"
+                        (keyup)="pagadores.PrimerApellido = valCotizador.formatoCampo(pagadores.PrimerApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                    </div>
+                    <div class="form-group">
+                      <label>Segundo Apellido</label>
+                      <input type="text" [(ngModel)]="pagadores.SegundoApellido" class="form-control texto"
+                        (keyup)="pagadores.SegundoApellido = valCotizador.formatoCampo(pagadores.SegundoApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Dirección</label>
+                    <textarea rows="5" [(ngModel)]="pagadores.Direccion" class="form-control texto" style="height: 80px"
+                      (keyup)="pagadores.Direccion = valCotizador.formatoCampo(pagadores.Direccion, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789- ', 350, 1)"></textarea>
+                  </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" [(ngModel)]="pagadores.Telefono" class="form-control texto"
+                      (keyup)="pagadores.Telefono = valCotizador.formatoCampo(pagadores.Telefono, '0123456789', 10, 2)">
+                  </div>
+                  <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="text" [(ngModel)]="pagadores.Email" class="form-control texto"
+                      (keyup)="pagadores.Email = valCotizador.formatoCampo(pagadores.Email, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789_-@.', 100, 2)">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-broker btn btn-effect-white" (mouseenter)="gestionColoresEnterBroker()"
+            (mouseleave)="gestionColoresLeaveBroker()" (click)="gestioPanelGlobal('Direcciones')">
+            <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar</button>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+
+      <!--PANEL DIRECCIONES-->
+      <div *ngIf="panelesGlobales.direcciones.estado" class="row">
+        <div class="col-md-8">
+          <h4 style="color: white">Gestión de Ubicaciones</h4>
+          <!--<div class="input-group">
+            <input #buscador type="text" class="form-control" style="font-size: 15px" placeholder="Buscar Dirección...">
+            <div class="input-group-append">
+              <span class="input-group-text">
+                <i class="mdi mdi-search-web"></i>
+              </span>
+            </div>
+          </div>-->
+          <div>
+            <div id="acordionDirecciones">
+              <div class="card" style="background-color: rgba(255,255,255,0.2) !important">
+                <div class="panel-direcciones-header" id="cabeceraUnoDireccion"
+                  [ngStyle]="{'background-color': 'rgba(' + usuario.broker.Color + ',0.8)'}" data-toggle="collapse"
+                  data-target="#acordionUnoDireccion" aria-expanded="true" aria-controls="acordionUnoDireccion">
+                  Ingreso Automático de las direcciones
+                  <i class="mdi mdi-chevron-down" style="float: right"></i>
+                </div>
+
+                <div id="acordionUnoDireccion" class="collapse show" aria-labelledby="cabeceraUnoDireccion"
+                  data-parent="#acordionDirecciones">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label style="font-weight: bold; color: #fff">Buscar Dirección</label>
+                      <input #buscador type="text" class="form-control texto" placeholder="Buscar Dirección...">
+                    </div>
+                    <div #map class="borde-redondeado-mapa"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card" style="background-color: rgba(255,255,255,0.2) !important">
+                <div class="panel-direcciones-header collapsed" id="cabeceraDosDireccion"
+                  [ngStyle]="{'background-color': 'rgba(' + usuario.broker.Color + ',0.8)'}" data-toggle="collapse"
+                  data-target="#acordionDosDireccion" aria-expanded="false" aria-controls="acordionDosDireccion">
+                  Ingreso Manual de las direcciones
+                  <i class="mdi mdi-chevron-down" style="float: right"></i>
+                </div>
+                <div id="acordionDosDireccion" class="collapse" aria-labelledby="cabeceraDosDireccion"
+                  data-parent="#acordionDirecciones">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label style="font-weight: bold; color: #fff">Dirección</label>
+                      <input type="text" class="form-control texto" [(ngModel)]="fmrMapa.nombre">
+                    </div>
+                    <div class="form-group">
+                      <label style="font-weight: bold; color: #fff">Provincia</label><br>
+                      <kendo-dropdownlist [data]="lstProvincias" [(ngModel)]="fmrMapa.provincia" style="width: 100%">
+                      </kendo-dropdownlist>
+                    </div>
+                    <div class="form-group">
+                      <button class="btn" (click)="asignarListaUbicaciones()">Agregar Dirección</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+        </div>
+        <div class="col-md-4">
+          <br>
+          <div class="table-responsive">
+            <table>
+              <thead class="thead-dark">
+                <tr style="text-align: center">
+                  <th>Ubi.</th>
+                  <th>Dirección</th>
+                  <th *ngIf="usuario.broker.Provincias == 1">Provincia</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let direccion of lstDirecciones; let i = index">
+                <tr style="text-align: center">
+                  <td>{{i + 1}}</td>
+                  <td>{{direccion.nombre}}</td>
+                  <td *ngIf="usuario.broker.Provincias == 1">{{direccion.provincia}}</td>
+                  <td>
+                    <button class="btn btn-danger"
+                      (click)="valMapa.eliminarMarcadorTabla(direccion.id, marcadores, lstDirecciones)">
+                      <i class="mdi mdi-delete"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <br>
+          <button type="button" class="btn-broker btn btn-effect-white" (mouseenter)="gestionColoresEnterBroker()"
+            (mouseleave)="gestionColoresLeaveBroker()" (click)="gestioPanelGlobal('Ramos')">
+            <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar</button>
+          <br>
+        </div>
+      </div>
+
+      <!--PANEL RAMOS -->
+      <div *ngIf="panelesGlobales.ramos.estado" class="row">
+        <div class="col-md-12">
+          <h4 style="color: white">Gestión Ramos</h4>
+        </div>
+        <div class="col-md-9 contenido-ramos-escritorio" style="font-size: 14px; text-align: center; color: white;">
+          <div class="row">
+            <div *ngIf="valDiseno.panelesVistaRamos.incendio.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.incendio.escritorio" [ngStyle]="{'border': 'rgb(0,0,0)'}">
+                <img src="../../../assets/images/ramos/incendio.png" /><br>Incendio y <br>Lineas Aliadas
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.equipoElectronico.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.equipoElectronico.escritorio"
+                (click)="gestionPanelRamos('equipoElectronico')">
+                <img src="../../../assets/images/ramos/electronico.png" /><br>Equipo <br>Electrónico
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.roturaMaquinaria.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.roturaMaquinaria.escritorio"
+                (click)="gestionPanelRamos('roturaMaquinaria')">
+                <img src="../../../assets/images/ramos/rotura.png" /><br>Rotura de <br>Maquinaria
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.lucroRoturaMaquinaria.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.lucroRoturaMaquinaria.escritorio"
+                (click)="gestionPanelRamos('lucroRoturaMaquinaria')">
+                <img src="../../../assets/images/ramos/lucro-rotura.png" /><br>Lucro Cesante por <br>Rotura de
+                Maquinaria
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.lucroIncendio.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.lucroIncendio.escritorio"
+                (click)="gestionPanelRamos('lucroIncendio')">
+                <img src="../../../assets/images/ramos/lucro-incendio.png" /><br>Lucro Cesante por <br>Incendio
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.roboAsalto.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.roboAsalto.escritorio" (click)="gestionPanelRamos('roboAsalto')">
+                <img src="../../../assets/images/ramos/robo.png" /><br>Robo y <br>Asalto
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.dineroValores.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.dineroValores.escritorio"
+                (click)="gestionPanelRamos('dineroValores')">
+                <img src="../../../assets/images/ramos/dineros.png" /><br>Dineros y <br>Valores
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.equipoMaquinaria.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.equipoMaquinaria.escritorio"
+                (click)="gestionPanelRamos('equipoMaquinaria')">
+                <img src="../../../assets/images/ramos/equipo.png" /><br>Equipo y <br>Maquinaria
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.responsabilidadCivil.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.responsabilidadCivil.escritorio"
+                (click)="gestionPanelRamos('responsabilidadCivil')">
+                <img src="../../../assets/images/ramos/civil.png" /><br>Responsabilidad <br>Civil
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.fidelidad.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.fidelidad.escritorio" (click)="gestionPanelRamos('fidelidad')">
+                <img src="../../../assets/images/ramos/fidelidad.png" /><br>Fidelidad <br>&nbsp;
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.accidentesPersonales.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.accidentesPersonales.escritorio"
+                (click)="gestionPanelRamos('accidentesPersonales')">
+                <img src="../../../assets/images/ramos/accidentes.png" /><br>Accidentes <br>Personales
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.transportes.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.transportes.escritorio" (click)="gestionPanelRamos('transportes')">
+                <img src="../../../assets/images/ramos/transportes.png" /><br>Transporte <br>Interno
+              </div>
+              <br>
+            </div>
+            <div *ngIf="valDiseno.panelesVistaRamos.transporteImportaciones.estado" class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.transporteImportaciones.escritorio"
+                (click)="gestionPanelRamos('transporteImportaciones')">
+                <img src="../../../assets/images/ramos/transporteImportaciones.png" /><br>Transporte <br>Importaciones
+              </div>
+              <br>
+            </div>
+
+            <div *ngIf="valDiseno.panelesVistaRamos.vehiculos.estado && this.usuario.broker.IdBroker == 1"
+              class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.vehiculos.escritorio" (click)="gestionPanelRamos('vehiculos')">
+                <img src="../../../assets/images/ramos/vehiculos.png" /><br>Vehículos <br>&nbsp;
+              </div>
+              <br>
+            </div>
+
+            <div *ngIf="valDiseno.panelesVistaRamos.vehiculos.estado && this.usuario.broker.IdBroker == 2"
+              class="col-md-3">
+              <div [ngClass]="valDiseno.panelesRamos.vehiculos.escritorio" (click)="mensajeVehiculos()">
+                <img src="../../../assets/images/ramos/vehiculos.png" /><br>Vehículos <br>&nbsp;
+              </div>
+              <br>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-md-9 contenido-ramos-movil">
+          <ul class="list-group">
+            <li *ngIf="valDiseno.panelesVistaRamos.incendio.estado" [ngClass]="valDiseno.panelesRamos.incendio.movil">
+              <img src="../../../assets/images/ramos/incendio.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Incendio y Lineas Aliadas
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.equipoElectronico.estado"
+              [ngClass]="valDiseno.panelesRamos.equipoElectronico.movil"
+              (click)="gestionPanelRamos('equipoElectronico')">
+              <img src="../../../assets/images/ramos/electronico.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Equipo Electrónico
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.roturaMaquinaria.estado"
+              [ngClass]="valDiseno.panelesRamos.roturaMaquinaria.movil" (click)="gestionPanelRamos('roturaMaquinaria')">
+              <img src="../../../assets/images/ramos/rotura.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Rotura de Maquinaria
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.lucroRoturaMaquinaria.estado"
+              [ngClass]="valDiseno.panelesRamos.lucroRoturaMaquinaria.movil"
+              (click)="gestionPanelRamos('lucroRoturaMaquinaria')">
+              <img src="../../../assets/images/ramos/lucro-rotura.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Lucro Cesante por Rotura de Maquinaria
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.lucroIncendio.estado"
+              [ngClass]="valDiseno.panelesRamos.lucroIncendio.movil" (click)="gestionPanelRamos('lucroIncendio')">
+              <img src="../../../assets/images/ramos/lucro-incendio.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Lucro Cesante por Incendio
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.roboAsalto.estado"
+              [ngClass]="valDiseno.panelesRamos.roboAsalto.movil" (click)="valDiseno.gestionPanelRamos('roboAsalto')">
+              <img src="../../../assets/images/ramos/robo.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Robo y Asalto
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.dineroValores.estado"
+              [ngClass]="valDiseno.panelesRamos.dineroValores.movil" (click)="gestionPanelRamos('dineroValores')">
+              <img src="../../../assets/images/ramos/dineros.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Dineros y Valores
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.equipoMaquinaria.estado"
+              [ngClass]="valDiseno.panelesRamos.equipoMaquinaria.movil" (click)="gestionPanelRamos('equipoMaquinaria')">
+              <img src="../../../assets/images/ramos/equipo.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Equipo y Maquinaria
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.responsabilidadCivil.estado"
+              [ngClass]="valDiseno.panelesRamos.responsabilidadCivil.movil"
+              (click)="gestionPanelRamos('responsabilidadCivil')">
+              <img src="../../../assets/images/ramos/civil.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Responsabilidad Civil
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.fidelidad.estado" [ngClass]="valDiseno.panelesRamos.fidelidad.movil"
+              (click)="gestionPanelRamos('fidelidad')">
+              <img src="../../../assets/images/ramos/fidelidad.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Fidelidad
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.accidentesPersonales.estado"
+              [ngClass]="valDiseno.panelesRamos.accidentesPersonales.movil"
+              (click)="gestionPanelRamos('accidentesPersonales')">
+              <img src="../../../assets/images/ramos/accidentes.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Accidentes Personales
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.transportes.estado"
+              [ngClass]="valDiseno.panelesRamos.transportes.movil" (click)="gestionPanelRamos('transportes')">
+              <img src="../../../assets/images/ramos/transportes.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Transporte Interno
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.transporteImportaciones.estado"
+              [ngClass]="valDiseno.panelesRamos.transporteImportaciones.movil"
+              (click)="gestionPanelRamos('transporteImportaciones')">
+              <img src="../../../assets/images/ramos/transporteImportaciones.png" width="30"
+                height="30" />&nbsp;&nbsp;&nbsp;
+              Transporte Importaciones
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.vehiculos.estado && this.usuario.broker.IdBroker == 1"
+              [ngClass]="valDiseno.panelesRamos.vehiculos.movil" (click)="gestionPanelRamos('vehiculos')">
+              <img src="../../../assets/images/ramos/vehiculos.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Vehículos
+            </li>
+            <li *ngIf="valDiseno.panelesVistaRamos.vehiculos.estado && this.usuario.broker.IdBroker == 2"
+              [ngClass]="valDiseno.panelesRamos.vehiculos.movil" (click)="mensajeVehiculos()">
+              <img src="../../../assets/images/ramos/vehiculos.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
+              Vehículos
+            </li>
+          </ul>
+          <br>
+        </div>
+        <div class="col-md-3">
+          <table class="table ">
+            <thead class="thead-dark">
+              <tr>
+                <th>Ramos Seleccionados</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let ramo of valDiseno.panelesValoresRamos">
+              <tr>
+                <td>{{ valDiseno.gestionPanelesValoresRamosSeleccionadosTexto(ramo) }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <button type="button" class="btn-broker btn btn-effect-white" (mouseenter)="gestionColoresEnterBroker()"
+            (mouseleave)="gestionColoresLeaveBroker()" (click)="gestioPanelGlobal('Valores')">
+            <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar</button>
+          <br>
+        </div>
+      </div>
+
+      <!--PANEL VALORES -->
+      <div *ngIf="panelesGlobales.valores.estado" class="row">
+        <div class="col-sm-12 col-md-12" style="text-align: center; cursor: pointer;">
+          <ul id="menu" class="steps-valores borde-redondeado-valores">
+            <li *ngIf="valDiseno.panelesRamos.incendio.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.incendio.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('incendio')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Incendios y Lineas Aliadas
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.equipoElectronico.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.equipoElectronico.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('equipoElectronico')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Equipo
+                Electrónico
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.roturaMaquinaria.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.roturaMaquinaria.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('roturaMaquinaria')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Rotura de
+                Maquinaria
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.lucroRoturaMaquinaria.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.lucroRoturaMaquinaria.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('lucroRoturaMaquinaria')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Lucro Cesante
+                por Rotura de Maquinaria
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.lucroIncendio.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.lucroIncendio.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('lucroIncendio')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Lucro Cesante
+                por Incendio
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.roboAsalto.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.roboAsalto.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('roboAsalto')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Robo y Asalto
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.dineroValores.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.dineroValores.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('dineroValores')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Dineros y Valores
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.equipoMaquinaria.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.equipoMaquinaria.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('equipoMaquinaria')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Equipo y
+                Maquinaria
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.coberturasAdicionales.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.coberturasAdicionales.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('coberturasAdicionales')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Amparos Adicionales
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.responsabilidadCivil.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.responsabilidadCivil.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('responsabilidadCivil')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i>
+                Responsabilidad Civil
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.fidelidad.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.fidelidad.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('fidelidad')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Fidelidad
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.accidentesPersonales.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.accidentesPersonales.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('accidentesPersonales')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Accidentes
+                Personales
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.transportes.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.transportes.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('transportes')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Transporte Interno
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.transporteImportaciones.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.transporteImportaciones.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('transporteImportaciones')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Transporte Importaciones
+              </a>
+            </li>
+            <li *ngIf="valDiseno.panelesRamos.vehiculos.estado"
+              [ngClass]="valDiseno.panelesValoresRamos_.vehiculos.seleccion.disenio">
+              <a (click)="gestionPanelesRamos('vehiculos')">
+                <i class="mdi mdi-chevron-double-right" style="font-size: 15px"></i> Vehículos
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-sm-12 col-md-12" style="top: 85px; overflow-y:hidden">
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.incendio.estado">
+            <template #ramoIncendio></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.equipoElectronico.estado">
+            <template #ramoEquipoElectronico></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.roturaMaquinaria.estado">
+            <template #ramoRoturaMaquinaria></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.lucroRoturaMaquinaria.estado">
+            <template #ramoLucroRoturaMaquinaria></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.lucroIncendio.estado">
+            <template #ramoLucroIncendio></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.roboAsalto.estado">
+            <template #ramoRoboAsalto></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.dineroValores.estado">
+            <template #ramoDineroValores></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.equipoMaquinaria.estado">
+            <template #ramoEquipoMaqunaria></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.coberturasAdicionales.estado">
+            <template #ramoCoberturasAdicionales></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.responsabilidadCivil.estado">
+            <template #ramoResponsabilidadCivil></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.fidelidad.estado">
+            <template #ramoFidelidad></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.accidentesPersonales.estado">
+            <template #ramoAcidentesPersonales></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.transportes.estado">
+            <template #ramoTransportes></template>
+          </div>
+          <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.transporteImportaciones.estado">
+            <template #ramoTransporteImportaciones></template>
+          </div>
+          <div *ngIf="valDiseno.panelesValoresRamos_.vehiculos.estado">
+            <div style="text-align: center; color: white;">
+              <span>{{listaVehiculos[0].Datos.Ramo.Nombre}}</span><br>
+              <span>{{listaVehiculos[0].Datos.Ramo.Rango}}</span>
+              <br><br>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h5 style="color: white">Agregar Vehículo: </h5>
+                <button type="button" class="btn-broker btn btn-effect-white" (mouseenter)="gestionColoresEnterBroker()"
+                  (mouseleave)="gestionColoresLeaveBroker()" (click)="generarVectorDinamico()">
+                  <i class="mdi mdi-plus-box"></i>
+                </button>
+              </div>
+              <div class="col-md-6">
+                <h5>.</h5>
+                <button class="btn btn-white" type="button" data-toggle="collapse" data-target="#borrarVehiculos"
+                  aria-expanded="false" aria-controls="borrarVehiculos" style="width: 100%; height: 38px">
+                  Eliminar Vehículos
+                </button>
+                <div class="collapse" id="borrarVehiculos">
+                  <div class="card card-body">
+                    <table class="table">
+                      <thead>
+                        <th>Placa</th>
+                        <th>Chasis</th>
+                        <th></th>
+                      </thead>
+                      <tbody *ngFor="let veh of listaDetallesVehiculos" style="text-align: center">
+                        <td>{{ veh.placa }}</td>
+                        <td>{{ veh.chasis }}</td>
+                        <td style="text-align: right">
+                          <button class="btn btn-danger" (click)="eliminarVehiculo(veh.id)">
+                            <i class="mdi mdi-delete"></i>
+                          </button>
+                        </td>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <template #ramoVehiculos></template>
+
+          </div>
+          <br><br><br><br>
+        </div>
+      </div>
+      <!-- VALORES DE LA COTIZACIÓN -->
+      <div *ngIf="panelesGlobales.cotizacion.estado">
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h4 style="color: white">Valor Total Cotización</h4>
+
+            <!-- INICIO VALORES MULTIRIESGO -->
+            <button class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionRamos" aria-expanded="false" aria-controls="cotizacionRamos">Multiriesgo</button>
+            <br>
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionRamos">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table id="tablaCotizacion">
+                    <tbody>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 12%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionMultiriesgo.primaNetaIva12), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 0%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionMultiriesgo.primaNetaIva0), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Neta
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionMultiriesgo.primaNetaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionMultiriesgo.impuestoSBS), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                            Campesino</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionMultiriesgo.seguroCampesino), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de Emisión</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionMultiriesgo.derechosEmision), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionMultiriesgo.iva), 2) }}</span></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionMultiriesgo.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- FIN VALORES MULTIRIESGO -->
+
+            <!-- INICIO VALORES EQUIPO Y MAQUINARIA -->
+            <br *ngIf="cotizacionVista.equipoMaquinara">
+            <button *ngIf="cotizacionVista.equipoMaquinara" class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionEM" aria-expanded="false" aria-controls="cotizacionEM">Equipo y
+              Maquinaria</button>
+            <br *ngIf="cotizacionVista.equipoMaquinara">
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionEM">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table id="tablaCotizacion">
+                    <tbody>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 12%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionEquipoMaquinaria.primaNetaIva12), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 0%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionEquipoMaquinaria.primaNetaIva0), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Neta
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionEquipoMaquinaria.primaNetaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionEquipoMaquinaria.impuestoSBS), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                            Campesino</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionEquipoMaquinaria.seguroCampesino), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de Emisión</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionEquipoMaquinaria.derechosEmision), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionEquipoMaquinaria.iva), 2) }}</span></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionEquipoMaquinaria.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- FIN VALORES EQUIPO Y MAQUINARIA -->
+
+            <!-- INICIO VALORES RESPONSABILIDAD CIVIL -->
+            <br *ngIf="cotizacionVista.responsabilidadCivil">
+            <button *ngIf="cotizacionVista.responsabilidadCivil" class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionRC" aria-expanded="false" aria-controls="cotizacionRC">Responsabilidad
+              Civil</button>
+            <br *ngIf="cotizacionVista.responsabilidadCivil">
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionRC">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table id="tablaCotizacion">
+                    <tbody>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 12%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionResponsabilidadCivil.primaNetaIva12), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 0%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionResponsabilidadCivil.primaNetaIva0), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Neta
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionResponsabilidadCivil.primaNetaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionResponsabilidadCivil.impuestoSBS), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                            Campesino</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionResponsabilidadCivil.seguroCampesino), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de Emisión</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionResponsabilidadCivil.derechosEmision), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionResponsabilidadCivil.iva), 2) }}</span></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionResponsabilidadCivil.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- FIN VALORES RESPONSABILIDAD CIVIL -->
+
+            <!-- INICIO VALORES FIDELIDAD -->
+            <br *ngIf="cotizacionVista.fidelidad">
+            <button *ngIf="cotizacionVista.fidelidad" class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionFI" aria-expanded="false" aria-controls="cotizacionFI">Fidelidad</button>
+            <br *ngIf="cotizacionVista.fidelidad">
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionFI">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table id="tablaCotizacion">
+                    <tbody>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 12%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionFidelidad.primaNetaIva12), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 0%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionFidelidad.primaNetaIva0), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Neta
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionFidelidad.primaNetaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionFidelidad.impuestoSBS), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                            Campesino</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionFidelidad.seguroCampesino), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de Emisión</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionFidelidad.derechosEmision), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionFidelidad.iva), 2) }}</span></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionFidelidad.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- FIN VALORES FIDELIDAD -->
+
+            <!-- INICIO ACCIDENTES PERSONALES -->
+            <br *ngIf="cotizacionVista.accidentesPersonales">
+            <button *ngIf="cotizacionVista.accidentesPersonales" class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionAP" aria-expanded="false" aria-controls="cotizacionAP">Accidentes
+              Personales</button>
+            <br *ngIf="cotizacionVista.accidentesPersonales">
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionAP">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table id="tablaCotizacion">
+                    <tbody>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 12%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionAccidentesPersonales.primaNetaIva12), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 0%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionAccidentesPersonales.primaNetaIva0), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Neta
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionAccidentesPersonales.primaNetaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionAccidentesPersonales.impuestoSBS), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                            Campesino</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionAccidentesPersonales.seguroCampesino), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de Emisión</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionAccidentesPersonales.derechosEmision), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionAccidentesPersonales.iva), 2) }}</span></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionAccidentesPersonales.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- FIN VALORES ACCIDENTES PERSONALES -->
+
+            <!-- INICIO VALORES TRANSPORTE INTERNO -->
+            <br *ngIf="cotizacionVista.transporteInterno">
+            <button *ngIf="cotizacionVista.transporteInterno" class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionTRIN" aria-expanded="false" aria-controls="cotizacionTRIN">Transporte
+              Interno</button>
+            <br *ngIf="cotizacionVista.transporteInterno">
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionTRIN">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table id="tablaCotizacion">
+                    <tbody>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 12%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionTransporteInterno.primaNetaIva12), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 0%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionTransporteInterno.primaNetaIva0), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Neta
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteInterno.primaNetaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteInterno.impuestoSBS), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                            Campesino</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteInterno.seguroCampesino), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de Emisión</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteInterno.derechosEmision), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteInterno.iva), 2) }}</span></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteInterno.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- FIN VALORES TRANSPORTE INTERNO -->
+
+            <!-- INICIO VALORES TRANSPORTE IMPORTACIONES -->
+            <br *ngIf="cotizacionVista.transporteImportaciones">
+            <button *ngIf="cotizacionVista.transporteImportaciones" class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionTRIM" aria-expanded="false" aria-controls="cotizacionTRIM">Transporte
+              Importaciones</button>
+            <br *ngIf="cotizacionVista.transporteImportaciones">
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionTRIM">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table id="tablaCotizacion">
+                    <tbody>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 12%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionTransporteImportaciones.primaNetaIva12), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Prima IVA 0%</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important">
+                          <span class="estilo-cotizacion"
+                            style="float: right">{{ globales.formatearNumero((cotizacionTransporteImportaciones.primaNetaIva0), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Neta
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteImportaciones.primaNetaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteImportaciones.impuestoSBS), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                            Campesino</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteImportaciones.seguroCampesino), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de Emisión</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteImportaciones.derechosEmision), 2) }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteImportaciones.iva), 2) }}</span></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTransporteImportaciones.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- FIN VALORES TRANSPORTE IMPORTACIONES -->
+
+            <br *ngIf="cotizacionVista.vehiculos">
+            <button *ngIf="cotizacionVista.vehiculos" class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionVehiculos" aria-expanded="false"
+              aria-controls="cotizacionVehiculos">Vehículos</button>
+            <br *ngIf="cotizacionVista.vehiculos">
+
+            <div class="row">
+              <div class="col-md-12 collapse multi-collapse" id="cotizacionVehiculos">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                            Total</span></td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((totalVehiculos), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <br>
+            <button class="btn borde-redondeado-cotizacion-varios"
+              [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')'}" type="button" data-toggle="collapse"
+              data-target="#cotizacionTotal" aria-expanded="false" aria-controls="cotizacionTotal">Total</button>
+            <br>
+
+            <div class="row">
+              <div class="col-md-12 multi-collapse" id="cotizacionTotal">
+                <br>
+                <div class="table-responsive borde-redondeado-cotizacion">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td style="font-weight: bold; width: 80% !important">
+                          <span class="estilo-cotizacion">Total a Pagar</span>
+                        </td>
+                        <td style="width: 5% !important">$</td>
+                        <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                            {{ globales.formatearNumero((cotizacionTotal.primaTotal), 2) }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+
+            <br>
+            <button type="button" class="btn-broker btn btn-effect-white" (mouseenter)="gestionColoresEnterBroker()"
+              (mouseleave)="gestionColoresLeaveBroker()" (click)="gestioPanelGlobal('Resumen')">
+              <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar</button>
+          </div>
+          <div class="col-md-3"></div>
+        </div>
+      </div>
+      <!-- RESUMEN DETALLADO DE LA COTIZACION -->
+      <div *ngIf="panelesGlobales.resumen.estado">
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h4 style="color: white">Resumen Cotización</h4>
+
+            <div class="table-responsive borde-redondeado-cotizacion">
+              <table id="tablaPago">
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Empresa</span></b></td>
+                  <td><span class="estilo-cotizacion">{{empresa.Nombre}} {{empresa.PrimerApellido}}
+                      {{empresa.SegundoApellido}}</span></td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Contratante</span></b></td>
+                  <td><span class="estilo-cotizacion">{{contratante.Nombre}} {{contratante.PrimerApellido}}
+                      {{contratante.SegundoApellido}}</span></td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Pagador/es</span></b></td>
+                  <td><span class="estilo-cotizacion">{{ pagadores.Nombre }} {{ pagadores.PrimerApellido }}
+                      {{ pagadores.SegundoApellido }}</span></td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Ramos</span></b></td>
+                  <td>
+                    <span class="estilo-cotizacion">
+                      <span *ngFor="let ramo_ of valDiseno.panelesValoresRamos">
+                        <span>■ {{ valDiseno.gestionPanelesValoresRamosSeleccionadosTexto(ramo_) }}</span><br><br>
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Valor a Pagar</span></b></td>
+                  <td><span class="estilo-cotizacion">$
+                      {{ globales.formatearNumero((cotizacionTotal.primaTotal), 2) }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <button *ngIf="pago" type="button" class="btn-broker btn btn-effect-white input-guardar-cotizacion"
+                      (mouseenter)="gestionColoresEnterBroker()" (mouseleave)="gestionColoresLeaveBroker()"
+                      (click)="gestioPanelGlobal('Pago')" style="width: 100% !important; height: 42px !important;">
+                      <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar
+                    </button>
+
+                    <span *ngIf="pago">&nbsp;&nbsp;&nbsp;</span>
+
+                    <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" type="button"
+                      class="btn-broker btn btn-effect-white input-guardar-cotizacion"
+                      (mouseenter)="gestionColoresEnterBroker()" (mouseleave)="gestionColoresLeaveBroker()"
+                      (click)="actualizarEmpresa(0)" style="width: 100% !important; height: 42px !important;">
+                      <span *ngIf="pago"><i class="mdi mdi-content-save"></i> Guardar Nuevos Cambios</span>
+                      <span *ngIf="!pago"><i class="mdi mdi-content-save"></i> Guardar</span>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <div>
+                      <button class="btn" [ngStyle]="{'background-color': 'rgb('+usuario.broker.Color+')'}"
+                        data-toggle="collapse" data-target="#advertencia" aria-expanded="false"
+                        aria-controls="advertencia" style="width: 100%; height: 40px; color: white; text-align: left">
+                        NOTA IMPORTANTE (DESPLEGAR) <i class="mdi mdi-chevron-down" style="float: right"></i>
+                      </button>
+                      <div class="collapse" id="advertencia" style="padding: 15px">
+                        <i class="mdi mdi-alert"></i> <b>NOTA:</b>
+                        <p>
+                          Para visualizar el reporte, enviarlo al cliente y habilitar el pago se deberá
+                          realizar el siguiente proceso:
+                        </p>
+                        <div>
+                          <span><i class="mdi mdi-security eicon"></i> <b>Garantías</b></span>
+                          <p>1. Gestionar y Guardar los parámetros necesarios del módulo.</p>
+                        </div>
+                        <div>
+                          <span><i class="mdi mdi-file-check eicon"></i> <b>Condiciones</b></span>
+                          <p>2. Gestionar y Guardar los parámetros necesarios del módulo.</p>
+                        </div>
+                        <div>
+                          <span><i class="mdi mdi-file eicon"></i> <b>Reporte</b></span>
+                          <p>3. Habilitar el pago.</p>
+                        </div>
+                        <div>
+                          <br>
+                          <span><b>AVISO: </b>Para realizar los pasos antes mencionados primero deberá guardar la
+                            cotización que
+                            se encuentra realizando, presionando el botón <b>Guardar</b>
+                            <i class="mdi mdi-arrow-up-bold"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <br>
+
+          </div>
+          <div class="col-md-3"></div>
+        </div>
+      </div>
+
+      <div *ngIf="panelesGlobales.pago.estado && deuda == '0'">
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h4 style="color: white">Envio Pago</h4>
+            <div class="table-responsive borde-redondeado-cotizacion">
+              <table id="tablaEmision">
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Empresa</span></b></td>
+                  <td><span class="estilo-cotizacion">{{empresa.Nombre}} {{empresa.PrimerApellido}}
+                      {{empresa.SegundoApellido}}</span></td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Pagador</span></b></td>
+                  <td><span class="estilo-cotizacion">{{pagadores.Nombre}} {{pagadores.PrimerApellido}}
+                      {{pagadores.SegundoApellido}}</span></td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Contacto</span></b></td>
+                  <td><span class="estilo-cotizacion">{{pagadores.Telefono}}</span></td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Correo Electrónico</span></b></td>
+                  <td><span class="estilo-cotizacion">{{pagadores.Email}}</span></td>
+                </tr>
+                <tr>
+                  <td><b><span class="estilo-cotizacion">Valor a Pagar</span></b></td>
+                  <td><span class="estilo-cotizacion">$
+                      {{ globales.formatearNumero(cotizacionTotal.primaTotal,2) }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <button class="btn" [ngStyle]="{'background-color': 'rgb('+usuario.broker.Color+')'}"
+                      data-toggle="collapse" data-target="#metodos" aria-expanded="false" aria-controls="metodos"
+                      style="width: 100%; height: 40px; color: white">
+                      Formas de Pago
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+
+                    <div>
+                      <div class="row" style="text-align: center !important">
+                        <div class="col-3" (click)="seleccionarFormaPago(1)">
+                          <div id="1" class="icono pagos-boton">
+                            <i class="mdi mdi-credit-card iconos-pago"></i>
+                            <br><small><b>Tarjeta de Crédito</b></small>
+                          </div>
+                        </div>
+                        <div class="col-3" (click)="seleccionarFormaPago(2)">
+                          <div id="2" class="icono pagos-boton">
+                            <i class="mdi mdi-credit-card iconos-pago"></i>
+                            <br><small><b>Tarjeta de Débito</b></small>
+                          </div>
+                        </div>
+                        <div class="col-3" (click)="seleccionarFormaPago(3)">
+                          <div id="3" class="icono pagos-boton">
+                            <i class="mdi mdi-cash iconos-pago"></i>
+                            <br><small><b>Contado</b></small>
+                          </div>
+                        </div>
+                        <div class="col-3" (click)="seleccionarFormaPago(4)">
+                          <div id="4" class="icono pagos-boton">
+                            <i class="mdi mdi-bank iconos-pago"></i>
+                            <br><small><b>Débito Bancario</b></small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br>
+                    <div>
+                      <div *ngIf="tipoPago == 1" class="mensaje-estado-pago bg-secondary">
+                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Forma de Pago:</b><br>
+                          <span>Tarjeta de Crédito</span>
+                        </div>
+                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Estado:</b><br>
+                          <span *ngIf="FormaPago.Estado == 0">Sin Gestionar</span>
+                          <span *ngIf="FormaPago.Estado == 1">Pago Sin Realizar</span>
+                          <span *ngIf="FormaPago.Estado == 2">Pago Realizando</span>
+                          <span *ngIf="FormaPago.Estado == 3">Pago Rechazado</span>
+                          <span *ngIf="FormaPago.Estado == 4">Pago Reversado</span>
+                          <span *ngIf="FormaPago.Estado == 5">Pago Anulado</span>
+                          <span *ngIf="FormaPago.Estado == 6">Pago Expirado</span>
+                        </div>
+
+                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Link de Pago:</b><br>
+                          <div *ngIf="FormaPago.IdPago == 0" style="padding-top: 8px !important;">
+                            <button class="btn btn-success" (click)="enviarFormaPago(1)">
+                              Enviar
+                            </button>
+                          </div>
+                          <div *ngIf="FormaPago.IdPago != 0" style="padding-top: 8px !important;">
+                            <button class="btn btn-dark" (click)="verificarPagoTarjeta(1)">
+                              Reenviar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div *ngIf="tipoPago == 2" class="mensaje-estado-pago bg-secondary">
+
+                      </div>
+                      <div *ngIf="tipoPago == 3" class="mensaje-estado-pago bg-secondary">
+
+                      </div>
+                      <div *ngIf="tipoPago == 4" class="mensaje-estado-pago bg-secondary">
+
+                      </div>
+                    </div>
+                    <button (click)="verificarPago()">
+                      Probar
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <div class="" id="metodos">
+                      <div class="mensaje-estado-pago bg-secondary">
+                        <span *ngIf="estadoCotizacion == 1" class="text-danger"><b> ESTADO: </b> NOTIFICACIÓN DE PAGO
+                          PENDIENTE</span>
+                        <span *ngIf="estadoCotizacion == 2" class="text-danger"><b> ESTADO: </b> NOTIFICACIÓN DE PAGO
+                          PENDIENTE</span>
+                        <span *ngIf="estadoCotizacion == 3" class="text-warning"><b> ESTADO: </b> NOTIFICACIÓN DE PAGO
+                          ENVIADA</span>
+                        <span *ngIf="estadoCotizacion == 4" class="text-success"><b> ESTADO: </b> EL CLIENTE REALIZÓ EL
+                          PAGO
+                          CORRESPONDIENTE</span>
+                        <span *ngIf="estadoCotizacion == 5" class="text-success"><b> ESTADO: </b> EL CLIENTE REALIZÓ EL
+                          PAGO
+                          CORRESPONDIENTE</span>
+                      </div>
+
+                      <div *ngIf="FormaPago.Estado == 0" class="mensaje-estado-pago bg-secondary"
+                        style="color: black !important">
+                        <p><b>Seleccionar la forma de pago</b></p>
+
+                        <kendo-dropdownlist [(ngModel)]="tipoPago" [data]="lstTipoPago" [textField]="'Nombre'"
+                          [valueField]="'Valor'" [valuePrimitive]="true"
+                          style="width: 50%; border: 1px solid #000000; font-size: 13px; height: 35px;">
+                          <ng-template kendoDropDownListItemTemplate let-dataItem>
+                            <i [ngClass]="dataItem.Icono" style="padding-right: 10px"></i> {{ dataItem.Nombre }}
+                          </ng-template>
+                        </kendo-dropdownlist>
+                        <br><br>
+                        <button class="btn btn-dark" (click)="seleccionarTipoPago()">
+                          Continuar
+                        </button>
+
+                        <hr>
+                        <small>
+                          <b>NOTA:</b> Una vez seleccionado el método de pago, ya no se podrá volver a seleccionar otro.
+                        </small>
+                      </div>
+
+                      <div *ngIf="FormaPago.Estado == 2">
+                        <br>
+                        <button class="btn btn-secondary" data-toggle="collapse" data-target="#tarjeta"
+                          aria-expanded="false" aria-controls="tarjeta" style="width: 100%; text-align: left">
+                          <i class="mdi mdi-credit-card"></i>
+                          <b>Tarjeta de Crédito / Débito</b>
+                          <i class="mdi mdi-chevron-down" style="float: right"></i>
+                        </button>
+                        <div class="contenido-metodos-pago" id="tarjeta">
+                          <span *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
+                            Se prodecerá a generar un link de pago, el cual recibirá el cliente/pagador al correo
+                            electrónico proporcionado:
+                          </span>
+                          <span *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5">
+                            <b>EL CLIENTE REALIZÓ EL PAGO CORRESPONDIENTE</b>
+                          </span>
+                          <br><br>
+                          <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" type="button"
+                            class="btn-broker btn btn-effect-white" (mouseenter)="gestionColoresEnterBroker()"
+                            (mouseleave)="gestionColoresLeaveBroker()" (click)="enviarLinkPagoCotizacion(2)"
+                            style="width: 100%; height: 42px;">
+                            <i class="mdi mdi-credit-card-multiple"></i> Enviar Link de Pagos
+                          </button>
+                          <br><br>
+                          <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" class="btn btn-success"
+                            (click)="verificarEstadoPagoCotizacionEquiPayment()" style="width: 100%; height: 42px;">
+                            <i class="mdi mdi-check"></i> Verificar Pago
+                          </button>
+                        </div>
+                      </div>
+
+                      <div *ngIf="FormaPago.Estado == 1">
+                        <br>
+                        <button class="btn btn-secondary" data-toggle="collapse" data-target="#otros"
+                          aria-expanded="false" aria-controls="otros" style="width: 100%; text-align: left">
+                          <i class="mdi mdi-cash-multiple"></i>
+                          <b>Otros Métodos de Pago</b>
+                          <i class="mdi mdi-chevron-down" style="float: right"></i>
+                        </button>
+                        <div class="collapse contenido-metodos-pago" id="otros">
+                          <p *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
+                            Para el siguiente método de pago la persona encargada de realizar la cotización,
+                            deberá adjuntar un archivo válido para continuar con el proceso.
+                          </p>
+                          <hr>
+                          <div *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5">
+
+                            <div *ngIf="FormaPago.Tipo == 'DÉBITO BANCARIO'" class="form-group">
+                              <label><b>Adjunto:</b></label><br>
+                              <a *ngIf="FormaPago.Adjunto != '' || FormaPago.Adjunto != null || FormaPago.Adjunto != undefined"
+                                class="btn btn-dark" [href]="verArchivoPagoOtros(FormaPago.Adjunto)"
+                                download="Adjunto.{{FormaPago.AdjuntoTipo}}">Visualizar</a>
+                            </div>
+
+                            <div *ngIf="FormaPago.Tipo == 'CONTADO'">
+                              <span><b>FORMA DE PAGO: </b>CONTADO</span><br><br>
+                              <span>Adjunto no disponible para esta forma de pago</span>
+                            </div>
+
+                          </div>
+                          <div *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
+                            <div class="form-group">
+                              <label><b>Forma de Pago:</b></label>
+                              <kendo-dropdownlist [data]="lstFormasPago" [(ngModel)]="FormaPago.TipoOtros"
+                                style="width: 100%; border: 1px solid #000000; font-size: 13px; height: 35px;">
+                              </kendo-dropdownlist>
+                            </div>
+
+                            <div *ngIf="FormaPago.TipoOtros == 'DÉBITO BANCARIO'" class="form-group">
+                              <label><b>Archivo Adjunto (AUTORIZACIÓN DE DÉBITO)</b></label><br>
+
+                              <small>Formatos: PDF, JPG, JPEG, PNG, DOC, ETC</small>
+                              <div class="input-group mb-3">
+                                <input id="file" type="file" class="form-control" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                  <a class="btn btn-dark" [href]="verArchivoPagoOtros(FormaPago.Adjunto)"
+                                    download="Adjunto.{{FormaPago.AdjuntoTipo}}">Visualizar</a>
+                                </div>
+                              </div>
+                            </div>
+
+
+                            <div class="form-group">
+                              <button class="btn btn-dark" (click)="adjuntarArchivoPagoOtros()">
+                                Actualizar
+                              </button>
+                            </div>
+                          </div>
+                          <hr style="display: none">
+                          <p style="display: none">
+                            <b>NOTA:</b>
+                            El corredor de seguros certifica que la Autorización de Débito en formato digital ha sido
+                            debidamente aceptada y firmada por el titular de la cuenta o tarjeta de crédito. <br>
+                            <small>Este documento es reflejo veraz y exacto del documento existente en formato
+                              papel.</small>
+                          </p>
+                          <hr>
+                          <button *ngIf="FormaPago.Estado == 1 && (estadoCotizacion != 4 && estadoCotizacion != 5)"
+                            class="btn btn-success"
+                            (click)="actualizarEstadoPago('','','','','','','','', '', FormaPago.TipoOtros)">
+                            Finalizar
+                          </button>
+
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <br>
+
+            <button *ngIf="estadoCotizacion == 4" type="button" class="btn-broker btn btn-effect-white"
+              (mouseenter)="gestionColoresEnterBroker()" (mouseleave)="gestionColoresLeaveBroker()"
+              (click)="gestioPanelGlobal('Emision')">
+              <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar
+            </button>
+
+          </div>
+          <div class="col-md-3"></div>
+        </div>
+      </div>
+
+      <div *ngIf="panelesGlobales.emision.estado">
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h4 style="color: white">Emitir Póliza PYMES</h4>
+            <br>
+
+
+            <div id="accordion">
+              <div class="card">
+                <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+                  aria-expanded="true" aria-controls="collapseOne"
+                  [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white', 'cursor': 'pointer'}">
+                  Datos Cotización
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div class="table-responsive borde-redondeado-cotizacion">
+
+                    <table *ngIf="FormaPago.Tipo == 'CONTADO'" id="tablaPago" class="table">
+                      <tr>
+                        <td><b><span class="estilo-cotizacion">N° Cotización</span></b></td>
+                        <td><span class="estilo-cotizacion">{{codigoCotizacion.codigoCotizacion}}</span></td>
+                      </tr>
+                      <tr>
+                        <td><b><span class="estilo-cotizacion">Fecha Cotización</span></b></td>
+                        <td><span class="estilo-cotizacion">{{ fechaCotizacion }}</span></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="font-size: 15px; text-align: center"><b>DATOS PAGO</b></td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Forma</b></td>
+                        <td class="estilo-cotizacion">CONTADO</td>
+                      </tr>
+                    </table>
+
+                    <table *ngIf="FormaPago.Tipo == 'TARJETA CRÉDITO / DÉBITO'" id="tablaPago" class="table">
+                      <tr>
+                        <td><b><span class="estilo-cotizacion">N° Cotización</span></b></td>
+                        <td><span class="estilo-cotizacion">{{codigoCotizacion.codigoCotizacion}}</span></td>
+                      </tr>
+                      <tr>
+                        <td><b><span class="estilo-cotizacion">Fecha Cotización</span></b></td>
+                        <td><span class="estilo-cotizacion">{{ fechaCotizacion }}</span></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="font-size: 15px; text-align: center"><b>DATOS PAGO</b></td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Plataforma</b></td>
+                        <td class="estilo-cotizacion">{{ FormaPago.Plataforma }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Código Autenticación</b></td>
+                        <td class="estilo-cotizacion">{{ FormaPago.CodigoAutenticacion }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Lote</b></td>
+                        <td class="estilo-cotizacion">{{ FormaPago.Lote }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Referencia</b></td>
+                        <td class="estilo-cotizacion">{{ FormaPago.Referencia }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Voucher</b></td>
+                        <td class="estilo-cotizacion">{{ FormaPago.Voucher }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Diferidos</b></td>
+                        <td class="estilo-cotizacion">
+                          {{ globales.obtenerNumerosCadena(FormaPago.Diferidos) == 0 ? 'Corriente': globales.obtenerNumerosCadena(FormaPago.Diferidos) + ' Meses' }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Intereses</b></td>
+                        <td class="estilo-cotizacion">{{ FormaPago.Intereses == 0 ? 'Sin Intereses': 'Con Intereses' }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Fecha Pago</b></td>
+                        <td class="estilo-cotizacion">{{ FormaPago.Fecha }}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo"
+                  aria-expanded="false" aria-controls="collapseTwo"
+                  [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white', 'cursor': 'pointer'}">
+                  Emisión
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                  <div class="table-responsive borde-redondeado-cotizacion"
+                    [ngStyle]="{'pointer-events': bloqueoEmision == false ? 'auto' : 'none'}">
+                    <table class="table">
+                      <tr>
+                        <td><b><span class="estilo-cotizacion">Multiriesgo</span></b></td>
+                        <td style="text-align: right !important">
+                          <span *ngIf="cotizacionBotones.multiriesgo" class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" (click)="emitirPoliza('MULTI')">
+                              <i class="mdi mdi-file-multiple"></i> Emitir
+                            </button>
+                          </span>
+                          <span *ngIf="!cotizacionBotones.multiriesgo" class="estilo-cotizacion" style="color: green">
+                            <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="cotizacionVista.equipoMaquinara != false">
+                        <td><b><span class="estilo-cotizacion">Equipo Maquinaria</span></b></td>
+                        <td style="text-align: right !important">
+                          <span *ngIf="cotizacionBotones.equipoMaquinara" class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" (click)="emitirPoliza('EM')">
+                              <i class="mdi mdi-file-multiple"></i> Emitir
+                            </button>
+                          </span>
+                          <span *ngIf="!cotizacionBotones.equipoMaquinara" class="estilo-cotizacion"
+                            style="color: green">
+                            <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="cotizacionVista.responsabilidadCivil != false">
+                        <td><b><span class="estilo-cotizacion">Responsabilidad Civil</span></b></td>
+                        <td style="text-align: right !important">
+                          <span *ngIf="cotizacionBotones.responsabilidadCivil" class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" (click)="emitirPoliza('RC')">
+                              <i class="mdi mdi-file-multiple"></i> Emitir
+                            </button>
+                          </span>
+                          <span *ngIf="!cotizacionBotones.responsabilidadCivil" class="estilo-cotizacion"
+                            style="color: green">
+                            <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="cotizacionVista.fidelidad != false">
+                        <td><b><span class="estilo-cotizacion">Fidelidad</span></b></td>
+                        <td style="text-align: right !important">
+                          <span *ngIf="cotizacionBotones.fidelidad" class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" (click)="emitirPoliza('FI')">
+                              <i class="mdi mdi-file-multiple"></i> Emitir
+                            </button>
+                          </span>
+                          <span *ngIf="!cotizacionBotones.fidelidad" class="estilo-cotizacion" style="color: green">
+                            <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="cotizacionVista.accidentesPersonales != false">
+                        <td><b><span class="estilo-cotizacion">Accidentes Personales</span></b></td>
+                        <td style="text-align: right !important">
+                          <span *ngIf="cotizacionBotones.accidentesPersonales" class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" (click)="emitirPoliza('AP')">
+                              <i class="mdi mdi-file-multiple"></i> Emitir
+                            </button>
+                          </span>
+                          <span *ngIf="!cotizacionBotones.accidentesPersonales" class="estilo-cotizacion"
+                            style="color: green">
+                            <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="cotizacionVista.transporteInterno != false">
+                        <td><b><span class="estilo-cotizacion">Transporte Interno</span></b></td>
+                        <td style="text-align: right !important">
+                          <span *ngIf="cotizacionBotones.transporteInterno" class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" (click)="emitirPoliza('TRIN')">
+                              <i class="mdi mdi-file-multiple"></i> Emitir
+                            </button>
+                          </span>
+                          <span *ngIf="!cotizacionBotones.transporteInterno" class="estilo-cotizacion"
+                            style="color: green">
+                            <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="cotizacionVista.transporteImportaciones != false">
+                        <td><b><span class="estilo-cotizacion">Transporte Importaciones</span></b></td>
+                        <td style="text-align: right !important">
+                          <span *ngIf="cotizacionBotones.transporteImportaciones" class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" (click)="emitirPoliza('TRIM')">
+                              <i class="mdi mdi-file-multiple"></i> Emitir
+                            </button>
+                          </span>
+                          <span *ngIf="!cotizacionBotones.transporteImportaciones" class="estilo-cotizacion"
+                            style="color: green">
+                            <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="cotizacionVista.vehiculos != false">
+                        <td><b><span class="estilo-cotizacion">Vehículos</span></b></td>
+                        <td style="text-align: right !important">
+                          <span class="estilo-cotizacion">
+                            <span *ngIf="cotizacionBotones.vehiculos" class="estilo-cotizacion">
+                              <button type="button" class="btn btn-dark" (click)="emitirPoliza('VH')">
+                                <i class="mdi mdi-file-multiple"></i> Emitir
+                              </button>
+                            </span>
+                            <span *ngIf="!cotizacionBotones.vehiculos" class="estilo-cotizacion" style="color: green">
+                              <i class="mdi mdi-checkbox-marked-circle-outline"></i> Póliza Emitida
+                            </span>
+                          </span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="FormaPago.Tipo == 'CONTADO'">
+                        <td colspan="2">
+                          <span class="estilo-cotizacion">
+                            <b>NOTA IMPORTANTE:</b> La aplicación del pago se lo deberá realizar de forma manual.
+                          </span>
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="estadoAplicarPago == true && fmrCotizacionResultado.EstadoPagoGlobal == 0 && FormaPago.Tipo == 'TARJETA CRÉDITO / DÉBITO'">
+                        <td colspan="2">
+                          <span class="estilo-cotizacion">
+                            <button type="button" class="btn btn-dark" style="width: 100%"
+                              (click)="aplicarPagoPolizas()">
+                              <i class="mdi mdi-credit-card"></i> Aplicar Pago
+                            </button>
+                          </span>
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="estadoAplicarPago == true && fmrCotizacionResultado.EstadoPagoGlobal == 1 && FormaPago.Tipo == 'TARJETA CRÉDITO / DÉBITO'">
+                        <td colspan="2" style="text-align: center !important">
+                          <span class="estilo-cotizacion" style="color: green">
+                            <i class="mdi mdi-credit-card"></i> Pago Aplicado Correctamente
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

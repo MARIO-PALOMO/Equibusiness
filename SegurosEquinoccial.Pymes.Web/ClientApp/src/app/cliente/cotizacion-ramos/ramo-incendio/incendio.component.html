@@ -1,0 +1,244 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaIncendio[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaIncendio[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+<!-- INICIO RAMO Y SUBRAMOS INCENDIO WEB -->
+<table id="tablaIncendio" class="subramo-valores-escritorio" border="1">
+  <thead style="text-align: center;">
+    <tr>
+      <th rowspan="2" style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span>
+      </th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <th rowspan="2" style="width: 12%">TASA</th>
+      <th rowspan="2" style="width: 10%">PRIMA</th>
+      <th rowspan="2" style="width: 25%">
+        DEDUCIBLE<br>
+        (POR DIRECCIÓN Y EVENTO)
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let direccion of lstDirecciones">
+        <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
+          Ubi. {{direccion.id}}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyIncendio">
+    <tr *ngFor="let subramos of listaIncendio; let i = index" id="{{subramos.Datos.Codigo}}">
+      <td>{{subramos.Datos.Nombre}}</td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaIncendio, subramos.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramos.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <input id="{{subramos.Valores.ValorU1.Texto}}" [(ngModel)]="subramos.Valores.ValorU1.Valor" type="number"
+            step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoIncendio(subramos.Valores.ValorU1.Texto, subramos.Datos.Codigo, 1)">
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 2 && subramos.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramos.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramos.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramos.Valores.ValorU2.Texto}}" [(ngModel)]="subramos.Valores.ValorU2.Valor" type="number"
+              step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramos.Valores.ValorU2.Texto, subramos.Datos.Codigo, 2)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 3 && subramos.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramos.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramos.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramos.Valores.ValorU3.Texto}}" [(ngModel)]="subramos.Valores.ValorU3.Valor" type="number"
+              step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramos.Valores.ValorU3.Texto, subramos.Datos.Codigo, 3)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 4 && subramos.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramos.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramos.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramos.Valores.ValorU4.Texto}}" [(ngModel)]="subramos.Valores.ValorU4.Valor" type="number"
+              step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramos.Valores.ValorU4.Texto, subramos.Datos.Codigo, 4)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 5 && subramos.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramos.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramos.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramos.Valores.ValorU5.Texto}}" [(ngModel)]="subramos.Valores.ValorU5.Valor" type="number"
+              step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramos.Valores.ValorU5.Texto, subramos.Datos.Codigo, 5)">
+          </span>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramos.Datos.MostrarTasa == 1" class="form-control texto" [(ngModel)]="subramos.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramos.Valores.TasaMinima" [max]="subramos.Tasa[0].ValorMaximo" [decimals]="2"
+          (ngModelChange)="gestionTasaIncendio(subramos.Datos.Codigo, subramos.Valores.Tasa)"></kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramos.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left;">$</span>{{globales.formatearNumero(subramos.Valores.Prima, 2)}}</span>
+      </td>
+
+      <ng-container *ngFor="let datosDeducibles of deducibles">
+        <td *ngIf="(i + 1) == datosDeducibles.vista" [rowSpan]="datosDeducibles.union">
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 2" [innerHTML]="subramos.Datos.RiesgoMayor"></pre>
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 1" [innerHTML]="subramos.Datos.RiesgoMenor"></pre>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Incendio y Líneas Aliadas
+        &nbsp;</b></td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalIncendio">{{globales.formatearNumero(general.calcularPrimaTotal(listaIncendio), 2)}}</span></span>
+    </td>
+    <td> &nbsp;{{general.mensajePrimaMinima(listaIncendio)}}</td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS INCENDIO WEB -->
+<!-- INCIO RAMO Y SUBRAMOS INCENDIO MÓVIL -->
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaIncendio, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaIncendio, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovil of listaIncendio">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovil.Datos.Codigo)">
+      {{subramosMovil.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovil.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovil.Datos.Rango}}" placement="top" show-delay="1"
+          display-mobile="true" theme="light">
+          <b>{{lstDirecciones[0].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[0].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[0].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovil.Valores.ValorU1.TextoMovil}}" [(ngModel)]="subramosMovil.Valores.ValorU1.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramosMovil.Valores.ValorU1.TextoMovil, subramosMovil.Datos.Codigo, 1)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 2 && subramosMovil.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovil.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[1].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[1].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[1].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovil.Valores.ValorU2.TextoMovil}}" [(ngModel)]="subramosMovil.Valores.ValorU2.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramosMovil.Valores.ValorU2.TextoMovil, subramosMovil.Datos.Codigo, 2)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 3 && subramosMovil.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovil.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[2].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[2].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovil.Valores.ValorU3.TextoMovil}}" [(ngModel)]="subramosMovil.Valores.ValorU3.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramosMovil.Valores.ValorU3.TextoMovil, subramosMovil.Datos.Codigo, 3)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 4 && subramosMovil.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovil.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[3].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovil.Valores.ValorU4.TextoMovil}}" [(ngModel)]="subramosMovil.Valores.ValorU4.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramosMovil.Valores.ValorU4.TextoMovil, subramosMovil.Datos.Codigo, 4)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 5 && subramosMovil.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovil.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[4].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[4].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovil.Valores.ValorU5.TextoMovil}}" [(ngModel)]="subramosMovil.Valores.ValorU5.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoIncendio(subramosMovil.Valores.ValorU5.TextoMovil, subramosMovil.Datos.Codigo, 5)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovil.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosMovil.Valores.TasaMinima" [decimals]="2"
+          (ngModelChange)="gestionTasaIncendio(subramosMovil.Datos.Codigo, subramosMovil.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovil.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="
+           (subramosMovil.Valores.ValorU1.Valor>
+          0 ? true: false) ||
+          (subramosMovil.Valores.ValorU2.Valor > 0 ? true: false) ||
+          (subramosMovil.Valores.ValorU3.Valor > 0 ? true: false) ||
+          (subramosMovil.Valores.ValorU4.Valor > 0 ? true: false) ||
+          (subramosMovil.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovil.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovil.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Incendio y Líneas Aliadas</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaIncendio)}}</span>
+      <span class="texto-ramos" style="float: right"> &nbsp;{{general.mensajePrimaMinima(listaIncendio)}}</span><br>
+    </div>
+  </div>
+</div>
+<!-- FIN RAMO Y SUBRAMOS INCENDIO MÓVIL -->

@@ -1,0 +1,54 @@
+<app-top-bar-cliente></app-top-bar-cliente>
+<div class="titulo">
+  <div *ngIf="usuario.broker.IdBroker == 2" style="padding-top: 10px">
+    <h3>Riesgos Asegurables <img src="assets/images/LogoBlanco.png" alt="Cotizador Pymes" width="48"></h3>
+  </div>
+  <div *ngIf="usuario.broker.IdBroker != 2" style="padding-top: 10px">
+    <h3>Giros Excluidos <img src="assets/images/LogoBlanco.png" alt="Cotizador Pymes" width="48"></h3>
+  </div>
+</div>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+    <div class="row">
+      <div class="col-md-10 offset-md-1">
+        <br>
+        <div>
+          <table style="text-align: justify">
+            <thead>
+              <tr>
+                <th [colSpan]="3" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}">
+                  
+                  <a [routerLink]="['/cliente/cotizacion/inicio']" class="btn btn-light" style="float: right">
+                    <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar | Información
+                  </a>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let giros of lstGirosExcluidos">
+                <td *ngIf="giros.Titulo == 1" class="titulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}" colspan="2">
+                  <b>{{giros.Descripcion}}</b>
+                </td>
+                <td *ngIf="giros.Subtitulo == 1" class="subtitulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +', 0.5)', 'text-align': 'center'}" colspan="2">
+                  <b>{{giros.Descripcion}}</b>
+                </td>
+                <td *ngIf="giros.Titulo == 0 && giros.Subtitulo == 0" style="padding-left: 60px;">
+                  <i class="mdi mdi-check"></i>
+                </td>
+                <td *ngIf="giros.Titulo == 0 && giros.Subtitulo == 0" class="texto-tabla">
+                  {{giros.Descripcion}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+
+</div>

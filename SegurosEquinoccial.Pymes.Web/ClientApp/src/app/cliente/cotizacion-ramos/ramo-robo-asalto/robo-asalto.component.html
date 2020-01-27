@@ -1,0 +1,247 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaRoboAsalto[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaRoboAsalto[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+<!-- INICIO RAMO Y SUBRAMOS ROBO Y ASALTO WEB -->
+<table id="tablaRoboAsalto" class=" subramo-valores-escritorio" border="1">
+  <thead style="text-align: center;">
+    <tr>
+      <th rowspan="2" style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span>
+      </th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <th rowspan="2" style="width: 12%">TASA</th>
+      <th rowspan="2" style="width: 10%">PRIMA</th>
+      <th rowspan="2" style="width: 25%">
+        DEDUCIBLE<br>
+        (POR EVENTO)
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let direccion of lstDirecciones">
+        <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
+          Ubi. {{direccion.id}}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyRoboAsalto">
+    <tr *ngFor="let subramosRA of listaRoboAsalto; let i = index" id="{{subramosRA.Datos.Codigo}}">
+      <td>{{subramosRA.Datos.Nombre}}</td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaRoboAsalto, subramosRA.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramosRA.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <input id="{{subramosRA.Valores.ValorU1.Texto}}" [(ngModel)]="subramosRA.Valores.ValorU1.Valor" type="number"
+            step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoRoboAsalto(subramosRA.Valores.ValorU1.Texto, subramosRA.Datos.Codigo, 1)">
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 2 && subramosRA.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRA.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRA.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRA.Valores.ValorU2.Texto}}" [(ngModel)]="subramosRA.Valores.ValorU2.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosRA.Valores.ValorU2.Texto, subramosRA.Datos.Codigo, 2)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 3 && subramosRA.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRA.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRA.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRA.Valores.ValorU3.Texto}}" [(ngModel)]="subramosRA.Valores.ValorU3.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosRA.Valores.ValorU3.Texto, subramosRA.Datos.Codigo, 3)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 4 && subramosRA.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRA.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRA.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRA.Valores.ValorU4.Texto}}" [(ngModel)]="subramosRA.Valores.ValorU4.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosRA.Valores.ValorU4.Texto, subramosRA.Datos.Codigo, 4)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 5 && subramosRA.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRA.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRA.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRA.Valores.ValorU5.Texto}}" [(ngModel)]="subramosRA.Valores.ValorU5.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosRA.Valores.ValorU5.Texto, subramosRA.Datos.Codigo, 5)">
+          </span>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramosRA.Datos.MostrarTasa == 1" class="form-control texto"
+          [(ngModel)]="subramosRA.Valores.Tasa" [autoCorrect]="true" [step]="0.01" [min]="subramosRA.Valores.TasaMinima"
+          [max]="subramosRA.Tasa[0].ValorMaximo"  [decimals]="2"
+          (ngModelChange)="gestionTasaRoboAsalto(subramosRA.Datos.Codigo, subramosRA.Valores.Tasa)">
+        </kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramosRA.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left">$</span>{{globales.formatearNumero(subramosRA.Valores.Prima,2)}}</span>
+      </td>
+      <td>
+        <p *ngIf="
+             (subramosRA.Valores.ValorU1.Valor>
+            0 ? true: false) ||
+            (subramosRA.Valores.ValorU2.Valor > 0 ? true: false) ||
+            (subramosRA.Valores.ValorU3.Valor > 0 ? true: false) ||
+            (subramosRA.Valores.ValorU4.Valor > 0 ? true: false) ||
+            (subramosRA.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosRA.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosRA.Datos.RiesgoMenor}}</span>
+        </p>
+      </td>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Robo y Asalto &nbsp;</b></td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalRoboAsalto">{{globales.formatearNumero(general.calcularPrimaTotal(listaRoboAsalto),2)}}</span></span>
+    </td>
+    <td> &nbsp;{{general.mensajePrimaMinima(listaRoboAsalto)}}</td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS ROBO Y ASALTO WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS ROBO Y ASALTO MÓVIL -->
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaRoboAsalto, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaRoboAsalto, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovilRA of listaRoboAsalto">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilRA.Datos.Codigo)">
+      {{subramosMovilRA.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilRA.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovilRA.Datos.Rango}}" placement="top" show-delay="1"
+          display-mobile="true" theme="light">
+          <b>{{lstDirecciones[0].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[0].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[0].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRA.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilRA.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosMovilRA.Valores.ValorU1.TextoMovil, subramosMovilRA.Datos.Codigo, 1)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 2 && subramosMovilRA.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRA.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[1].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[1].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[1].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRA.Valores.ValorU2.TextoMovil}}"
+              [(ngModel)]="subramosMovilRA.Valores.ValorU2.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosMovilRA.Valores.ValorU2.TextoMovil, subramosMovilRA.Datos.Codigo, 2)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 3 && subramosMovilRA.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRA.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[2].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[2].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRA.Valores.ValorU3.TextoMovil}}"
+              [(ngModel)]="subramosMovilRA.Valores.ValorU3.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosMovilRA.Valores.ValorU3.TextoMovil, subramosMovilRA.Datos.Codigo, 3)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 4 && subramosMovilRA.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRA.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[3].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRA.Valores.ValorU4.TextoMovil}}"
+              [(ngModel)]="subramosMovilRA.Valores.ValorU4.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosMovilRA.Valores.ValorU4.TextoMovil, subramosMovilRA.Datos.Codigo, 4)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 5 && subramosMovilRA.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRA.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[4].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[4].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRA.Valores.ValorU5.TextoMovil}}"
+              [(ngModel)]="subramosMovilRA.Valores.ValorU5.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoboAsalto(subramosMovilRA.Valores.ValorU5.TextoMovil, subramosMovilRA.Datos.Codigo, 5)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovilRA.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosMovilRA.Valores.TasaMinima"
+          (ngModelChange)="gestionTasaRoboAsalto(subramosMovilRA.Datos.Codigo, subramosMovilRA.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovilRA.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="
+               (subramosMovilRA.Valores.ValorU1.Valor>
+              0 ? true: false) ||
+              (subramosMovilRA.Valores.ValorU2.Valor > 0 ? true: false) ||
+              (subramosMovilRA.Valores.ValorU3.Valor > 0 ? true: false) ||
+              (subramosMovilRA.Valores.ValorU4.Valor > 0 ? true: false) ||
+              (subramosMovilRA.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovilRA.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovilRA.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Robo y Asalto</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaRoboAsalto)}}</span>
+      <span class="texto-ramos" style="float: right"> &nbsp;{{general.mensajePrimaMinima(listaRoboAsalto)}}</span><br>
+    </div>
+  </div>
+</div>
+<!--FIN RAMO Y SUBRAMOS ROBO Y ASALTO MÓVIL -->

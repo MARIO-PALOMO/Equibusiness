@@ -1,0 +1,129 @@
+<app-top-bar-cliente></app-top-bar-cliente>
+<div class="titulo">
+  <div style="padding-top: 10px">
+    <h3>Perfil <img src="assets/images/LogoBlanco.png" alt="Cotizador Pymes" width="48"></h3>
+  </div>
+</div>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+    <br>
+    <div class="row">
+      <div class="col-md-4 offset-md-4">
+
+        <div class="contenedor-cabecera" [ngStyle]="{'background-color': 'rgba('+usuario.broker.Color+', 0.8)'}">
+          <img class="rounded-circle" src="{{usuario.Foto}}" alt="{{usuario.Usuario}}" width="180" height="180">
+        </div>
+        <div class="contenedor-cuerpo">
+          <div class="container" style="text-align: left">
+            <div>
+              <span class="label"><u>DATOS PERSONALES</u></span>
+            </div>
+            <div>
+              <span class="label">Nombre:</span><br>
+              <span class="texto">{{ usuario.Usuario }}</span>
+            </div>
+            <div>
+              <span class="label">Correo Electrónico:</span><br>
+              <span class="texto">{{ usuario.Email }}</span>
+            </div>
+            <div>
+              <span class="label">Rol:</span><br>
+              <span class="texto">{{ usuario.rol.Nombre }}</span>
+            </div>
+            <br>
+            <div>
+              <span class="label"><u>EMPRESA</u></span>
+            </div>
+            <div>
+              <span class="label">Razón Social:</span><br>
+              <span class="texto">{{ usuario.broker.RazonSocial }}</span>
+            </div>
+            <br>
+            <div>
+              <button class="btn btn-secondary"
+                [ngStyle]="{'background-color': 'rgba('+usuario.broker.Color+', 1)', 'width': '100%', 'color': 'white'}"
+                data-toggle="modal" data-target="#modificarDatos">
+                <i class="mdi mdi-account-alert"></i> Editar Perfil
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modificarDatos" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modificar Datos Personales</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+              aria-controls="nav-home" aria-selected="true">Gestionar Datos</a>
+            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+              aria-controls="nav-profile" aria-selected="false">Gestionar Contraseña</a>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+            <br>
+            <div style="padding: 10px;">
+              <div class="form-group">
+                <label class="label">Foto</label>
+                <img class="rounded-circle" src="{{fmrUsuario.Foto}}" alt="Img" width="120" height="120">
+                <input id="file" type="file" class="form-control texto" (change)="seleccionarFoto()" />
+              </div>
+              <div class="form-group">
+                <label class="label">Nombre: </label>
+                <input type="text" class="form-control texto" [(ngModel)]="fmrUsuario.Usuario">
+              </div>
+              <div class="form-group">
+                <label class="label">Correo Electrónico: </label>
+                <input type="email" class="form-control texto" [(ngModel)]="fmrUsuario.Email">
+              </div>
+              <button type="button" class="btn btn-secondary"
+                [ngStyle]="{'background-color': 'rgba('+usuario.broker.Color+', 1)', 'color': 'white', 'width': '100%'}"
+                (click)="modificarDatosUsuario()">Modificar Datos</button>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+            <br>
+            <div style="padding: 10px;">
+              <div class="form-group">
+                <label class="label">Contraseña: </label>
+                <input type="password" class="form-control texto" placeholder="Ingresar Contraseña"
+                  [(ngModel)]="fmrUsuario.Contrasena">
+                <small>La contraseña debe tener los siguientes requisitos:
+                  <ul>
+                    <li>8 caracteres</li>
+                    <li>Al menos dos números</li>
+                    <li>Al menos una mayúscula</li>
+                    <li>Al menos una minúscula</li>
+                    <li>Sin repetir 1 caracter o número mas de 4 veces</li>
+                    <li>Sin espacios en blanco</li>
+                  </ul>
+                </small>
+              </div>
+              <button type="button" class="btn btn-secondary"
+                [ngStyle]="{'background-color': 'rgba('+usuario.broker.Color+', 1)', 'color': 'white', 'width': '100%'}"
+                (click)="modificarContrasenaUsuario()">Modificar Contraseña</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

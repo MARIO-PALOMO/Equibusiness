@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CE4B8E9F-E128-48F6-A5C6-8F897B27DA68}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SegurosEquinoccial.Pymes.Datos</RootNamespace>
+    <AssemblyName>SegurosEquinoccial.Pymes.Datos</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Administracion\DAdmCredenciales.cs" />
+    <Compile Include="Administracion\DAdmErrores.cs" />
+    <Compile Include="Administracion\DAdmUsuarios.cs" />
+    <Compile Include="Broker\DBroBroker.cs" />
+    <Compile Include="Broker\DBroCatalogoEmpresa.cs" />
+    <Compile Include="Broker\DBroCatalogos.cs" />
+    <Compile Include="Broker\DBroClausulas.cs" />
+    <Compile Include="Broker\DBroComplementos.cs" />
+    <Compile Include="Broker\DBroCompromiso.cs" />
+    <Compile Include="Broker\DBroContenido.cs" />
+    <Compile Include="Broker\DBroContratante.cs" />
+    <Compile Include="Broker\DBroCotizacion.cs" />
+    <Compile Include="Broker\DBroCotizacionResultado.cs" />
+    <Compile Include="Broker\DBroDireccion.cs" />
+    <Compile Include="Broker\DBroEmpresa.cs" />
+    <Compile Include="Broker\DBroFormaPago.cs" />
+    <Compile Include="Broker\DBrokerRamo.cs" />
+    <Compile Include="Broker\DBroProvincia.cs" />
+    <Compile Include="Broker\DBroReglas.cs" />
+    <Compile Include="Broker\DBroReglasGenerales.cs" />
+    <Compile Include="Broker\DBroResumen.cs" />
+    <Compile Include="Broker\DBroSectorEconomico.cs" />
+    <Compile Include="Broker\DBroTasa.cs" />
+    <Compile Include="Broker\DBroVehiculo.cs" />
+    <Compile Include="Broker\DBroPagador.cs" />
+    <Compile Include="Gestion\DAdmConexion.cs" />
+    <Compile Include="Gestion\DAdmConexionREST.cs" />
+    <Compile Include="Gestion\DAdmEncriptacion.cs" />
+    <Compile Include="Gestion\DAdmConexionSOAP.cs" />
+    <Compile Include="Pagos\DPagCheckout.cs" />
+    <Compile Include="Polizas\Multiriesgo\DPoMultiriesgo.cs" />
+    <Compile Include="Polizas\Pago\DPolPago.cs" />
+    <Compile Include="Polizas\Textos\DPolTextos.cs" />
+    <Compile Include="Polizas\Validaciones\DPolValidaciones.cs" />
+    <Compile Include="Polizas\Vehiculos\DPolVehiculos.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SegurosEquinoccial.Pymes.Entidad\SegurosEquinoccial.Pymes.Entidad.csproj">
+      <Project>{2cd34647-be94-4b76-9835-af079dd550f4}</Project>
+      <Name>SegurosEquinoccial.Pymes.Entidad</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Cliente\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\DataSources\System.Data.DataSet.datasource" />
+    <None Include="Properties\DataSources\System.Data.DataTable.datasource" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

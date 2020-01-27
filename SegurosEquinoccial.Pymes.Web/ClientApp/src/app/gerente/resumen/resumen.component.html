@@ -1,0 +1,457 @@
+<app-top-bar-gerente></app-top-bar-gerente>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false"
+            aria-controls="collapseExample" style="background-color: #333333">
+            <h5 class="mb-0" style="float: left">
+              Filtros:
+            </h5>
+            <i style="float: right" class="mdi mdi-chevron-down"></i>
+          </div>
+          <div class="collapse" id="collapseExample" class="card-body" style="color: black">
+            <div class="row">
+              <div class="col-md-6">
+                <span>Supervisores:</span>
+                <kendo-multiselect [data]="lstSupervisores" [(ngModel)]="filtros.supervisores" textField="Usuario"
+                  valueField="IdUsuario" placeholder="Seleccionar supervisor/es para la búsqueda"
+                  (ngModelChange)="listarCotizacionesOperadores()">
+                  <ng-template kendoMultiSelectItemTemplate let-dataItem>
+                    <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
+                    <span style="padding: 15px">{{ dataItem.Usuario }}</span>
+                  </ng-template>
+                </kendo-multiselect>
+              </div>
+              <div class="col-md-3">
+                <span>Fecha Inicio:</span><br>
+                <kendo-datepicker [(ngModel)]="filtros.fechaInicio" (ngModelChange)="listarCotizacionesOperadores()">
+                </kendo-datepicker>
+              </div>
+              <div class="col-md-3">
+                <span>Fecha Fin:</span><br>
+                <kendo-datepicker [(ngModel)]="filtros.fechaFin" (ngModelChange)="listarCotizacionesOperadores()">
+                </kendo-datepicker>
+              </div>
+              <!--<div class="col-md-6">
+                <span>Operadores:</span>
+                <kendo-multiselect [data]="groupedData" [(ngModel)]="filtros.operadores" textField="Usuario"
+                  valueField="IdUsuario" placeholder="Seleccionar operador/es para la búsqueda"
+                  (ngModelChange)="listarCotizacionesOperadores()">
+                  <ng-template kendoMultiSelectItemTemplate let-dataItem>
+                    <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
+                    <span style="padding: 15px">{{ dataItem.Usuario }}</span>
+                  </ng-template>
+                </kendo-multiselect>
+              </div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body" style="color: black">
+
+            <nav>
+              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+                  aria-controls="nav-home" aria-selected="true">Supervisores</a>
+                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+                  aria-controls="nav-profile" aria-selected="false">Operadores</a>
+              </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <br>
+                <h4>Resumen Gestión Supervisores</h4><br>
+                <div class="row">
+                  <div class="col-md-12">
+                    <kendo-grid [data]="gridDataResumenSupervisor" [pageSize]="stateResumenSupervisor.take"
+                      [skip]="stateResumenSupervisor.skip" [sort]="stateResumenSupervisor.sort" [sortable]="true"
+                      [pageable]="true" filterable="menu" [resizable]="true"
+                      (dataStateChange)="dataStateChangeResumenSupervisor($event)"
+                      style="border: none; font-size: 12px !important;">
+
+                      <ng-template kendoGridToolbarTemplate>
+                        <div style="float: right">
+                          <button type="button" kendoGridPDFCommand icon="file-pdf"
+                            style="font-size: 12px !important; background-color: #CB4335; color: #FFFFFF">
+                            <b>Exportar a PDF</b>
+                          </button>
+
+                          <button type="button" kendoGridExcelCommand icon="file-excel"
+                            style="font-size: 12px !important; background-color: #107C41; color: #FFFFFF">
+                            <b>Exportar a Excel</b>
+                          </button>
+                        </div>
+                      </ng-template>
+
+                      <kendo-grid-column media="(max-width: 800px)" title="Resumen Supervisores" [filterable]="true"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+
+                          <h4 [class.discontinued]="dataItem.Ciudad" style="text-align: center; font-weight: bold">
+                            {{ dataItem.Ciudad }}
+                          </h4>
+                          <dl>
+                            <dt>Supervisor</dt>
+                            <dd>{{ dataItem.UsuarioPadre }}</dd>
+
+                            <dt>N° Cotizaciones Sin Emitir</dt>
+                            <dd>{{ dataItem.SinEmitir }}</dd>
+
+                            <dt>N° Cotizaciones Emitidas</dt>
+                            <dd>{{ dataItem.Emitidas }}</dd>
+
+                            <dt>Ingresos Generados Cotizaciones Emitidas</dt>
+                            <dd>$ {{ globales.formatearNumero(dataItem.Total, 2) }}</dd>
+
+                          </dl>
+                        </ng-template>
+                      </kendo-grid-column>
+
+                      <kendo-grid-column media="(min-width: 800px)" field="Ciudad" title="Ciudad" width="130"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                      </kendo-grid-column>
+                      <kendo-grid-column media="(min-width: 800px)" field="UsuarioPadre" title="Supervisor" width="150"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                      </kendo-grid-column>
+                      <kendo-grid-column media="(min-width: 800px)" field="SinEmitir" title="N° Cotizaciones Sin Emitir"
+                        width="150" [filterable]="false"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                      </kendo-grid-column>
+                      <kendo-grid-column media="(min-width: 800px)" field="Emitidas" title="N° Cotizaciones Emitidas"
+                        width="160" [filterable]="false" type="date"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                      </kendo-grid-column>
+                      <kendo-grid-column media="(min-width: 800px)" field="Total"
+                        title="Ingresos Generados Cotizaciones Emitidas" width="240" [filterable]="false"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                          $ {{ globales.formatearNumero(dataItem.Total, 2) }}
+                        </ng-template>
+                      </kendo-grid-column>
+                      <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar"
+                        noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems"
+                        pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
+                        filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a"
+                        filterNotEqOperator="No es igual a" filterContainsOperator="Contiene"
+                        filterNotContainsOperator="No contiene" filterStartsWithOperator="Comienza con"
+                        filterEndsWithOperator="Termina con" filterIsNullOperator="Es nulo (null)"
+                        filterIsNotNullOperator="No es nulo (null)" filterIsEmptyOperator="Esta vacio"
+                        filterIsNotEmptyOperator="No está vacío" filterAfterOperator="Es posterior a"
+                        filterAfterOrEqualOperator="Es posterior o igual a"
+                        filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
+                      </kendo-grid-messages>
+
+                      <kendo-grid-excel fileName="ResumenSupervisores.xlsx">
+
+                        <kendo-excelexport-column field="Ciudad" title="Ciudad">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="UsuarioPadre" title="Supervisor">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="Emitidas" title="N° Cotizaciones Emitidas">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="Total" title="Ingresos Generados Cotizaciones Emitidas">
+                        </kendo-excelexport-column>
+                      </kendo-grid-excel>
+
+                      <kendo-grid-pdf fileName="ResumenSupervisores.pdf" [allPages]="true" paperSize="auto"
+                        [scale]="0.8" [margin]="{ top: '1cm', left: '1cm', right: '1cm', bottom: '1cm' }"
+                        [repeatHeaders]="true" [landscape]="true">
+                        <kendo-grid-column field="Ciudad" title="Ciudad">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="UsuarioPadre" title="Supervisor">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="Emitidas" title="N° Cotizaciones Emitidas">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="Total" title="Ingresos Generados Cotizaciones Emitidas">
+                        </kendo-grid-column>
+                      </kendo-grid-pdf>
+                    </kendo-grid>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <br>
+                <h4>Resumen Gestión Operadores</h4><br>
+                <div class="row">
+                  <div class="col-md-12">
+                    <kendo-grid [data]="gridDataResumenOperador" [pageSize]="stateResumenOperador.take"
+                      [skip]="stateResumenOperador.skip" [sort]="stateResumenOperador.sort" [sortable]="true"
+                      [pageable]="true" filterable="menu" [resizable]="true" [groupable]="true"
+                      [group]="groupsOperadores" (groupChange)="groupChangeResumenOperador($event)"
+                      (dataStateChange)="dataStateChangeResumenOperador($event)"
+                      style="border: none; font-size: 12px !important;">
+
+                      <ng-template kendoGridToolbarTemplate>
+                        <div style="float: right">
+                          <button type="button" kendoGridPDFCommand icon="file-pdf"
+                            style="font-size: 12px !important; background-color: #CB4335; color: #FFFFFF">
+                            <b>Exportar a PDF</b>
+                          </button>
+
+                          <button type="button" kendoGridExcelCommand icon="file-excel"
+                            style="font-size: 12px !important; background-color: #107C41; color: #FFFFFF">
+                            <b>Exportar a Excel</b>
+                          </button>
+                        </div>
+                      </ng-template>
+
+                      <kendo-grid-column media="(max-width: 800px)" title="Resumen Supervisores" [filterable]="true"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+
+                          <h4 [class.discontinued]="dataItem.UsuarioPadre" style="text-align: center; font-weight: bold">
+                            {{ dataItem.UsuarioPadre }}
+                          </h4>
+                          <dl>
+                            <dt>Operador</dt>
+                            <dd>{{ dataItem.Usuario }}</dd>
+
+                            <dt>N° Cotizaciones Sin Emitir</dt>
+                            <dd>{{ dataItem.Estado.SinEmitir }}</dd>
+
+                            <dt>N° Cotizaciones Emitidas</dt>
+                            <dd>{{ dataItem.Estado.Emitidas }}</dd>
+
+                            <dt>Ingresos Generados Cotizaciones Emitidas</dt>
+                            <dd>$ {{ globales.formatearNumero(dataItem.Total, 2) }}</dd>
+
+                          </dl>
+                        </ng-template>
+                      </kendo-grid-column>
+
+                      <kendo-grid-column media="(min-width: 800px)" field="Usuario" title="Operador" width="150"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                      </kendo-grid-column>
+                      <kendo-grid-column media="(min-width: 800px)" field="Estado" title="N° Cotizaciones Sin Emitir"
+                        width="150" [filterable]="false"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                          {{ dataItem.Estado.SinEmitir }}
+                        </ng-template>
+                      </kendo-grid-column>
+                      <kendo-grid-column media="(min-width: 800px)" field="Estado" title="N° Cotizaciones Emitidas"
+                        width="160" [filterable]="false"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                          {{ dataItem.Estado.Emitidas }}
+                        </ng-template>
+                      </kendo-grid-column>
+                      <kendo-grid-column media="(min-width: 800px)" field="Total"
+                        title="Ingresos Generados Cotizaciones Emitidas" width="240" [filterable]="false"
+                        [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                          $ {{globales.formatearNumero(dataItem.Total, 2)}}
+                        </ng-template>
+                      </kendo-grid-column>
+
+                      <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar"
+                        noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems"
+                        pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
+                        filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a"
+                        filterNotEqOperator="No es igual a" filterContainsOperator="Contiene"
+                        filterNotContainsOperator="No contiene" filterStartsWithOperator="Comienza con"
+                        filterEndsWithOperator="Termina con" filterIsNullOperator="Es nulo (null)"
+                        filterIsNotNullOperator="No es nulo (null)" filterIsEmptyOperator="Esta vacio"
+                        filterIsNotEmptyOperator="No está vacío" filterAfterOperator="Es posterior a"
+                        filterAfterOrEqualOperator="Es posterior o igual a"
+                        filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
+                      </kendo-grid-messages>
+
+                      <kendo-grid-excel fileName="ResumenOperadores.xlsx">
+
+                        <kendo-excelexport-column field="Usuario" title="Operador">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="Estado.SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="Estado.Emitidas" title="N° Cotizaciones Emitidas">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="Total" title="Ingresos Generados Cotizaciones Emitidas">
+                        </kendo-excelexport-column>
+                      </kendo-grid-excel>
+
+                      <kendo-grid-pdf fileName="ResumenOperadores.pdf" [allPages]="true" paperSize="auto"
+                        [scale]="0.8" [margin]="{ top: '1cm', left: '1cm', right: '1cm', bottom: '1cm' }"
+                        [repeatHeaders]="true" [landscape]="true">
+                        <kendo-grid-column field="Usuario" title="Operador">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="Estado.SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="Estado.Emitidas" title="N° Cotizaciones Emitidas">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="Total" title="Ingresos Generados Cotizaciones Emitidas">
+                        </kendo-grid-column>
+                      </kendo-grid-pdf>
+                    </kendo-grid>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body" style="color: black">
+            <h4>Cotizaciones Operadores</h4><br>
+            <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
+              [sortable]="true" [pageable]="true" filterable="menu" [resizable]="true" [groupable]="true"
+              [group]="groups" (groupChange)="groupChange($event)" (dataStateChange)="dataStateChange($event)"
+              style="border: none; font-size: 12px !important;">
+
+              <ng-template kendoGridToolbarTemplate>
+                <button type="button" kendoGridPDFCommand icon="file-pdf"
+                  style="font-size: 12px !important; background-color: #CB4335; color: #FFFFFF">
+                  <b>Exportar a PDF</b>
+                </button>
+
+                <button type="button" kendoGridExcelCommand icon="file-excel"
+                  style="font-size: 12px !important; background-color: #107C41; color: #FFFFFF">
+                  <b>Exportar a Excel</b>
+                </button>
+
+                <div style="float: right">
+                  <small>Estados: Emitida = 5 | Sin Emitir != 5 </small>
+                </div>
+              </ng-template>
+
+              <kendo-grid-column media="(max-width: 800px)" title="Cotizaciones" [filterable]="true"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <!-- template for mobile -->
+                  <h4 [class.discontinued]="dataItem.Empresa.RazonSocial" style="text-align: center; font-weight: bold">
+                    {{ dataItem.Empresa.RazonSocial }}
+                  </h4>
+                  <dl>
+                    <dt>Contacto</dt>
+                    <dd>{{ dataItem.Empresa.Telefono }}</dd>
+
+                    <dt>Fecha Generación</dt>
+                    <dd>{{ dataItem.Fecha }}</dd>
+
+                    <dt>Antiguedad</dt>
+                    <dd>
+                      <span [ngStyle]="{'color': verificarVencimientoCotizacion(dataItem.Antiguedad).color}">
+                        {{dataItem.Antiguedad}}<br>
+                        <small>{{ verificarVencimientoCotizacion(dataItem.Antiguedad).texto }}</small>
+                      </span>
+                    </dd>
+
+                    <dt>Prima Total</dt>
+                    <dd>$ {{globales.formatearNumero(dataItem.PrimaTotal, 2)}}</dd>
+
+                    <dt>Estado</dt>
+                    <dd>{{ convertirNumeroEstado(dataItem.Estado)[0] }}</dd>
+
+                  </dl>
+                </ng-template>
+              </kendo-grid-column>
+
+              <kendo-grid-column media="(min-width: 800px)" field="Usuario.Usuario" title="Operador" width="150"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Codigo" title="Codigo" width="150"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Empresa.RazonSocial" title="Empresa / Persona"
+                width="240" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Empresa.Telefono" title="Contacto" width="110"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Fecha" title="Generación" width="120"
+                [filterable]="false" type="date" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Antiguedad" title="Antiguedad" width="130"
+                [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <span [ngStyle]="{'color': verificarVencimientoCotizacion(dataItem.Antiguedad).color}">
+                    {{dataItem.Antiguedad}}<br>
+                    <small>{{ verificarVencimientoCotizacion(dataItem.Antiguedad).texto }}</small>
+                  </span>
+                </ng-template>
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="PrimaTotal" title="Prima Total" width="140"
+                [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  $ {{globales.formatearNumero(dataItem.PrimaTotal, 2)}}
+                </ng-template>
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Estado" title="Estado" width="140"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  {{ convertirNumeroEstado(dataItem.Estado)[0] }}
+                </ng-template>
+              </kendo-grid-column>
+              <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar"
+                noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems"
+                pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
+                filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a" filterNotEqOperator="No es igual a"
+                filterContainsOperator="Contiene" filterNotContainsOperator="No contiene"
+                filterStartsWithOperator="Comienza con" filterEndsWithOperator="Termina con"
+                filterIsNullOperator="Es nulo (null)" filterIsNotNullOperator="No es nulo (null)"
+                filterIsEmptyOperator="Esta vacio" filterIsNotEmptyOperator="No está vacío"
+                filterAfterOperator="Es posterior a" filterAfterOrEqualOperator="Es posterior o igual a"
+                filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
+              </kendo-grid-messages>
+
+              <kendo-grid-excel fileName="Resumen.xlsx">
+
+                <kendo-excelexport-column field="Usuario.Usuario" title="Operador">
+                </kendo-excelexport-column>
+                <kendo-excelexport-column field="Codigo" title="Codigo">
+                </kendo-excelexport-column>
+                <kendo-excelexport-column field="Empresa.RazonSocial" title="Empresa / Persona">
+                </kendo-excelexport-column>
+                <kendo-excelexport-column field="Empresa.Telefono" title="Contacto">
+                </kendo-excelexport-column>
+                <kendo-excelexport-column field="Fecha" title="Generación">
+                </kendo-excelexport-column>
+                <kendo-excelexport-column field="Antiguedad" title="Antiguedad">
+                </kendo-excelexport-column>
+                <kendo-excelexport-column field="PrimaTotal" title="Prima Total">
+                </kendo-excelexport-column>
+              </kendo-grid-excel>
+
+              <kendo-grid-pdf fileName="Resumen.pdf" [allPages]="true" paperSize="auto" [scale]="0.8"
+                [margin]="{ top: '1cm', left: '1cm', right: '1cm', bottom: '1cm' }" [repeatHeaders]="true"
+                [landscape]="true">
+                <kendo-grid-column field="Usuario.Usuario" title="Operador">
+                </kendo-grid-column>
+                <kendo-grid-column field="Codigo" title="Codigo">
+                </kendo-grid-column>
+                <kendo-grid-column field="Empresa.RazonSocial" title="Empresa / Persona">
+                </kendo-grid-column>
+                <kendo-grid-column field="Empresa.Telefono" title="Contacto">
+                </kendo-grid-column>
+                <kendo-grid-column field="Fecha" title="Generación">
+                </kendo-grid-column>
+                <kendo-grid-column field="Antiguedad" title="Antiguedad">
+                </kendo-grid-column>
+                <kendo-grid-column field="PrimaTotal" title="Prima Total">
+                </kendo-grid-column>
+              </kendo-grid-pdf>
+            </kendo-grid>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

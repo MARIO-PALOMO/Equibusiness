@@ -1,0 +1,282 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaResponsabilidadCivil[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaResponsabilidadCivil[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+<!-- INICIO RAMO Y SUBRAMOS RESPONSABILIDAD CIVIL WEB -->
+<table id="tablaResponsabilidadCivil" class=" subramo-valores-escritorio" border="1">
+  <thead style="text-align: center;">
+    <tr>
+      <th rowspan="2" style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span>
+      </th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <th rowspan="2" style="width: 12%">TASA</th>
+      <th rowspan="2" style="width: 10%">PRIMA</th>
+      <th rowspan="2" style="width: 25%">
+        DEDUCIBLE<br>
+        (POR EVENTO)
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let direccion of lstDirecciones">
+        <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
+          Ubi. {{direccion.id}}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyResponsabilidadCivil">
+    <tr *ngFor="let subramosRC of listaResponsabilidadCivil; let i = index" id="{{subramosRC.Datos.Codigo}}">
+      <td>{{subramosRC.Datos.Nombre}}</td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaResponsabilidadCivil, subramosRC.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramosRC.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <div style="text-align: center; font-size: 12px" *ngIf="subramosRC.Datos.Seleccion == 1" class="row">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="font-size: 11px"><span>Número de Vehículos:</span></div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+              <kendo-numerictextbox class="form-control texto" [(ngModel)]="numeroVehiculos" [autoCorrect]="true"
+                [step]="1" [min]="0" [max]="10" [spinners]="false" [decimals]="0" [format]="'n0'"
+                (ngModelChange)="gestionRamoReponsabilidadCivil(subramosRC.Valores.ValorU1.Texto, subramosRC.Datos.Codigo, 1)">
+              </kendo-numerictextbox>
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="font-size: 11px"><span>Valor en exceso:</span></div>
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+              <input id="{{subramosRC.Valores.ValorU1.Texto}}" [(ngModel)]="subramosRC.Valores.ValorU1.Valor"
+                type="number" step="0.01" class="form-control texto"
+                (ngModelChange)="gestionRamoReponsabilidadCivil(subramosRC.Valores.ValorU1.Texto, subramosRC.Datos.Codigo, 1)">
+            </div>
+          </div>
+          <input *ngIf="subramosRC.Datos.Seleccion != 1" id="{{subramosRC.Valores.ValorU1.Texto}}"
+            [(ngModel)]="subramosRC.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoReponsabilidadCivil(subramosRC.Valores.ValorU1.Texto, subramosRC.Datos.Codigo, 1)">
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 2 && subramosRC.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRC.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRC.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRC.Valores.ValorU2.Texto}}" [(ngModel)]="subramosRC.Valores.ValorU2.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosRC.Valores.ValorU2.Texto, subramosRC.Datos.Codigo, 2)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 3 && subramosRC.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRC.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRC.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRC.Valores.ValorU3.Texto}}" [(ngModel)]="subramosRC.Valores.ValorU3.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosRC.Valores.ValorU3.Texto, subramosRC.Datos.Codigo, 3)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 4 && subramosRC.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRC.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRC.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRC.Valores.ValorU4.Texto}}" [(ngModel)]="subramosRC.Valores.ValorU4.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosRC.Valores.ValorU4.Texto, subramosRC.Datos.Codigo, 4)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 5 && subramosRC.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRC.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRC.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosRC.Valores.ValorU5.Texto}}" [(ngModel)]="subramosRC.Valores.ValorU5.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosRC.Valores.ValorU5.Texto, subramosRC.Datos.Codigo, 5)">
+          </span>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramosRC.Datos.MostrarTasa == 1" class="form-control texto"
+          [(ngModel)]="subramosRC.Valores.Tasa" [autoCorrect]="true" [decimals]="2" [step]="0.01"
+          [min]="subramosRC.Valores.TasaMinima" [max]="subramosRC.Tasa[0].ValorMaximo" [decimals]="2"
+          (ngModelChange)="gestionTasaReponsabilidadCivil(subramosRC.Datos.Codigo, subramosRC.Valores.Tasa)">
+        </kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramosRC.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left">$</span>{{globales.formatearNumero(subramosRC.Valores.Prima,2)}}</span>
+      </td>
+      <ng-container *ngFor="let datosDeducibles of deducibles">
+        <td *ngIf="(i + 1) == datosDeducibles.vista" [rowSpan]="datosDeducibles.union">
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 2">{{subramosRC.Datos.RiesgoMayor}}</pre>
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 1">{{subramosRC.Datos.RiesgoMenor}}</pre>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Responsabilidad Civil &nbsp;</b>
+    </td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalResponsabilidadCivil">{{globales.formatearNumero(general.calcularPrimaTotal(listaResponsabilidadCivil),2)}}</span></span>
+    </td>
+    <td> &nbsp;{{general.mensajePrimaMinima(listaResponsabilidadCivil)}}</td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS RESPONSABILIDAD CIVIL WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS RESPONSABILIDAD CIVIL MÓVIL
+
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaResponsabilidadCivil, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaResponsabilidadCivil, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovilRC of listaResponsabilidadCivil">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilRC.Datos.Codigo)">
+      {{subramosMovilRC.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilRC.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovilRC.Datos.Rango}}" placement="top" show-delay="1"
+          display-mobile="true" theme="light">
+          <b>{{lstDirecciones[0].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[0].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[0].id}}
+          </span>
+          <span>
+            <div *ngIf="subramosMovilRC.Datos.Seleccion == 1" class="row">
+              <div class="col-md-12"><span><b>Número de Vehículos:</b></span></div>
+              <div class="col-md-12"><input [(ngModel)]="numeroVehiculos" type="number" class="form-control texto"
+                  value="0"
+                  (keyup)="calculoExcesoVehiculos(subramosMovilRC.Valores.ValorU1.TextoMovil, subramosMovilRC.Datos.Codigo, 1)"
+                  (change)="calculoExcesoVehiculos(subramosMovilRC.Valores.ValorU1.Texto, subramosMovilRC.Datos.Codigo, 1)">
+              </div>
+              <div class="col-md-12"><span><b>Valor en exceso:</b></span></div>
+              <div class="col-md-12"><input [(ngModel)]="valorExceso" type="number" class="form-control texto" value="0"
+                  (keyup)="calculoExcesoVehiculos(subramosMovilRC.Valores.ValorU1.TextoMovil, subramosMovilRC.Datos.Codigo, 1)"
+                  (change)="calculoExcesoVehiculos(subramosMovilRC.Valores.ValorU1.Texto, subramosMovilRC.Datos.Codigo, 1)">
+              </div>
+              <div style="display: none"><input id="{{subramosMovilRC.Valores.ValorU1.TextoMovil}}"
+                  [(ngModel)]="subramosMovilRC.Valores.ValorU1.Valor" type="number" step="0.01"
+                  class="form-control texto"
+                  (ngModelChange)="gestionRamoReponsabilidadCivil(subramosMovilRC.Valores.ValorU1.TextoMovil, subramosMovilRC.Datos.Codigo, 1)">
+              </div>
+            </div>
+            <input *ngIf="subramosMovilRC.Datos.Seleccion != 1" id="{{subramosMovilRC.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilRC.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosMovilRC.Valores.ValorU1.TextoMovil, subramosMovilRC.Datos.Codigo, 1)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 2 && subramosMovilRC.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRC.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[1].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[1].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[1].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRC.Valores.ValorU2.TextoMovil}}"
+              [(ngModel)]="subramosMovilRC.Valores.ValorU2.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosMovilRC.Valores.ValorU2.TextoMovil, subramosMovilRC.Datos.Codigo, 2)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 3 && subramosMovilRC.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRC.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[2].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[2].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRC.Valores.ValorU3.TextoMovil}}"
+              [(ngModel)]="subramosMovilRC.Valores.ValorU3.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosMovilRC.Valores.ValorU3.TextoMovil, subramosMovilRC.Datos.Codigo, 3)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 4 && subramosMovilRC.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRC.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[3].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRC.Valores.ValorU4.TextoMovil}}"
+              [(ngModel)]="subramosMovilRC.Valores.ValorU4.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosMovilRC.Valores.ValorU4.TextoMovil, subramosMovilRC.Datos.Codigo, 4)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 5 && subramosMovilRC.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRC.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[4].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[4].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilRC.Valores.ValorU5.TextoMovil}}"
+              [(ngModel)]="subramosMovilRC.Valores.ValorU5.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoReponsabilidadCivil(subramosMovilRC.Valores.ValorU5.TextoMovil, subramosMovilRC.Datos.Codigo, 5)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovilRC.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosMovilRC.Valores.TasaMinima"
+          (ngModelChange)="gestionTasaReponsabilidadCivil(subramosMovilRC.Datos.Codigo, subramosMovilRC.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovilRC.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="
+           (subramosMovilRC.Valores.ValorU1.Valor>
+          0 ? true: false) ||
+          (subramosMovilRC.Valores.ValorU2.Valor > 0 ? true: false) ||
+          (subramosMovilRC.Valores.ValorU3.Valor > 0 ? true: false) ||
+          (subramosMovilRC.Valores.ValorU4.Valor > 0 ? true: false) ||
+          (subramosMovilRC.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovilRC.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovilRC.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Responsabilidad Civil</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaResponsabilidadCivil)}}</span>
+      <span class="texto-ramos" style="float: right">
+        &nbsp;{{general.mensajePrimaMinima(listaResponsabilidadCivil)}}</span><br>
+    </div>
+  </div>
+</div>
+
+FIN RAMO Y SUBRAMOS RESPONSABILIDAD CIVIL MÓVIL -->

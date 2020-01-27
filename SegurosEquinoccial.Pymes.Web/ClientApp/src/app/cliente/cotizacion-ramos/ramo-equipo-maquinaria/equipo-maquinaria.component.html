@@ -1,0 +1,246 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaEquipoMaquinaria[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaEquipoMaquinaria[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+<!-- INICIO RAMO Y SUBRAMOS EQUIPO Y MAQUINARIA WEB -->
+<table id="tablaEquipoMaquinaria" class=" subramo-valores-escritorio" border="1">
+  <thead style="text-align: center;">
+    <tr>
+      <th rowspan="2" style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span>
+      </th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <th rowspan="2" style="width: 12%">TASA</th>
+      <th rowspan="2" style="width: 10%">PRIMA</th>
+      <th rowspan="2" style="width: 25%">
+        DEDUCIBLE<br>
+        (POR EVENTO)
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let direccion of lstDirecciones">
+        <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
+          Ubi. {{direccion.id}}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyEquipoMaquinaria">
+    <tr *ngFor="let subramosEM of listaEquipoMaquinaria; let i = index" id="{{subramosEM.Datos.Codigo}}">
+      <td>{{subramosEM.Datos.Nombre}}</td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaEquipoMaquinaria, subramosEM.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramosEM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <input id="{{subramosEM.Valores.ValorU1.Texto}}" [(ngModel)]="subramosEM.Valores.ValorU1.Valor" type="number"
+            step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoEquipoMaquinaria(subramosEM.Valores.ValorU1.Texto, subramosEM.Datos.Codigo, 1)">
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 2 && subramosEM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosEM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosEM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosEM.Valores.ValorU2.Texto}}" [(ngModel)]="subramosEM.Valores.ValorU2.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosEM.Valores.ValorU2.Texto, subramosEM.Datos.Codigo, 2)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 3 && subramosEM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosEM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosEM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosEM.Valores.ValorU3.Texto}}" [(ngModel)]="subramosEM.Valores.ValorU3.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosEM.Valores.ValorU3.Texto, subramosEM.Datos.Codigo, 3)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 4 && subramosEM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosEM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosEM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosEM.Valores.ValorU4.Texto}}" [(ngModel)]="subramosEM.Valores.ValorU4.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosEM.Valores.ValorU4.Texto, subramosEM.Datos.Codigo, 4)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 5 && subramosEM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosEM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosEM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosEM.Valores.ValorU5.Texto}}" [(ngModel)]="subramosEM.Valores.ValorU5.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosEM.Valores.ValorU5.Texto, subramosEM.Datos.Codigo, 5)">
+          </span>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramosEM.Datos.MostrarTasa == 1" class="form-control texto"
+          [(ngModel)]="subramosEM.Valores.Tasa" [autoCorrect]="true" [step]="0.01" [min]="subramosEM.Valores.TasaMinima"
+          [max]="subramosEM.Tasa[0].ValorMaximo"  [decimals]="2"
+          (ngModelChange)="gestionTasaEquipoMaquinaria(subramosEM.Datos.Codigo, subramosEM.Valores.Tasa)">
+        </kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramosEM.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left">$</span>{{globales.formatearNumero(subramosEM.Valores.Prima,2)}}</span>
+      </td>
+      <ng-container *ngFor="let datosDeducibles of deducibles">
+        <td *ngIf="(i + 1) == datosDeducibles.vista" [rowSpan]="datosDeducibles.union">
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 2" [innerHTML]="subramosEM.Datos.RiesgoMayor"></pre>
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 1" [innerHTML]="subramosEM.Datos.RiesgoMenor"></pre>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Equipo y Maquinaria &nbsp;</b></td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalEquipoMaquinaria">{{globales.formatearNumero(general.calcularPrimaTotal(listaEquipoMaquinaria),2)}}</span></span>
+    </td>
+    <td> &nbsp;{{general.mensajePrimaMinima(listaEquipoMaquinaria)}}</td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS EQUIPO Y MAQUINARIA WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS EQUIPO Y MAQUINARIA MÓVIL -->
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaEquipoMaquinaria, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaEquipoMaquinaria, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovilEM of listaEquipoMaquinaria">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilEM.Datos.Codigo)">
+      {{subramosMovilEM.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilEM.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovilEM.Datos.Rango}}" placement="top" show-delay="1"
+          display-mobile="true" theme="light">
+          <b>{{lstDirecciones[0].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[0].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[0].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilEM.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilEM.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosMovilEM.Valores.ValorU1.TextoMovil, subramosMovilEM.Datos.Codigo, 1)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 2 && subramosMovilEM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilEM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[1].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[1].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[1].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilEM.Valores.ValorU2.TextoMovil}}"
+              [(ngModel)]="subramosMovilEM.Valores.ValorU2.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosMovilEM.Valores.ValorU2.TextoMovil, subramosMovilEM.Datos.Codigo, 2)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 3 && subramosMovilEM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilEM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[2].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[2].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilEM.Valores.ValorU3.TextoMovil}}"
+              [(ngModel)]="subramosMovilEM.Valores.ValorU3.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosMovilEM.Valores.ValorU3.TextoMovil, subramosMovilEM.Datos.Codigo, 3)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 4 && subramosMovilEM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilEM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[3].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilEM.Valores.ValorU4.TextoMovil}}"
+              [(ngModel)]="subramosMovilEM.Valores.ValorU4.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosMovilEM.Valores.ValorU4.TextoMovil, subramosMovilEM.Datos.Codigo, 4)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 5 && subramosMovilEM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilEM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[4].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[4].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilEM.Valores.ValorU5.TextoMovil}}"
+              [(ngModel)]="subramosMovilEM.Valores.ValorU5.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoEquipoMaquinaria(subramosMovilEM.Valores.ValorU5.TextoMovil, subramosMovilEM.Datos.Codigo, 5)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovilEM.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosMovilEM.Valores.TasaMinima"
+          (ngModelChange)="gestionTasaEquipoMaquinaria(subramosMovilEM.Datos.Codigo, subramosMovilEM.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovilEM.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="
+               (subramosMovilEM.Valores.ValorU1.Valor>
+              0 ? true: false) ||
+              (subramosMovilEM.Valores.ValorU2.Valor > 0 ? true: false) ||
+              (subramosMovilEM.Valores.ValorU3.Valor > 0 ? true: false) ||
+              (subramosMovilEM.Valores.ValorU4.Valor > 0 ? true: false) ||
+              (subramosMovilEM.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovilEM.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovilEM.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Equipo y Maquinaria</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaEquipoMaquinaria)}}</span>
+      <span class="texto-ramos" style="float: right">
+        &nbsp;{{general.mensajePrimaMinima(listaEquipoMaquinaria)}}</span><br>
+    </div>
+  </div>
+</div>
+<!--FIN RAMO Y SUBRAMOS EQUIPO Y MAQUINARIA MÓVIL -->

@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="SegurosEquinoccial.Pymes.Servicio.Broker.SBroker" CodeBehind="SBroker.svc.cs" %>

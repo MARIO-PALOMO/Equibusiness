@@ -1,0 +1,386 @@
+<app-top-bar-cliente></app-top-bar-cliente>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+    <div class="row">
+      <div class="col-md-10 offset-md-1">
+        <h2>Bienvenido</h2>
+        <h3>Cotizador | Emisor de Pólizas para Empresas</h3>
+        <br>
+        <div>
+          <div *ngIf="panelEmpresa.inicio">
+            <button type="button" class="btn-broker btn" (mouseenter)="gestionColoresEnterBroker()"
+              (mouseleave)="gestionColoresLeaveBroker()" (click)="gestionPanelInicio()">
+              Generar Cotización
+            </button>
+          </div>
+          <div class="row">
+            <div class="col-md-8 offset-md-2" *ngIf="panelEmpresa.formulario">
+              <h4 class="modal-title">Generar Empresa | Cotización</h4>
+              <br>
+              <div class="forms-sample" style="text-align: left">
+                <div class="row">
+                  <div class="col-xs-6 col-sm-6 col-md-6">
+                    <div class="form-group"
+                      tooltip="Ingresar el N° R.U.C / C.I y presionar el botón buscar para obtener los datos de la empresa / persona."
+                      placement="top" show-delay="1" display-mobile="true" theme="light">
+                      <label>R.U.C / C.I</label>
+                      <div class="input-group">
+                        <input type="text" [(ngModel)]="fmrEmpresa.Ruc" class="form-control texto-busqueda"
+                          style="width: 7%"
+                          (keyup)="fmrEmpresa.Ruc = valCotizador.formatoCampo(fmrEmpresa.Ruc, '0123456789', 13, 2)"
+                          placeholder="Ingresar RUC o Cédula para obtener datos de la empresa" autocomplete="off">
+                        <div class="input-group-append busqueda-ruc" (click)="consultarAsegurado()">
+                          <span class="input-group-text">
+                            <i class="mdi mdi-search-web" style="color: white"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="activacionCampos == 13" class="form-group">
+                      <label>Razón Social</label>
+                      <input type="text" [(ngModel)]="fmrEmpresa.PrimerApellido" class="form-control texto"
+                        autocomplete="off"
+                        (keyup)="fmrEmpresa.PrimerApellido = valCotizador.formatoCampo(fmrEmpresa.PrimerApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                    </div>
+
+                    <div *ngIf="activacionCampos == 10">
+                      <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" [(ngModel)]="fmrEmpresa.Nombre" class="form-control texto" autocomplete="off"
+                          (keyup)="fmrEmpresa.Nombre = valCotizador.formatoCampo(fmrEmpresa.Nombre, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                      </div>
+                      <div class="form-group">
+                        <label>Primer Apellido</label>
+                        <input type="text" [(ngModel)]="fmrEmpresa.PrimerApellido" class="form-control texto"
+                          autocomplete="off"
+                          (keyup)="fmrEmpresa.PrimerApellido = valCotizador.formatoCampo(fmrEmpresa.PrimerApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                      </div>
+                      <div class="form-group">
+                        <label>Segundo Apellido</label>
+                        <input type="text" [(ngModel)]="fmrEmpresa.SegundoApellido" class="form-control texto"
+                          autocomplete="off"
+                          (keyup)="fmrEmpresa.SegundoApellido = valCotizador.formatoCampo(fmrEmpresa.SegundoApellido, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)">
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Teléfono</label>
+                      <input type="text" [(ngModel)]="fmrEmpresa.Telefono" class="form-control texto" autocomplete="off"
+                        (keyup)="fmrEmpresa.Telefono = valCotizador.formatoCampo(fmrEmpresa.Telefono, '0123456789', 10, 2)">
+                    </div>
+                    <div class="form-group">
+                      <label>Correo Electrónico</label>
+                      <input type="text" [(ngModel)]="fmrEmpresa.Email" class="form-control texto" autocomplete="off"
+                        (keyup)="fmrEmpresa.Email = valCotizador.formatoCampo(fmrEmpresa.Email, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789_-@.', 60, 2)">
+                    </div>
+                  </div>
+                  <div class="col-xs-6 col-sm-6 col-md-6">
+                    <div class="form-group">
+                      <label>Giro del Negocio</label>
+                      <textarea rows="5" [(ngModel)]="fmrEmpresa.GiroNegocio" class="form-control texto"
+                        autocomplete="off" style="height: 100px"
+                        (keyup)="fmrEmpresa.GiroNegocio = valCotizador.formatoCampo(fmrEmpresa.GiroNegocio, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ,. ', 250, 1)"></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>Sector Económico</label>
+                      <br>
+                      <kendo-dropdownlist [data]="lstSectorEconomico" [(ngModel)]="fmrEmpresa.SectorEconomico"
+                        class="texto">
+                      </kendo-dropdownlist>
+                    </div>
+                    <div *ngIf="usuario.broker.Riesgo == 1" class="form-group">
+                      <label>Tipo de Riesgo</label>
+                      <br>
+                      <kendo-dropdownlist [data]="listaRiesgo" [(ngModel)]="fmrEmpresa.Riesgo" [textField]="'Nombre'"
+                        [valueField]="'Valor'" [valuePrimitive]="true" class="texto">
+                        <ng-template kendoDropDownListItemTemplate let-dataItem>
+                          {{ dataItem.Nombre }}
+                        </ng-template>
+                      </kendo-dropdownlist>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Dirección de Facturación</label>
+                      <input type="text" [(ngModel)]="fmrEmpresa.Direccion" class="form-control texto"
+                        autocomplete="off"
+                        (keyup)="fmrEmpresa.Direccion = valCotizador.formatoCampo(fmrEmpresa.Direccion, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789- ', 1000, 1)">
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Siniestralidad</label>
+                      <div class="siniestralidad">
+
+                        <input type="radio" name="checkMode" id="CeroCiniestralidad" value="1" class="k-radio"
+                          [(ngModel)]="fmrEmpresa.Siniestralidad" />
+                        <label class="k-radio-label" for="CeroCiniestralidad">Declaro que la presente cuenta no tiene
+                          siniestralidad.</label><br>
+
+                        <input type="radio" name="checkMode" id="50MeCiniestralidad" value="2" class="k-radio"
+                          [(ngModel)]="fmrEmpresa.Siniestralidad" />
+                        <label class="k-radio-label" for="50MeCiniestralidad">Declaro que la presente cuenta tiene una
+                          siniestralidad menor 50%.</label><br>
+
+                        <input type="radio" name="checkMode" id="50MaCiniestralidad" value="3" class="k-radio"
+                          [(ngModel)]="fmrEmpresa.Siniestralidad" />
+                        <label class="k-radio-label" for="50MaCiniestralidad">Declaro que la presente cuenta tiene una
+                          siniestralidad mayor 50%.</label><br>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <!-- INICIO SELECCION CORREDORES -->
+                <div *ngIf="usuario.Corredores == '1'" class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Tipo Agente</label>
+                      <kendo-dropdownlist [data]="lstTipoAgente" [(ngModel)]="TipoAgente" textField="text"
+                        valueField="value" (ngModelChange)="listarAgentes()" class="texto">
+                        <ng-template kendoDropDownListItemTemplate let-dataItem>
+                          <span>{{ dataItem.text }}</span>
+                        </ng-template>
+                      </kendo-dropdownlist>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Agente</label>
+                      <kendo-dropdownlist [data]="dataAgente" [(ngModel)]="Agente" [filterable]="true"
+                        textField="nombreAgente" valueField="codigoAgente" (filterChange)="filtrarAgente($event)"
+                        class="texto">
+                        <ng-template kendoDropDownListItemTemplate let-dataItem>
+                          <span>{{ dataItem.nombreAgente }}</span>
+                        </ng-template>
+                      </kendo-dropdownlist>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="usuario.Corredores == '1'" class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Punto de Venta - Sucursal</label>
+                      <kendo-dropdownlist [data]="lstSucursal" [(ngModel)]="Sucursal" textField="Nombre"
+                        valueField="Union" class="texto">
+                        <ng-template kendoDropDownListItemTemplate let-dataItem>
+                          <span>{{ dataItem.Nombre }}</span>
+                        </ng-template>
+                      </kendo-dropdownlist>
+                    </div>
+                  </div>
+                  <!--<div class="col-md-6">
+                    <div class="form-group">
+                      <label>Comisión (%)</label>
+                      <kendo-numerictextbox [(ngModel)]="Comision" [min]="0" [max]="100" [spinners]="false" [step]="1"
+                        [autoCorrect]="true" class="texto">
+                      </kendo-numerictextbox>
+                    </div>
+                  </div> -->
+                </div>
+                <!-- FIN SELECCION CORREDORES -->
+
+
+
+                <br>
+                <div class="row">
+                  <div class="col-md-12" style="text-align: center">
+                    <button type="button" class="btn-broker btn" (mouseenter)="gestionColoresEnterBroker()"
+                      (mouseleave)="gestionColoresLeaveBroker()" (click)="validarCotizacion()">
+                      Generar Cotización
+                    </button>
+                    <br>
+                    <span (click)="gestionPanelFormulario()"
+                      style="color: white; cursor: pointer; font-size: 13px"><u>Cancelar</u></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div *ngIf="panelEmpresa.inicio">
+            <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
+              [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)"
+              [height]="650" style="border: none;">
+
+              <kendo-grid-column media="(max-width: 800px)" title="Cotizaciones" [filterable]="true"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <!-- template for mobile -->
+                  <h4 [class.discontinued]="dataItem.Empresa.RazonSocial" style="text-align: center; font-weight: bold">
+                    {{ dataItem.Empresa.RazonSocial }}
+                  </h4>
+                  <dl>
+                    <dt>Contacto</dt>
+                    <dd>{{ dataItem.Empresa.Telefono }}</dd>
+
+                    <dt>Fecha Generación</dt>
+                    <dd>{{ dataItem.Fecha }}</dd>
+
+                    <dt>Antiguedad</dt>
+                    <dd>
+                      <span [ngStyle]="{'color': verificarVencimientoCotizacion(dataItem.Antiguedad).color}">
+                        {{dataItem.Antiguedad}}<br>
+                        <small>{{ verificarVencimientoCotizacion(dataItem.Antiguedad).texto }}</small>
+                      </span>
+                    </dd>
+
+                    <dt>Prima Total</dt>
+                    <dd>{{ dataItem.PrimaTotal }}</dd>
+
+                    <dt>Editar</dt>
+                    <dd>
+                      <button class="btn btn-icons btn-broker" (click)="continuarCotizacion(dataItem)"
+                        style="width: 92%">
+                        <i
+                          class="mdi {{ convertirNumeroEstado(dataItem.Estado, dataItem.CotizacionResultado.EstadoPagoGlobal)[1] }}"></i>&nbsp;&nbsp;
+                        {{ convertirNumeroEstado(dataItem.Estado, dataItem.CotizacionResultado.EstadoPagoGlobal)[3] }}
+                      </button>
+                    </dd>
+                  </dl>
+                </ng-template>
+              </kendo-grid-column>
+
+              <kendo-grid-column media="(min-width: 800px)" field="Empresa.RazonSocial" title="Empresa / Persona"
+                width="240" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Fecha" title="Fecha" width="150" type="date"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Antiguedad" title="Vigencia" width="130"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <div *ngIf="dataItem.Estado == 5">
+                    <span style="color: #17AE22">Poliza Vigente</span>
+                  </div>
+                  <div *ngIf="dataItem.Estado != 5">
+                    <span [ngStyle]="{'color': verificarVencimientoCotizacion(dataItem.Antiguedad).color}">
+                      {{dataItem.Antiguedad}}<br>
+                      <small>{{ verificarVencimientoCotizacion(dataItem.Antiguedad).texto }}</small>
+                    </span>
+                  </div>
+                </ng-template>
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="PrimaTotal" title="Prima Total" width="110"
+                [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  {{metodos.formatearNumero(dataItem.PrimaTotal, 2)}}
+                </ng-template>
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="Estado" title="Estado" width="100"
+                [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <span style="font-size: 13px !important; text-align: center !important">
+                    {{ convertirNumeroEstado(dataItem.Estado, dataItem.CotizacionResultado.EstadoPagoGlobal)[3].toUpperCase() }}
+                  </span>
+                </ng-template>
+              </kendo-grid-column>
+
+              <kendo-grid-column media="(min-width: 800px)" field="Estado" title="Ver" width="60" [filterable]="false"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <button type="button" class="btn btn-icons btn-rounded btn-dark"
+                    (click)="verificarDeudaAsegurado(dataItem)">
+                    <i class="mdi mdi-eye"></i>
+                  </button>
+                </ng-template>
+              </kendo-grid-column>
+
+              <ng-template kendoGridDetailTemplate let-dataItem>
+                <table style="font-size: 12px !important">
+                  <tr style="background-color: #434343; color: #fff">
+                    <td colspan="2" style="text-align: center">
+                      <span style="font-weight: bold">Emisiones</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <div [innerHTML]="listarPolizas(dataItem.IdCotizacion)"></div>
+                    </td>
+                  </tr>
+                  <tr style="background-color: #434343; color: #fff">
+                    <td colspan="2" style="text-align: center">
+                      <span style="font-weight: bold">Pago</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Forma: </strong></td>
+                    <td>{{dataItem.FormaPago.Tipo}}</td>
+                  </tr>
+                  <tr style="background-color: #434343; color: #fff">
+                    <td colspan="2" style="text-align: center">
+                      <span style="font-weight: bold">Cotización</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Código: </strong></td>
+                    <td>{{dataItem.Codigo}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fecha: </strong></td>
+                    <td>{{dataItem.Fecha}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Antiguedad: </strong></td>
+                    <td>{{dataItem.Antiguedad}}</td>
+                  </tr>
+                  <tr style="background-color: #434343; color: #fff">
+                    <td colspan="2" style="text-align: center">
+                      <span style="font-weight: bold">Asegurado</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>R.U.C / C.I: </strong></td>
+                    <td>{{dataItem.Empresa.Ruc}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Razón Social: </strong></td>
+                    <td>{{dataItem.Empresa.RazonSocial}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Teléfono: </strong></td>
+                    <td>{{dataItem.Empresa.Telefono}}</td>
+                  </tr>
+                  <tr style="background-color: #434343; color: #fff">
+                    <td colspan="2" style="text-align: center">
+                      <span style="font-weight: bold">Pagador</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>R.U.C / C.I: </strong></td>
+                    <td>{{dataItem.Pagador.Cedula}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nombre: </strong></td>
+                    <td>{{dataItem.Pagador.Nombre}} {{dataItem.Pagador.PrimerApellido}}
+                      {{dataItem.Pagador.SegundoApellido}}</td>
+                  </tr>
+                </table>
+              </ng-template>
+
+              <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar"
+                noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems"
+                pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
+                filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a" filterNotEqOperator="No es igual a"
+                filterContainsOperator="Contiene" filterNotContainsOperator="No contiene"
+                filterStartsWithOperator="Comienza con" filterEndsWithOperator="Termina con"
+                filterIsNullOperator="Es nulo (null)" filterIsNotNullOperator="No es nulo (null)"
+                filterIsEmptyOperator="Esta vacio" filterIsNotEmptyOperator="No está vacío"
+                filterAfterOperator="Es posterior a" filterAfterOrEqualOperator="Es posterior o igual a"
+                filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
+              </kendo-grid-messages>
+            </kendo-grid>
+            <br><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

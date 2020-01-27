@@ -1,0 +1,391 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..." type="ball-atom">
+</ngx-spinner>
+
+<div class="card">
+  <div class="card-header" style="background-color: rgba(0,0,0, 0.8); color: white !important">
+    Detalle Vehículos
+  </div>
+  <div class="card-body" style="background-color: rgba(0,0,0, 0.8); color: white !important">
+    <span style="font-size: 13px">
+      NOTA: Este valor corresponde a la cotización, para efectos de emisión solo será considerado el primer ítem.
+    </span>
+
+    <div *ngIf="listaDetallesVehiculos.length != 0" class="row">
+      <div class="col-md-12" style="text-align: right;">
+        <small>Número de Vehículos a Cotizar</small><br>
+        <div class="btn-group" role="group">
+          <button *ngFor="let detalleVehiculos of listaDetallesVehiculos; let i = index" type="button"
+            class="btn btn-secondary"
+            [ngStyle]="{'background-color': (detalleVehiculos.estado == 1) ?  '#707070': 'white'}"
+            (click)=" gestionPaginacionDetallesVehiculos(detalleVehiculos.id)">
+            {{ i + 1 }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div *ngFor="let detalleVehiculos of listaDetallesVehiculos"
+      [ngStyle]="{'display': (detalleVehiculos.estado == 1) ?  'inline': 'none'}">
+      <div>
+        <div class="row contenedor-vechiculos-titulo">
+          <div class="col-md-12">
+            Detalles Vehículo N° {{detalleVehiculos.id}} | {{detalleVehiculos.placa}}
+          </div>
+        </div>
+        <div class="row contenedor-vechiculos">
+          <div class="col-md-12">
+            <label class="label-vehiculo"><b>Placa</b></label><small style="padding-left: 5px">*Ingresar placa del
+              vehículo y presionar <i class="mdi mdi-search-web"></i> para obtener los
+              datos automaticamente.</small>
+            <div class="input-group">
+              <input type="text" [(ngModel)]="detalleVehiculos.placa" class="form-control texto" style="width: 7%"
+                placeholder="Ingresar Placa del Vehículo Ej: (ABC0123 - ABC1234)"
+                mask="AAA0000">
+              <div class="input-group-append busqueda-vehiculo"
+                (click)="verificarPolizaVigente(detalleVehiculos.id, detalleVehiculos.placa)">
+                <span class="input-group-text">
+                  <i class="mdi mdi-search-web" style="color: white"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="false">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_color">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_marca">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_modelo">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_pais">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_submodelo">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_tipo">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_tipo_ant">
+            <input type="text" [(ngModel)]="detalleVehiculos.cod_tipo_placa">
+          </div>
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="row">
+                  <div class="col-md-12">
+                    <br>
+                    <h4 style="font-weight: bold"><u>Datos Vehículo</u></h4>
+                  </div>
+                  <!--<div
+                      *ngIf="(detalleVehiculos.valorFijo == 0 && detalleVehiculos.valorCasco == 0) && detalleVehiculos.fechaCompra == ''"
+                      class="col-md-12">
+                      <label class="label-vehiculo"><b>Fecha Compra</b></label>
+                      <input [(ngModel)]="detalleVehiculos.fechaCompra" type="date" class="form-control texto"
+                        placeholder="Fecha de Compra" (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)">
+
+                      <label class="label-vehiculo"><b>Valor Vehículo</b></label>
+                      <input [(ngModel)]="detalleVehiculos.valorFijo" type="number" min="0"
+                        placeholder="Ingresar Fijo del Vehículo" class="form-control texto"
+                        (ngModelChange)="gestionDetalleVehiculosCalcular(detalleVehiculos.id)">
+                  </div>-->
+                  <div class="col-md-4">
+                    <label class="label-vehiculo"><b>Certificado</b></label>
+                    <input [(ngModel)]="detalleVehiculos.poliza" type="text" class="form-control texto"
+                      placeholder="N° de Certificado" (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)"
+                      disabled>
+                    <label class="label-vehiculo"><b>Marca</b></label>
+                    <input [(ngModel)]="detalleVehiculos.marca" type="text" class="form-control texto"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.marca == '' || detalleVehiculos.marca == null ? 'auto' : 'none'}"
+                      placeholder="Ingresar Marca del Vehículo"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)">
+                    <label class="label-vehiculo"><b>Modelo</b></label>
+                    <input [(ngModel)]="detalleVehiculos.modelo" type="text" class="form-control texto"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.modelo == '' || detalleVehiculos.modelo == null ? 'auto' : 'none'}"
+                      placeholder="Ingresar Modelo del Vehículo"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)">
+                    <label class="label-vehiculo"><b>Año</b></label>
+                    <input [(ngModel)]="detalleVehiculos.anio" type="number" min="0" class="form-control texto"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.anio == '' || detalleVehiculos.anio == null ? 'auto' : 'none'}"
+                      placeholder="Ingresar Año del Vehículo"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)">
+                    <label class="label-vehiculo"><b>N° Motor</b></label>
+                    <input [(ngModel)]="detalleVehiculos.motor" type="text" class="form-control texto"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.motor == '' || detalleVehiculos.motor == null ? 'auto' : 'none'}"
+                      placeholder="Ingresar N° de Motor del Vehículo"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="label-vehiculo"><b>N° Chasis</b></label>
+                    <input [(ngModel)]="detalleVehiculos.chasis" type="text" class="form-control texto"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.chasis == '' || detalleVehiculos.chasis == null ? 'auto' : 'none'}"
+                      placeholder="Ingresar N° de Chasis del Vehículo"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)">
+                    <label class="label-vehiculo"><b>Clase de Vehículo</b></label>
+                    <input [(ngModel)]="detalleVehiculos.tipo" type="text" class="form-control texto"
+                      placeholder="Tipo Vehículo" disabled>
+                    <label class="label-vehiculo"><b>Tipo de Vehículo</b></label>
+                    <select [(ngModel)]="detalleVehiculos.tipoVehiculo"
+                      [ngClass]="(detalleVehiculos.tipoVehiculo == '') ? 'form-control texto input-error-vehiculo': 'form-control texto'"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)">
+                      <option value="Livianos">Livianos</option>
+                      <option value="SemiPesados">SemiPasados</option>
+                      <option value="Motos">Motos</option>
+                    </select>
+                    <label class="label-vehiculo"><b>Color</b></label>
+                    <select [(ngModel)]="detalleVehiculos.cod_color" class="form-control texto"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.cod_color == '' || detalleVehiculos.cod_color == null || detalleVehiculos.cod_color == 0 ? 'auto' : 'none'}">
+                      <option *ngFor="let colores of colores" value="{{colores.IdColor}}">{{colores.Nombre}}
+                      </option>
+                    </select>
+                    <label class="label-vehiculo"><b>Requiere Dispositivo</b></label>
+                    <input [(ngModel)]="detalleVehiculos.requiereDispositivo" type="text" class="form-control texto"
+                      placeholder="Requiere Dispositivo" disabled>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="label-vehiculo"><b>Valor Casco</b></label>
+                    <input [(ngModel)]="detalleVehiculos.valorCasco" type="number" min="0"
+                      [ngClass]="(detalleVehiculos.valorCasco == 0) ? 'form-control texto input-error-vehiculo': 'form-control texto'"
+                      placeholder="Ingresar Valor del Casco"
+                      (ngModelChange)="gestionDetalleVehiculosCalcular(detalleVehiculos.id)"
+                      (focusout)="validacionSumaAsegurada(detalleVehiculos.id)">
+                    <label class="label-vehiculo"><b>Valor Total</b></label>
+                    <input [(ngModel)]="detalleVehiculos.valorTotal" type="number" min="0"
+                      [ngClass]="(detalleVehiculos.valorTotal == 0) ? 'form-control texto input-error-vehiculo': 'form-control texto'"
+                      placeholder="Ingresar Valor Total del Vehículo"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)" disabled>
+                    <label class="label-vehiculo"><b>Tasa</b></label>
+                    <input [(ngModel)]="detalleVehiculos.tasa" type="number" min="0" class="form-control texto"
+                      placeholder="Tasa Calculada" disabled>
+                    <label class="label-vehiculo"><b>Póliza de Deducibles</b></label>
+                    <select [(ngModel)]="detalleVehiculos.polizaDeducibles"
+                      [ngClass]="(detalleVehiculos.polizaDeducibles == '') ? 'form-control texto input-error-vehiculo': 'form-control texto'"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.tipoVehiculo == 'Motos' ? 'none' : 'auto'}">
+                      <option value="1">SI</option>
+                      <option value="0">NO</option>
+                    </select>
+                    <label class="label-vehiculo"><b>Auto Sustituto</b></label>
+                    <select [(ngModel)]="detalleVehiculos.autoSustituto" class="form-control texto"
+                      (ngModelChange)="gestionDetalleVehiculos(detalleVehiculos.id)"
+                      [ngStyle]="{'pointer-events': detalleVehiculos.tipoVehiculo == 'Motos' ? 'none' : 'auto'}">
+                      <option value="1">SI</option>
+                      <option value="0">NO</option>
+                    </select>
+
+                    <input [(ngModel)]="detalleVehiculos.valorPolizaDeducibles" type="number" style="display: none">
+                  </div>
+                  <div class="col-md-12">
+                    <label class="label-vehiculo"><b>ACCESORIOS</b></label>
+                    <select [(ngModel)]="detalleVehiculos.numeroAccesorios"
+                      (ngModelChange)="agregarAccesorios(detalleVehiculos.id)" class="form-control texto">
+                      <option *ngFor="let numeros of detalleVehiculos.listaNumeroAccesorios" value="{{ numeros.text }}">
+                        {{ numeros.value }}
+                      </option>
+                    </select>
+                    <br>
+
+                    <div *ngFor="let accesorio of detalleVehiculos.accesorios">
+                      <div class="row">
+                        <div class="col-md-3">
+                          <b>Accesorio {{ accesorio.secuencial }}: </b>
+                        </div>
+                        <div class="col-md-3">
+                          <select [(ngModel)]="accesorio.cod_accesorio" class="form-control texto"
+                            (ngModelChange)="calcularPrimaAccesorio(detalleVehiculos.id, accesorio.secuencial)">
+                            <option *ngFor="let accesorio of lstCatalogoAccesorios" value="{{ accesorio.Codigo }}">
+                              {{ accesorio.Nombre }}</option>
+                          </select>
+                        </div>
+                        <div class="col-md-3">
+                          <b>Valor: </b>
+                        </div>
+                        <div class="col-md-3">
+                          <input type="number" [(ngModel)]="accesorio.suma_aseg_acc"
+                            (ngModelChange)="calcularPrimaAccesorio(detalleVehiculos.id, accesorio.secuencial)"
+                            class="form-control texto" min="0"
+                            (focusout)="validacionSumaAseguradaAccesorios(detalleVehiculos.id)">
+                        </div>
+                      </div>
+                      <br>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="col-md-12">
+                  <br>
+                  <h4 style="font-weight: bold"><u>Valores Vehículo</u></h4>
+                </div>
+                <div class="col-md-12">
+                  <br>
+                  <div class="table-responsive borde-redondeado-cotizacion">
+                    <table id="tablaCotizacion">
+                      <tbody>
+                        <tr>
+                          <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                              Neta</span></td>
+                          <td style="width: 5% !important">$</td>
+                          <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                              {{ globales.formatearNumero((detalleVehiculos.detallesCotizacion.prima_neta), 2) }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto SBS</span></td>
+                          <td style="width: 5% !important">$</td>
+                          <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                              {{ globales.formatearNumero((detalleVehiculos.detallesCotizacion.super), 2) }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width: 80% !important"><span class="estilo-cotizacion">Impuesto Seguro
+                              Campesino</span>
+                          </td>
+                          <td style="width: 5% !important">$</td>
+                          <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                              {{ globales.formatearNumero((detalleVehiculos.detallesCotizacion.seg_camp), 2) }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width: 80% !important"><span class="estilo-cotizacion">Derecho de
+                              Emisión</span></td>
+                          <td style="width: 5% !important">$</td>
+                          <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                              {{ globales.formatearNumero((detalleVehiculos.detallesCotizacion.der_emi), 2) }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width: 80% !important"><span class="estilo-cotizacion">IVA</span></td>
+                          <td style="width: 5% !important">$</td>
+                          <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                              {{ globales.formatearNumero((detalleVehiculos.detallesCotizacion.iva), 2) }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="font-weight: bold; width: 80% !important"><span class="estilo-cotizacion">Prima
+                              Total</span></td>
+                          <td style="width: 5% !important">$</td>
+                          <td style="width: 10% !important"><span class="estilo-cotizacion" style="float: right">
+                              {{ globales.formatearNumero((detalleVehiculos.detallesCotizacion.prima_total), 2) }}</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
+
+  </div>
+</div>
+
+<!--
+<div id="panelesVehiculos">
+  <div class="card fondo-vehiculos">
+    <div class="card-header" id="inicioDetallesVehiculos" data-toggle="collapse"
+      data-target="#detallesDetallesVehiculos" aria-expanded="true" aria-controls="detallesDetallesVehiculos">
+      <h5 class="mb-0">
+        <button class="boton-vehiculos">
+          Detalle Vehículos
+        </button>
+        <span style="float: right"><i class="mdi mdi-arrow-down-bold-hexagon-outline"></i></span>
+      </h5>
+    </div>
+    <div id="detallesDetallesVehiculos" class="collapse show" aria-labelledby="inicioDetallesVehiculos"
+      data-parent="#panelesVehiculos">
+      <div class="card-body fondo-vehiculos">
+        <span style="font-size: 13px">
+          NOTA: Este valor corresponde a la cotización, para efectos de emisión solo será considerado el primer ítem.
+        </span>
+
+        <div *ngIf="listaDetallesVehiculos.length != 0" class="row">
+          <div class="col-md-12" style="text-align: right;">
+            <button type="button" class="btn-broker btn btn-effect-white" id="inicioResumenVehiculos"
+              data-toggle="collapse" data-target="#detallesResumenVehiculos" aria-expanded="true"
+              aria-controls="detallesResumenVehiculos" (mouseenter)="gestionColoresEnterBroker()"
+              (mouseleave)="gestionColoresLeaveBroker()">Ver Resumen</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="card fondo-vehiculos">
+    <div class="card-header collapsed" id="inicioResumenVehiculos" data-toggle="collapse"
+      data-target="#detallesResumenVehiculos" aria-expanded="false" aria-controls="detallesResumenVehiculos">
+      <h5 class="mb-0">
+        <button class="boton-vehiculos">
+          Detalle Ramo Vehículos
+        </button>
+        <span style="float: right"><i class="mdi mdi-arrow-down-bold-hexagon-outline"></i></span>
+      </h5>
+    </div>
+    <div id="detallesResumenVehiculos" class="collapse" aria-labelledby="inicioResumenVehiculos"
+      data-parent="#panelesVehiculos">
+      <div class="card-body fondo-vehiculos">
+
+        <table id="tablaVehiculos" class=" subramo-valores-escritorio" border="1">
+          <thead style="text-align: center;">
+            <tr style="display: none">
+              <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+                <span [(ngClass)]="estadoUbicaciones"
+                  [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+                  id="pril{{i+1}}">{{direccion.provincia}}</span>
+              </th>
+            </tr>
+            <tr>
+              <th style="width: 20%"></th>
+              <th style="width: 15%">SUMA ASEGURADA</th>
+              <th style="width: 10%"></th>
+              <th style="width: 10%"></th>
+              <th style="width: 12%">TASA</th>
+              <th style="width: 10%">PRIMA</th>
+              <th style="width: 40%">
+                DEDUCIBLE<br>
+                (POR EVENTO)
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tablaBodyVehiculos">
+            <tr *ngFor="let subramosVE of listaVehiculos; let i = index" id="{{subramosVE.Datos.Codigo}}">
+              <td>{{subramosVE.Datos.Nombre}}</td>
+              <td>
+                <span tooltip="{{subramosVE.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+                  <input id="{{subramosVE.Valores.ValorU1.Texto}}" [(ngModel)]="subramosVE.Valores.ValorU1.Valor"
+                    type="number" step="0.01" class="form-control texto"
+                    (ngModelChange)="gestionRamoVehiculos(subramosVE.Valores.ValorU1.Texto, subramosVE.Datos.Codigo, 1)"
+                    [ngStyle]="{'pointer-events': subramosVE.Datos.Seleccion == 1 ? 'auto' : 'none'}">
+                </span>
+              </td>
+              <td>Número<br>Vehículos</td>
+              <td>
+                <input [(ngModel)]="subramosVE.Valores.NVehiculos" type="number" step="1" class="form-control texto"
+                  (ngModelChange)="gestionRamoVehiculos(subramosVE.Valores.ValorU1.Texto, subramosVE.Datos.Codigo, 1)"
+                  [ngStyle]="{'pointer-events': subramosVE.Datos.Seleccion == 1 ? 'auto' : 'none'}">
+              </td>
+              <td>
+                <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosVE.Valores.Tasa"
+                  [autoCorrect]="true" [step]="0.01" [min]="subramosVE.Valores.TasaMinima" [disabled]="true"
+                  (ngModelChange)="gestionTasaVehiculos(subramosVE.Datos.Codigo, subramosVE.Valores.Tasa)">
+                </kendo-numerictextbox>
+              </td>
+              <td>
+                <span class="form-control texto-ramos"><span
+                    style="float: left">$</span>{{globales.formatearNumero(subramosVE.Valores.Prima,2)}}</span>
+              </td>
+              <ng-container *ngFor="let datosDeducibles of deducibles">
+                <td *ngIf="(i + 1) == datosDeducibles.vista" [rowSpan]="datosDeducibles.union" style="font-size: 11px;">
+                  <pre
+                    style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+                    *ngIf="riesgo == 2" [innerHTML]="subramosVE.Datos.RiesgoMayor"></pre>
+                  <pre
+                    style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+                    *ngIf="riesgo == 1" [innerHTML]="subramosVE.Datos.RiesgoMenor"></pre>
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+    </div>
+  </div>-->

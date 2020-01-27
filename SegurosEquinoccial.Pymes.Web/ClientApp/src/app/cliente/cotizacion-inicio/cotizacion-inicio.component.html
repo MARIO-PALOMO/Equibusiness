@@ -1,0 +1,54 @@
+<app-top-bar-cliente></app-top-bar-cliente>
+<div class="titulo">
+  <div style="padding-top: 10px">
+    <h3>Información <img src="assets/images/LogoBlanco.png" alt="Cotizador Pymes" width="48"></h3>
+  </div>
+</div>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+    <div class="row">
+
+      <div class="col-md-10 offset-md-1">
+        <br>
+        <div class="table-responsive">
+          <table style="text-align: justify">
+            <thead>
+              <tr>
+                <th [colSpan]="2" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}">
+                  <a [routerLink]="['/cliente/inicio']" class="btn btn-light" style="float: right">
+                    <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar | Cotizador
+                  </a>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let inicio of lstInicio">
+                <td *ngIf="inicio.Titulo == 1" class="titulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}" [colSpan]="(inicio.Monto != 0) ? 1 : 2">
+                  <b>{{inicio.Descripcion}}</b>
+                </td>
+                <td *ngIf="inicio.Subtitulo == 1" class="subtitulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +', 0.5)'}" [colSpan]="(inicio.Monto != 0) ? 1 : 2">
+                  <b>{{inicio.Descripcion}}</b>
+                </td>
+                <td *ngIf="inicio.Titulo == 0 && inicio.Subtitulo == 0" [colSpan]="(inicio.Monto != 0) ? 1 : 2"
+                  class="texto-tabla">
+                  {{inicio.Descripcion}}
+                </td>
+                <td *ngIf="inicio.Monto != 0">
+                  <div style="padding-right: 70px">
+                    <span style="float: left !important; padding-right: 7px !important">$</span> <span
+                      style="float: right !important">{{ globales.formatearNumero(inicio.Monto, 0)}}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

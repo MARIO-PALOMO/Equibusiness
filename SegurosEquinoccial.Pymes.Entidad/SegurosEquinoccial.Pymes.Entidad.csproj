@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2CD34647-BE94-4B76-9835-AF079DD550F4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SegurosEquinoccial.Pymes.Entidad</RootNamespace>
+    <AssemblyName>SegurosEquinoccial.Pymes.Entidad</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Administracion\EAdmBroker.cs" />
+    <Compile Include="Administracion\EAdmCatalogoCredenciales.cs" />
+    <Compile Include="Administracion\EAdmErrores.cs" />
+    <Compile Include="Administracion\EAdmRol.cs" />
+    <Compile Include="Administracion\EAdmUsuarios.cs" />
+    <Compile Include="Auxiliares\EAuxAccesorios.cs" />
+    <Compile Include="Auxiliares\EAuxiliares.cs" />
+    <Compile Include="Auxiliares\EAuxVehiculos.cs" />
+    <Compile Include="Broker\EBroCalculablesCotizacion.cs" />
+    <Compile Include="Broker\EBroCatalogoAccesorios.cs" />
+    <Compile Include="Broker\EBroCatalogoCedulas.cs" />
+    <Compile Include="Broker\EBroCatalogoCiudades.cs" />
+    <Compile Include="Broker\EBroCatalogoEmpresa.cs" />
+    <Compile Include="Broker\EBroCatalogoSucursal.cs" />
+    <Compile Include="Broker\EBroCatalogoVehiculos.cs" />
+    <Compile Include="Broker\EBroClausulas.cs" />
+    <Compile Include="Broker\EBroComplementos.cs" />
+    <Compile Include="Broker\EBroContenido.cs" />
+    <Compile Include="Broker\EBroContratante.cs" />
+    <Compile Include="Broker\EBroCorreoElectronico.cs" />
+    <Compile Include="Broker\EBroCotizacion.cs" />
+    <Compile Include="Broker\EBroCotizacionResultado.cs" />
+    <Compile Include="Broker\EBroDeducibles.cs" />
+    <Compile Include="Broker\EBroDerechosEmision.cs" />
+    <Compile Include="Broker\EBroDireccion.cs" />
+    <Compile Include="Broker\EBroEmpresa.cs" />
+    <Compile Include="Broker\EBroFormaPago.cs" />
+    <Compile Include="Broker\EBroPagador.cs" />
+    <Compile Include="Broker\EBroProvincia.cs" />
+    <Compile Include="Broker\EBroRamo.cs" />
+    <Compile Include="Broker\EBroReglasAdicionales.cs" />
+    <Compile Include="Broker\EBroReglasGenerales.cs" />
+    <Compile Include="Broker\EBroResumen.cs" />
+    <Compile Include="Broker\EBroSectorEconomico.cs" />
+    <Compile Include="Broker\EBroSubRamo.cs" />
+    <Compile Include="Broker\EBroSubRamoTransporte.cs" />
+    <Compile Include="Broker\EBroTasa.cs" />
+    <Compile Include="Broker\EBroReglas.cs" />
+    <Compile Include="Broker\EBroTasaVehiculo.cs" />
+    <Compile Include="Broker\EBroTextos.cs" />
+    <Compile Include="Broker\EBroVehiculo.cs" />
+    <Compile Include="Globales\EGloGlobales.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Cliente\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

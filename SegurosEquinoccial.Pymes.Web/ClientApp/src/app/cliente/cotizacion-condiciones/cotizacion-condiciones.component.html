@@ -1,0 +1,67 @@
+<app-top-bar-cliente></app-top-bar-cliente>
+<div class="titulo">
+  <div style="padding-top: 10px">
+    <h3>Condiciones <img src="assets/images/LogoBlanco.png" alt="Cotizador Pymes" width="48"></h3>
+  </div>
+</div>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom">
+    </ngx-spinner>
+    <div class="row">
+      <div class="col-md-10 offset-md-1">
+        <br>
+        <div class="table-responsive">
+          <table style="text-align: justify">
+            <thead>
+              <tr>
+                <th colspan="2" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}">
+                  <span style="float: left">
+                    <b>COTIZACIÓN: &nbsp;&nbsp;&nbsp;{{cotizacion.codigoCotizacion}}</b>
+                  </span>
+
+                  <button *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" class="btn btn-light"
+                    style="float: right" (click)="continuarCotizacion()">
+                    <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Continuar | Cotización
+                  </button>
+
+                  <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" class="btn btn-light"
+                    style="float: right" (click)="guardarComplementoContenido()">
+                    <i class="mdi mdi-arrow-right-bold-circle-outline"></i> Guardar y Generar | Cotización
+                  </button>
+
+                </th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let global of lstRamos">
+              <tr *ngFor="let ramo_ of global.ramo">
+                <td *ngIf="ramo_.Ramo.Titulo == 1" colspan="2" class="titulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +')'}">
+                  <b>{{ramo_.Ramo.Descripcion}}</b>
+                </td>
+                <td *ngIf="ramo_.Ramo.Subtitulo == 1" colspan="2" class="subtitulo-tabla" [ngStyle]="{'background-color': 'rgba('+ usuario.broker.Color +', 0.5)'}">
+                  <b>{{ramo_.Ramo.Descripcion}}</b>
+                </td>
+                <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0" style="padding-left: 60px;">
+                  <i class="mdi mdi-check"></i>
+                </td>
+                <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0" class="texto-tabla">
+                  {{ limpiarDatos(ramo_.Ramo.Descripcion, '*', '') }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+      </div>
+      <div class="contenedor2">
+        <div class="botonF1" (click)="guardarComplementoContenido()">
+          <i class="mdi mdi-arrow-right-bold-circle-outline"
+            [ngStyle]="{'color': 'rgb(' + usuario.broker.Color + ')'}"></i><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

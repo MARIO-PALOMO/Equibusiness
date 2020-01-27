@@ -1,0 +1,64 @@
+.texto {
+  font-size: 14px !important;
+  color: black !important;
+  height: 35px !important;
+  width: 100% !important;
+}
+.texto-busqueda {
+  font-size: 14px !important;
+  color: black !important;
+  height: 35px !important;
+}
+
+.contenedor {
+  padding-top: 100px;
+  color: white;
+  text-align: center;
+}
+
+.table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: #505050;
+  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #505050;
+  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.busqueda-ruc {
+  height: 35px;
+  background-color: #4e4e4e;
+  cursor: pointer;
+}
+
+.busqueda-ruc:hover {
+  background-color: #696969;
+}
+
+.k-grid,
+.k-grid-header-wrap,
+.k-grid-header th,
+.k-grid-content > table > tbody > tr > td {
+  border: 0 !important;
+}
+
+.siniestralidad {
+  background-color: white;
+  color: black;
+  padding: 15px;
+  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+}

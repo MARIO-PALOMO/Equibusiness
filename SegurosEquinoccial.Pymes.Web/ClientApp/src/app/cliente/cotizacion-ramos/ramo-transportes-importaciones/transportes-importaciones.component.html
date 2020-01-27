@@ -1,0 +1,178 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaTransportes[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaTransportes[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+
+<!-- INICIO RAMO Y TRASPORTE IMPORTACIONES WEB -->
+<table id="tablaTransporteImportaciones" class=" subramo-valores-escritorio" border="1">
+  <thead style="text-align: center; font-weight: bold">
+    <tr style="text-align: center; font-weight: bold">
+      <td>Detalle Mercadería Transporte Importaciones:</td>
+      <td [colSpan]="lstDirecciones.length + 3">
+        <input id="detalleTransporteImportacionesW" type="text" class="form-control texto"
+          placeholder="Ingresar Detalles de la Mercadería">
+      </td>
+    </tr>
+    <tr style="text-align: center; font-weight: bold">
+      <th style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span></th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <td style="width: 12%">TASA</td>
+      <td style="width: 10%">PRIMA</td>
+      <td style="width: 25%">
+        DEDUCIBLE<br>
+        (POR EVENTO)
+      </td>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyTransporteImportaciones">
+    <tr *ngFor="let subramosTRIM of listaTransportes; let i = index" id="{{subramosTRIM.Datos.Codigo}}">
+      <td>
+        {{subramosTRIM.Datos.Nombre}}
+      </td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaTransportes, subramosTRIM.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramosTRIM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <div *ngIf="subramosTRIM.Datos.Seleccion == 1">
+
+            <div [ngClass]="'row'">
+              <div [ngClass]="usuario.broker.Transporte == '0' ? 'col-md-6': 'col-md-12'">
+
+                <kendo-dropdownlist class="form-control texto" [data]="listaSubramoTransporteDatos"
+                  [textField]="'Descripcion'" [valueField]="'IdSubRamoTransporte'"
+                  [(ngModel)]="datosTransporteImportaciones"
+                  (ngModelChange)="gestionListasTransportes(2, subramosTRIM.Datos.Codigo, listaTransportes)"
+                  [ngStyle]="{'width': usuario.broker.Transporte == '0' ? '100%' : '450px'}">
+                </kendo-dropdownlist>
+
+              </div>
+              <div *ngIf="usuario.broker.Transporte == '0'" [ngClass]="'col-md-6'">
+
+                <input id="{{subramosTRIM.Valores.ValorU1.Texto}}" [(ngModel)]="subramosTRIM.Valores.ValorU1.Valor"
+                  type="number" step="0.01" [ngClass]="'form-control texto'"
+                  (ngModelChange)="gestionRamoTransporteImportaciones(subramosTRIM.Valores.ValorU1.Texto, subramosTRIM.Datos.Codigo, 1)">
+
+              </div>
+            </div>
+
+          </div>
+          <div *ngIf="subramosTRIM.Datos.Seleccion != 1">
+            <div id="valor_{{ subramosTRIM.Datos.Codigo }}">
+              <input id="{{subramosTRIM.Valores.ValorU1.Texto}}" [(ngModel)]="subramosTRIM.Valores.ValorU1.Valor"
+                type="number" step="0.01" [ngClass]="'form-control texto valor_' + subramosTRIM.Datos.Codigo"
+                (ngModelChange)="gestionRamoTransporteImportaciones(subramosTRIM.Valores.ValorU1.Texto, subramosTRIM.Datos.Codigo, 1)">
+            </div>
+          </div>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramosTRIM.Datos.MostrarTasa == 1" class="form-control texto"
+          [(ngModel)]="subramosTRIM.Valores.Tasa" [autoCorrect]="true" [step]="0.01"
+          [min]="subramosTRIM.Valores.TasaMinima" [max]="1" [decimals]="2"
+          (ngModelChange)="gestionTasaTransporteImportaciones(subramosTRIM.Datos.Codigo, subramosTRIM.Valores.Tasa)">
+        </kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramosTRIM.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left">$</span>{{globales.formatearNumero(subramosTRIM.Valores.Prima,2)}}</span>
+      </td>
+      <ng-container *ngFor="let datosDeducibles of deducibles">
+        <td *ngIf="(i + 1) == datosDeducibles.vista" [rowSpan]="datosDeducibles.union">
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 2" [innerHTML]="subramosTRIM.Datos.RiesgoMayor"></pre>
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 1" [innerHTML]="subramosTRIM.Datos.RiesgoMenor"></pre>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Transporte Importaciones &nbsp;</b>
+    </td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalTransporteInterno">{{globales.formatearNumero(general.calcularPrimaTotal(listaTransportes), 2)}}</span></span>
+    </td>
+    <td style="text-align: right !important">
+      &nbsp;{{general.mensajePrimaMinima(listaTransportes)}}
+      <b style="color: #C0392B; font-size: 13px;">NOTA: Este valor es referencial ya que cada movilización genera su
+        costo y factura
+        individual. Costo de póliza madre $0.04</b>
+    </td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS TRANSPORTE IMPORTACIONES WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS TRANSPORTE IMPORTACIONES MÓVIL
+<div class="subramo-valores-movil">
+  <div>
+    <button class="btn btn-dark boton-oscuro" style="float: right"
+      (click)="general.visualizacionInicialSubramoMovil(listaTransportes, 1)">
+      <i class="mdi mdi-window-minimize"></i>
+    </button>
+    <button class="btn btn-dark boton-oscuro" style="float: right"
+      (click)="general.visualizacionInicialSubramoMovil(listaTransportes, 0)">
+      <i class="mdi mdi-window-restore"></i>
+    </button><br>
+    <input id="detalleTransporteImportacionesM" type="text" class="form-control texto"
+      placeholder="Ingresar Detalles de la Mercadería">
+  </div>
+  <div *ngFor="let subramosMovilTRAIM of listaTransportes">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilTRAIM.Datos.Codigo)">
+      {{subramosMovilTRAIM.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilTRAIM.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovilTRAIM.Datos.Rango}}" placement="top"
+          show-delay="1" display-mobile="true" theme="light">
+          <b>VALOR</b><br>
+          <div *ngIf="subramosMovilTRAIM.Datos.Seleccion == 1">
+            <kendo-dropdownlist class="form-control texto" [data]="listaSubRamoTransporteImportaciones"
+              [textField]="'Descripcion'" [valueField]="'LimiteInferior'" [(ngModel)]="datosTransporteImportaciones"
+              (ngModelChange)="gestionListasTransportes(2, subramosMovilTRAIM.Datos.Codigo, listaTransportes)">
+            </kendo-dropdownlist>
+          </div>
+          <input *ngIf="subramosMovilTRAIM.Datos.Seleccion != 1" id="{{subramosMovilTRAIM.Valores.ValorU1.TextoMovil}}"
+            [(ngModel)]="subramosMovilTRAIM.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoTransporteImportaciones(subramosMovilTRAIM.Valores.ValorU1.TextoMovil, subramosMovilTRAIM.Datos.Codigo, 1)">
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovilTRAIM.Valores.Tasa"
+          [autoCorrect]="true" [step]="0.01" [min]="subramosMovilTRAIM.Valores.TasaMinima"
+          (ngModelChange)="gestionTasaTransporteImportaciones(subramosMovilTRAIM.Datos.Codigo, subramosMovilTRAIM.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovilTRAIM.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="(subramosMovilTRAIM.Valores.ValorU1.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovilTRAIM.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovilTRAIM.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Transporte Importaciones</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaTransportes)}}</span>
+      <span class="texto-ramos" style="float: right">
+        &nbsp;{{general.mensajePrimaMinima(listaTransportes)}}</span><br>
+    </div>
+  </div>
+</div>
+FIN RAMO Y SUBRAMOS TRANSPORTE IMPORTACIONES MÓVIL -->

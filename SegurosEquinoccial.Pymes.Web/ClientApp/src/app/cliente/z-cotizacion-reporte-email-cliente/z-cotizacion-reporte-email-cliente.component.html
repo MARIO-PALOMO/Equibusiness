@@ -1,0 +1,361 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..." type="ball-atom">
+</ngx-spinner>
+<div class="row">
+  <div class="col-md-12">
+    <button class="btn btn-light" (click)="imprimirCotizacion()">
+      <i class="mdi mdi-printer"></i> IMPRIMIR/EXPORTAR COTIZACIÓN
+    </button>
+  </div>
+  <br><br>
+  <div class="col-md-12">
+    <div id="reporte" class="table-responsive">
+      <table id="tablaReporte" style="text-align: justify" border="1" style="width: 100%">
+        <tbody>
+          <tr>
+            <th class="separacion">
+              <div style="display: inline-block">
+                <img src="../../../assets/images/brokers/segurosequinoccial.png" alt="" width="220">
+                <span style="padding: 5px;"></span>
+                <img src="../../../assets/images/line.png" alt="" width="1" height="52">
+                <span style="padding: 7px;"></span>
+                <img src="../../../{{parametros.BrokerFoto}}" alt="" width="220">
+              </div>
+            </th>
+            <th class="separacion" style="text-align: right">
+              <h3>Cotizador de Pólizas para Pymes</h3>
+            </th>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table id="tablaDatosEmpresa" border="1" style="width: 100%">
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Razon Social</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.RazonSocial}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>RUC</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.Ruc}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Teléfono</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.Telefono}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Correo Electrónico</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.Email}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Fecha Cotización</b></td>
+                  <td class="separacion">{{datosCotizacion.Fecha}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Giro del Negocio</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.GiroNegocio}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Sector Económico</b></td>
+                  <td class="separacion">{{datosCotizacion.Empresa.SectorEconomico}}</td>
+                </tr>
+                <tr class="general">
+                  <td class="separacion" style="width: 20%"><b>Direcciones Aseguradas</b></td>
+                  <td class="separacion">{{ datosDireccion.length }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr class="paginacion">
+            <td colspan="2">
+              <!--INICIO RESUMEN RAMOS-->
+              <table id="tablaDatosRamos" *ngFor="let ramo of lstRamos" border="1" style="width: 100%">
+                <tbody *ngIf="ramo.visualizacion != 0">
+                  <tr *ngIf="ramo.ramo.length > 0 ? true : false" class="general">
+                    <td colspan="7" class="separacion">
+                      <span style="font-size: 17px;"><b>{{ramo.nombre}}</b></span>
+                    </td>
+                  </tr>
+                  <tr
+                    *ngIf="ramo.identificador != 'RCA14' && ramo.identificador != 'RRC9' && ramo.identificador != 'RFI10' && ramo.identificador != 'RAP12' && ramo.identificador != 'RTR11IN' && ramo.identificador != 'RTR11IM' && ramo.identificador != 'RVE13'">
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: center !important">
+                      <span>
+                        <b>{{direccion.provincia == 'Global' ? 'Dirección': direccion.provincia}}</b>
+                      </span>
+                    </td>
+                    <td [colSpan]="(5 - datosDireccion.length) + 1">
+                      &nbsp;
+                    </td>
+                  </tr>
+                  <tr
+                    *ngIf="ramo.identificador != 'RCA14' && ramo.identificador != 'RRC9' && ramo.identificador != 'RFI10' && ramo.identificador != 'RAP12' && ramo.identificador != 'RTR11IN' && ramo.identificador != 'RTR11IM' && ramo.identificador != 'RVE13'">
+                    <td></td>
+                    <td *ngFor="let direccion of datosDireccion" style="text-align: justify !important; padding: 5px !important">
+                      <span>
+                        {{direccion.nombre}}
+                      </span>
+                    </td>
+                    <td [colSpan]="(5 - datosDireccion.length) + 1">
+                      &nbsp;
+                    </td>
+                  </tr>
+                  <tr *ngIf="ramo.ramo.length > 0 ? true : false">
+                    <td colspan="6"></td>
+                    <td class="separacion" style="text-align: right !important" *ngIf="ramo.identificador == 'RCA14' ? false : true"><b>PRIMA</b></td>
+                  </tr>
+
+                  <ng-container *ngFor="let coberturas of ramo.ramo">
+                    <tr class="general"
+                      *ngIf="sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor) != 0">
+                      <td *ngIf="ramo.identificador != 'RCA14'" class="separacion"
+                        [colSpan]="ramo.identificador == 'RCA14' ? 6 : 1" style="width: 30%">
+                        {{coberturas.Datos.Nombre}}
+                        <div *ngIf="ramo.identificador == 'RRC9'">
+                          <div *ngIf="coberturas.Datos.Codigo == 'SRC2'">
+                            <b>Número de Vehículos:</b> N° {{coberturas.Valores.NVehiculos}}<br>
+                            <b>Valor en Exeso:</b> $ {{formatearValores(coberturas.Valores.VResponsabilidad)}}
+                          </div>
+                          <b>{{ obtenerInformacioTransportes(coberturas.Valores.ITransporte, listaInformacionTransporte) }}</b>
+                        </div>
+                        <div *ngIf="ramo.identificador == 'RTR11IN'">
+                          <b>{{ obtenerInformacioTransportes(coberturas.Valores.ITransporte, listaInformacionTransporte) }}</b>
+                        </div>
+                        <div *ngIf="ramo.identificador == 'RTR11IM'">
+                          <b>{{ obtenerInformacioTransportes(coberturas.Valores.ITransporte, listaInformacionTransporte) }}</b>
+                        </div>
+                      </td>
+
+                      <td *ngIf="coberturas.Valores.EAdicionales == 1 && ramo.identificador == 'RCA14'"
+                        class="separacion" [colSpan]="ramo.identificador == 'RCA14' ? 6 : 1" style="width: 30%">
+                        {{coberturas.Datos.Nombre}}
+                      </td>
+                      <td *ngIf="coberturas.Valores.EAdicionales == 1 && ramo.identificador == 'RCA14'"
+                        [colSpan]="coberturas.Datos.AgregadoAnual == 1 ? 5 : 1" class="separacion-r" style="width: 10%">
+                        <span class="valores-r">$</span>{{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+
+                      <td *ngIf="ramo.identificador != 'RCA14'" [colSpan]="coberturas.Datos.AgregadoAnual == 1 ? 5 : 1"
+                        class="separacion-r" style="width: 10%">
+                        <span class="valores-r">$</span>{{formatearValores(coberturas.Valores.ValorU1.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0" class="separacion-r" style="width: 10%">
+                        <span class="valores-r">$</span>{{formatearValores(coberturas.Valores.ValorU2.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0" class="separacion-r" style="width: 10%">
+                        <span class="valores-r">$</span>{{formatearValores(coberturas.Valores.ValorU3.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0" class="separacion-r" style="width: 10%">
+                        <span class="valores-r">$</span>{{formatearValores(coberturas.Valores.ValorU4.Valor)}}
+                      </td>
+                      <td *ngIf="coberturas.Datos.AgregadoAnual == 0" class="separacion-r" style="width: 10%">
+                        <span class="valores-r">$</span>{{formatearValores(coberturas.Valores.ValorU5.Valor)}}
+                      </td>
+                      <td *ngIf="ramo.identificador == 'RCA14' ? false : true" class="separacion-r" style="width: 10%">
+                        <span class="valores-r">$</span>{{formatearValores(coberturas.Valores.Prima)}}
+                      </td>
+                    </tr>
+                  </ng-container>
+
+                  <tr *ngIf="ramo.ramo.length > 0 ? true : false" class="general">
+                    <td *ngIf="ramo.identificador == 'RCA14' ? false : true" colspan="6" class="separacion-r">
+                      <b>Prima Neta {{ramo.nombre}}</b></td>
+                    <td *ngIf="ramo.identificador == 'RCA14' ? false : true" class="separacion-r">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(ramo.visualizacion,2)}}
+                    </td>
+
+                    <td *ngIf="ramo.identificador == 'RCA14' ? true : false" colspan="6" class="separacion-r">
+                      <b>Prima Neta Multiriesgo</b></td>
+                    <td *ngIf="ramo.identificador == 'RCA14' ? true : false" class="separacion-r">
+                      <span class="valores-r">$</span>{{ primalNetaMultiriesgo() }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!--FIN RESUMEN RAMOS-->
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table border="1" style="width: 100%">
+                <tbody>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">Prima IVA 12%</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaNetaIva12,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">Prima IVA 0%</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaNetaIva0,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">Prima Neta Total</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaNetaTotal,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">Impuesto SBS</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.ImpuestoSBS,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">Impuesto Seguro Campesino</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.ImpuestoCampesino,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">Derecho de Emisión</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.DerechosEmision,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">IVA</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.Iva,2)}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="separacion" style="width: 85%; font-weight: bold">Prima Total</td>
+                    <td class="separacion-r" style="width: 15%">
+                      <span class="valores-r">$</span>{{globales.formatearNumero(datosCotizacion.PrimaTotal,2)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo2-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor+ ',0.8)'}">
+              <u>DEDUCIBLES</u>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table *ngFor="let ramo of lstRamos" border="1" style="width: 100%">
+                <tbody *ngIf="ramo.visualizacion != 0">
+                  <tr *ngIf="ramo.ramo.length > 0 ? true : false" class="general">
+                    <td *ngIf="ramo.identificador != 'RCA14'" colspan="2" class="separacion">
+                      <span style="font-size: 17px;"><b>{{ramo.nombre}}</b></span>
+                    </td>
+                  </tr>
+                  <tr class="general" *ngFor="let coberturas of ramo.ramo; let i = index">
+                    <td
+                      *ngIf="(coberturas.Datos.RiesgoMenor.trim() != '' || coberturas.Datos.RiesgoMayor.trim() != '')
+                  && (sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor) != 0)"
+                      class="separacion" style="width: 40%">
+                      {{ coberturas.Datos.Nombre }}
+                    </td>
+                    <ng-container *ngFor="let datosDeducibles of ramo.deducibles">
+                      <td
+                        *ngIf="((i + 1) == datosDeducibles.vista) &&
+                    (coberturas.Datos.RiesgoMenor.trim() != '' || coberturas.Datos.RiesgoMayor.trim() != '')
+                    && (sumarValores(coberturas.Valores.ValorU1.Valor, coberturas.Valores.ValorU2.Valor, coberturas.Valores.ValorU3.Valor, coberturas.Valores.ValorU4.Valor, coberturas.Valores.ValorU5.Valor) != 0)"
+                        [rowSpan]="datosDeducibles.union" style="padding-left: 10px; padding-right: 10px">
+
+                        <pre
+                          style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none'
+                          *ngIf="datosCotizacion.Empresa.Riesgo == 2" [innerHTML]="coberturas.Datos.RiesgoMayor"></pre>
+                        <pre
+                          style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none'
+                          *ngIf="datosCotizacion.Empresa.Riesgo == 1" [innerHTML]="coberturas.Datos.RiesgoMenor"></pre>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo2-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor+ ',0.8)'}"><u>GARANTÍAS</u></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table border="1" style="width: 100%">
+                <tbody *ngFor="let global of datosGarantias">
+                  <tr *ngFor="let ramo_ of global.ramo">
+                    <td *ngIf="ramo_.Ramo.Titulo == 1" class="titulo-tabla">
+                      <b>{{ramo_.Ramo.Descripcion}}</b>
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Subtitulo == 1" class="subtitulo-tabla">
+                      <b>{{ramo_.Ramo.Descripcion}}</b>
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0 && ramo_.Valor == 1"
+                      class="separacion">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                  </tr>
+                  <tr *ngIf="global.ramo.length != 0">
+                    <td class="separacion">
+                      <b>Tiempo de Cumplimiento: </b><span>{{ global.cumplimiento }} días</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="global.ramo.length != 0">
+                    <td class="separacion"> 
+                      El incumplimiento parcial o total de las garantías antes indicadas libera de
+                      responsabilidad a la aseguradora en caso de siniestros.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo2-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor+ ',0.8)'}"><u>CONDICIONES</u></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="separador-tabla">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="titulo-tabla"
+              [ngStyle]="{'background-color': 'rgba(' + parametros.BrokerColor+ ',0.5)', 'font-weight': 'bold'}">
+              MULTIRIESGO INDUSTRIAL</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table border="1" style="width: 100%">
+                <tbody *ngFor="let global of datosCondiciones">
+                  <tr *ngFor="let ramo_ of global.ramo">
+                    <td *ngIf="ramo_.Ramo.Titulo == 1" class="titulo-tabla">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Subtitulo == 1" class="subtitulo-tabla">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                    <td *ngIf="ramo_.Ramo.Titulo == 0 && ramo_.Ramo.Subtitulo == 0" class="separacion">
+                      {{ramo_.Ramo.Descripcion}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

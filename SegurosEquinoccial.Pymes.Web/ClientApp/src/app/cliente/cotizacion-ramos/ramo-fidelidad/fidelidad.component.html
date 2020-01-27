@@ -1,0 +1,244 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaFidelidad[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaFidelidad[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+<!-- INICIO RAMO Y SUBRAMOS FIDELIDAD WEB -->
+<table id="tablaFidelidad" class=" subramo-valores-escritorio" border="1">
+  <thead style="text-align: center;">
+    <tr>
+      <th rowspan="2" style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span>
+      </th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <th rowspan="2" style="width: 12%">TASA</th>
+      <th rowspan="2" style="width: 10%">PRIMA</th>
+      <th rowspan="2" style="width: 25%">
+        DEDUCIBLE<br>
+        (POR EVENTO)
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let direccion of lstDirecciones">
+        <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
+          Ubi. {{direccion.id}}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyFidelidad">
+    <tr *ngFor="let subramosFI of listaFidelidad;  let i = index" id="{{subramosFI.Datos.Codigo}}">
+      <td>{{subramosFI.Datos.Nombre}}</td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaFidelidad, subramosFI.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramosFI.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <input id="{{subramosFI.Valores.ValorU1.Texto}}" [(ngModel)]="subramosFI.Valores.ValorU1.Valor" type="number"
+            step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoFidelidad(subramosFI.Valores.ValorU1.Texto, subramosFI.Datos.Codigo, 1)">
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 2 && subramosFI.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosFI.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosFI.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosFI.Valores.ValorU2.Texto}}" [(ngModel)]="subramosFI.Valores.ValorU2.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosFI.Valores.ValorU2.Texto, subramosFI.Datos.Codigo, 2)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 3 && subramosFI.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosFI.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosFI.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosFI.Valores.ValorU3.Texto}}" [(ngModel)]="subramosFI.Valores.ValorU3.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosFI.Valores.ValorU3.Texto, subramosFI.Datos.Codigo, 3)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 4 && subramosFI.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosFI.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosFI.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosFI.Valores.ValorU4.Texto}}" [(ngModel)]="subramosFI.Valores.ValorU4.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosFI.Valores.ValorU4.Texto, subramosFI.Datos.Codigo, 4)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 5 && subramosFI.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosFI.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosFI.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosFI.Valores.ValorU5.Texto}}" [(ngModel)]="subramosFI.Valores.ValorU5.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosFI.Valores.ValorU5.Texto, subramosFI.Datos.Codigo, 5)">
+          </span>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramosFI.Datos.MostrarTasa == 1" class="form-control texto" [(ngModel)]="subramosFI.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosFI.Valores.TasaMinima" [max]="subramosFI.Tasa[0].ValorMaximo"  [decimals]="2"
+          (ngModelChange)="gestionTasaFidelidad(subramosFI.Datos.Codigo, subramosFI.Valores.Tasa)">
+        </kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramosFI.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left">$</span>{{globales.formatearNumero(subramosFI.Valores.Prima,2)}}</span>
+      </td>
+      <ng-container *ngFor="let datosDeducibles of deducibles">
+        <td *ngIf="(i + 1) == datosDeducibles.vista" [rowSpan]="datosDeducibles.union">
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 2" [innerHTML]="subramosFI.Datos.RiesgoMayor"></pre>
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 1" [innerHTML]="subramosFI.Datos.RiesgoMenor"></pre>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Fidelidad &nbsp;</b></td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalFidelidad">{{globales.formatearNumero(general.calcularPrimaTotal(listaFidelidad),2)}}</span></span>
+    </td>
+    <td> &nbsp;{{general.mensajePrimaMinima(listaFidelidad)}}</td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS FIDELIDAD WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS FIDELIDAD MÓVIL -->
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaFidelidad, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaFidelidad, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovilFI of listaFidelidad">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilFI.Datos.Codigo)">
+      {{subramosMovilFI.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilFI.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovilFI.Datos.Rango}}" placement="top" show-delay="1"
+          display-mobile="true" theme="light">
+          <b>{{lstDirecciones[0].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[0].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[0].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilFI.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilFI.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosMovilFI.Valores.ValorU1.TextoMovil, subramosMovilFI.Datos.Codigo, 1)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 2 && subramosMovilFI.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilFI.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[1].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[1].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[1].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilFI.Valores.ValorU2.TextoMovil}}"
+              [(ngModel)]="subramosMovilFI.Valores.ValorU2.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosMovilFI.Valores.ValorU2.TextoMovil, subramosMovilFI.Datos.Codigo, 2)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 3 && subramosMovilFI.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilFI.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[2].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[2].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilFI.Valores.ValorU3.TextoMovil}}"
+              [(ngModel)]="subramosMovilFI.Valores.ValorU3.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosMovilFI.Valores.ValorU3.TextoMovil, subramosMovilFI.Datos.Codigo, 3)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 4 && subramosMovilFI.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilFI.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[3].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilFI.Valores.ValorU4.TextoMovil}}"
+              [(ngModel)]="subramosMovilFI.Valores.ValorU4.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosMovilFI.Valores.ValorU4.TextoMovil, subramosMovilFI.Datos.Codigo, 4)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 5 && subramosMovilFI.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilFI.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[4].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[4].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilFI.Valores.ValorU5.TextoMovil}}"
+              [(ngModel)]="subramosMovilFI.Valores.ValorU5.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoFidelidad(subramosMovilFI.Valores.ValorU5.TextoMovil, subramosMovilFI.Datos.Codigo, 5)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovilFI.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosMovilFI.Valores.TasaMinima"
+          (ngModelChange)="gestionTasaFidelidad(subramosMovilFI.Datos.Codigo, subramosMovilFI.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovilFI.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="
+           (subramosMovilFI.Valores.ValorU1.Valor>
+          0 ? true: false) ||
+          (subramosMovilFI.Valores.ValorU2.Valor > 0 ? true: false) ||
+          (subramosMovilFI.Valores.ValorU3.Valor > 0 ? true: false) ||
+          (subramosMovilFI.Valores.ValorU4.Valor > 0 ? true: false) ||
+          (subramosMovilFI.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovilFI.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovilFI.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Fidelidad</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaFidelidad)}}</span>
+      <span class="texto-ramos" style="float: right"> &nbsp;{{general.mensajePrimaMinima(listaFidelidad)}}</span><br>
+    </div>
+  </div>
+</div>
+<!--FIN RAMO Y SUBRAMOS FIDELIDAD MÓVIL -->

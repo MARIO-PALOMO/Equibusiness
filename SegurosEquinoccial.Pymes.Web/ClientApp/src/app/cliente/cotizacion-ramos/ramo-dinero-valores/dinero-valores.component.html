@@ -1,0 +1,245 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaDineroValores[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaDineroValores[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+<!-- INICIO RAMO Y SUBRAMOS DINERO Y VALORES WEB -->
+<table id="tablaDineroValores" class=" subramo-valores-escritorio" border="1">
+  <thead style="text-align: center;">
+    <tr>
+      <th rowspan="2" style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span>
+      </th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <th rowspan="2" style="width: 12%">TASA</th>
+      <th rowspan="2" style="width: 10%">PRIMA</th>
+      <th rowspan="2" style="width: 25%">
+        DEDUCIBLE<br>
+        (POR EVENTO)
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let direccion of lstDirecciones">
+        <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
+          Ubi. {{direccion.id}}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyDineroValores">
+    <tr *ngFor="let subramosDV of listaDineroValores; let i = index" id="{{subramosDV.Datos.Codigo}}">
+      <td>{{subramosDV.Datos.Nombre}}</td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaDineroValores, subramosDV.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramosDV.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <input id="{{subramosDV.Valores.ValorU1.Texto}}" [(ngModel)]="subramosDV.Valores.ValorU1.Valor" type="number"
+            step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoDineroValores(subramosDV.Valores.ValorU1.Texto, subramosDV.Datos.Codigo, 1)">
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 2 && subramosDV.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosDV.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosDV.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosDV.Valores.ValorU2.Texto}}" [(ngModel)]="subramosDV.Valores.ValorU2.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosDV.Valores.ValorU2.Texto, subramosDV.Datos.Codigo, 2)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 3 && subramosDV.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosDV.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosDV.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosDV.Valores.ValorU3.Texto}}" [(ngModel)]="subramosDV.Valores.ValorU3.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosDV.Valores.ValorU3.Texto, subramosDV.Datos.Codigo, 3)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 4 && subramosDV.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosDV.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosDV.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosDV.Valores.ValorU4.Texto}}" [(ngModel)]="subramosDV.Valores.ValorU4.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosDV.Valores.ValorU4.Texto, subramosDV.Datos.Codigo, 4)">
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 5 && subramosDV.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosDV.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosDV.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input id="{{subramosDV.Valores.ValorU5.Texto}}" [(ngModel)]="subramosDV.Valores.ValorU5.Valor"
+              type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosDV.Valores.ValorU5.Texto, subramosDV.Datos.Codigo, 5)">
+          </span>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramosDV.Datos.MostrarTasa == 1" class="form-control texto" [(ngModel)]="subramosDV.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosDV.Valores.TasaMinima" [max]="subramosDV.Tasa[0].ValorMaximo"  [decimals]="2"
+          (ngModelChange)="gestionTasaDineroValores(subramosDV.Datos.Codigo, subramosDV.Valores.Tasa)">
+        </kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramosDV.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left">$</span>{{globales.formatearNumero(subramosDV.Valores.Prima,2)}}</span>
+      </td>
+      <ng-container *ngFor="let datosDeducibles of deducibles">
+        <td *ngIf="(i + 1) == datosDeducibles.vista" [rowSpan]="datosDeducibles.union">
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 2" [innerHTML]="subramosDV.Datos.RiesgoMayor"></pre>
+          <pre
+            style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; border: none; font-size: 11px;'
+            *ngIf="riesgo == 1" [innerHTML]="subramosDV.Datos.RiesgoMenor"></pre>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Dinero y Valores &nbsp;</b></td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalDineroValores">{{globales.formatearNumero(general.calcularPrimaTotal(listaDineroValores),2)}}</span></span>
+    </td>
+    <td> &nbsp;{{general.mensajePrimaMinima(listaDineroValores)}}</td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS DINERO Y VALORES WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS DINERO Y VALORES MÓVIL -->
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaDineroValores, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaDineroValores, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovilDV of listaDineroValores">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilDV.Datos.Codigo)">
+      {{subramosMovilDV.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilDV.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovilDV.Datos.Rango}}" placement="top" show-delay="1"
+          display-mobile="true" theme="light">
+          <b>{{lstDirecciones[0].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[0].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[0].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilDV.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilDV.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosMovilDV.Valores.ValorU1.TextoMovil, subramosMovilDV.Datos.Codigo, 1)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 2 && subramosMovilDV.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilDV.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[1].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[1].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[1].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilDV.Valores.ValorU2.TextoMovil}}"
+              [(ngModel)]="subramosMovilDV.Valores.ValorU2.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosMovilDV.Valores.ValorU2.TextoMovil, subramosMovilDV.Datos.Codigo, 2)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 3 && subramosMovilDV.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilDV.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[2].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[2].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilDV.Valores.ValorU3.TextoMovil}}"
+              [(ngModel)]="subramosMovilDV.Valores.ValorU3.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosMovilDV.Valores.ValorU3.TextoMovil, subramosMovilDV.Datos.Codigo, 3)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 4 && subramosMovilDV.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilDV.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[3].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilDV.Valores.ValorU4.TextoMovil}}"
+              [(ngModel)]="subramosMovilDV.Valores.ValorU4.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosMovilDV.Valores.ValorU4.TextoMovil, subramosMovilDV.Datos.Codigo, 4)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 5 && subramosMovilDV.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilDV.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[4].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[4].id}}
+          </span>
+          <span>
+            <input id="{{subramosMovilDV.Valores.ValorU5.TextoMovil}}"
+              [(ngModel)]="subramosMovilDV.Valores.ValorU5.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoDineroValores(subramosMovilDV.Valores.ValorU5.TextoMovil, subramosMovilDV.Datos.Codigo, 5)">
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovilDV.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosMovilDV.Valores.TasaMinima"
+          (ngModelChange)="gestionTasaDineroValores(subramosMovilDV.Datos.Codigo, subramosMovilDV.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovilDV.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="
+               (subramosMovilDV.Valores.ValorU1.Valor>
+              0 ? true: false) ||
+              (subramosMovilDV.Valores.ValorU2.Valor > 0 ? true: false) ||
+              (subramosMovilDV.Valores.ValorU3.Valor > 0 ? true: false) ||
+              (subramosMovilDV.Valores.ValorU4.Valor > 0 ? true: false) ||
+              (subramosMovilDV.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovilDV.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovilDV.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Dinero y Valores</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaDineroValores)}}</span>
+      <span class="texto-ramos" style="float: right">
+        &nbsp;{{general.mensajePrimaMinima(listaDineroValores)}}</span><br>
+    </div>
+  </div>
+</div>
+<!--FIN RAMO Y SUBRAMOS DINERO Y VALORES MÓVIL -->

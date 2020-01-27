@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="SegurosEquinoccial.Pymes.Servicio.Gestion.SGesConsultas" CodeBehind="SGesConsultas.svc.cs" %>

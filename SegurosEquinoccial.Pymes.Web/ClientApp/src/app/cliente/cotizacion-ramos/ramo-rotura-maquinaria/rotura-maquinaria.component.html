@@ -1,0 +1,338 @@
+<div style="text-align: center; color: white;">
+  <span>{{listaRoturaMaquinaria[0].Datos.Ramo.Nombre}}</span><br>
+  <span>{{listaRoturaMaquinaria[0].Datos.Ramo.Rango}}</span>
+  <br><br>
+</div>
+<!-- INICIO RAMO Y SUBRAMOS ROTURA MAQUINARIA WEB -->
+<table id="tablaRoturaMaquinaria" class=" subramo-valores-escritorio" border="1">
+  <thead style="text-align: center;">
+    <tr>
+      <th rowspan="2" style="width: 20%"> <span *ngIf="usuario.broker.Provincias == 0 ? false : true">Provincia:</span>
+      </th>
+      <th *ngFor="let direccion of lstDirecciones; let i=index" style="text-align: center; font-weight: bold">
+        <span [(ngClass)]="estadoUbicaciones"
+          [ngStyle]="{'font-size': (direccion.provincia == 'Global') ?  '0px': '14px'}"
+          id="pril{{i+1}}">{{direccion.provincia}}</span>
+      </th>
+      <th rowspan="2" style="width: 12%">TASA</th>
+      <th rowspan="2" style="width: 10%">PRIMA</th>
+      <th rowspan="2" style="width: 25%">
+        DEDUCIBLE<br>
+        (POR EVENTO)
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let direccion of lstDirecciones">
+        <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
+          Ubi. {{direccion.id}}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="tablaBodyRoturaMaquinaria">
+    <tr *ngFor="let subramosRM of listaRoturaMaquinaria" id="{{subramosRM.Datos.Codigo}}">
+      <td>{{subramosRM.Datos.Nombre}}</td>
+      <td *ngIf="lstDirecciones.length >= 1"
+        [colSpan]="general.estiloAgregadoAnual(listaRoturaMaquinaria, subramosRM.Datos.Codigo, lstDirecciones)">
+        <span tooltip="{{subramosRM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+          <input *ngIf="subramosRM.Datos.Seleccion != 1" id="{{subramosRM.Valores.ValorU1.Texto}}"
+            [(ngModel)]="subramosRM.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+            (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU1.Texto, subramosRM.Datos.Codigo, 1)">
+          <select *ngIf="subramosRM.Datos.Seleccion == 1" id="{{subramosRM.Valores.ValorU1.Texto}}"
+            [(ngModel)]="subramosRM.Valores.ValorU1.Valor" class="form-control texto"
+            (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU1.Texto, subramosRM.Datos.Codigo, 1)">
+            <option [value]="0">0</option>
+            <option
+              [value]="listaIncendio[1].Valores.ValorU1.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU1.Valor">
+              {{listaIncendio[1].Valores.ValorU1.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU1.Valor}}
+            </option>
+          </select>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 2 && subramosRM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input *ngIf="subramosRM.Datos.Seleccion != 1" id="{{subramosRM.Valores.ValorU2.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU2.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU2.Texto, subramosRM.Datos.Codigo, 2)">
+            <select *ngIf="subramosRM.Datos.Seleccion == 1" id="{{subramosRM.Valores.ValorU2.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU2.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU2.Texto, subramosRM.Datos.Codigo, 2)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU2.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU2.Valor">
+                {{listaIncendio[1].Valores.ValorU2.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU2.Valor}}
+              </option>
+            </select>
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 3 && subramosRM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input *ngIf="subramosRM.Datos.Seleccion != 1" id="{{subramosRM.Valores.ValorU3.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU3.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU3.Texto, subramosRM.Datos.Codigo, 3)">
+            <select *ngIf="subramosRM.Datos.Seleccion == 1" id="{{subramosRM.Valores.ValorU3.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU3.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU3.Texto, subramosRM.Datos.Codigo, 3)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU3.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU3.Valor">
+                {{listaIncendio[1].Valores.ValorU3.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU3.Valor}}
+              </option>
+            </select>
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 4 && subramosRM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input *ngIf="subramosRM.Datos.Seleccion != 1" id="{{subramosRM.Valores.ValorU4.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU4.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU4.Texto, subramosRM.Datos.Codigo, 4)">
+            <select *ngIf="subramosRM.Datos.Seleccion == 1" id="{{subramosRM.Valores.ValorU4.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU4.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU4.Texto, subramosRM.Datos.Codigo, 4)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU4.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU4.Valor">
+                {{listaIncendio[1].Valores.ValorU4.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU4.Valor}}
+              </option>
+            </select>
+          </span>
+        </span>
+      </td>
+      <td *ngIf="lstDirecciones.length >= 5 && subramosRM.Datos.AgregadoAnual == 0">
+        <span *ngIf="subramosRM.Datos.AgregadoAnual == 0">
+          <span tooltip="{{subramosRM.Datos.Rango}}" placement="left" show-delay="200" display-mobile="true">
+            <input *ngIf="subramosRM.Datos.Seleccion != 1" id="{{subramosRM.Valores.ValorU5.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU5.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU5.Texto, subramosRM.Datos.Codigo, 5)">
+            <select *ngIf="subramosRM.Datos.Seleccion == 1" id="{{subramosRM.Valores.ValorU5.Texto}}"
+              [(ngModel)]="subramosRM.Valores.ValorU5.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosRM.Valores.ValorU5.Texto, subramosRM.Datos.Codigo, 5)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU5.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU5.Valor">
+                {{listaIncendio[1].Valores.ValorU5.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU5.Valor}}
+              </option>
+            </select>
+          </span>
+        </span>
+      </td>
+      <td>
+        <kendo-numerictextbox *ngIf="subramosRM.Datos.MostrarTasa == 1" class="form-control texto" [(ngModel)]="subramosRM.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosRM.Valores.TasaMinima"  [max]="subramosRM.Tasa[0].ValorMaximo"  [decimals]="2"
+          (ngModelChange)="gestionTasaRoturaMaquinaria(subramosRM.Datos.Codigo, subramosRM.Valores.Tasa)">
+        </kendo-numerictextbox>
+      </td>
+      <td>
+        <span *ngIf="subramosRM.Datos.MostrarPrima == 1" class="form-control texto-ramos"><span
+            style="float: left">$</span>{{globales.formatearNumero(subramosRM.Valores.Prima,2)}}</span>
+      </td>
+      <td>
+        <p *ngIf="
+             (subramosRM.Valores.ValorU1.Valor>
+            0 ? true: false) ||
+            (subramosRM.Valores.ValorU2.Valor > 0 ? true: false) ||
+            (subramosRM.Valores.ValorU3.Valor > 0 ? true: false) ||
+            (subramosRM.Valores.ValorU4.Valor > 0 ? true: false) ||
+            (subramosRM.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosRM.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosRM.Datos.RiesgoMenor}}</span>
+        </p>
+      </td>
+    </tr>
+  </tbody>
+  <tr *ngIf="usuario.broker.Primas == 1">
+    <td [colSpan]="lstDirecciones.length + 2" class="alineacion-tabla"><b>Prima Neta Rotura de Maquinaria &nbsp;</b>
+    </td>
+    <td><span class="form-control texto-ramos"><span style="float: left">$</span><span
+          id="totalRoturaMaquinaria">{{globales.formatearNumero(general.calcularPrimaTotal(listaRoturaMaquinaria),2)}}</span></span>
+    </td>
+    <td> &nbsp;{{general.mensajePrimaMinima(listaRoturaMaquinaria)}}</td>
+  </tr>
+</table>
+<!-- FIN RAMO Y SUBRAMOS ROTURA MAQUINARIA WEB -->
+
+<!--INICIO RAMO Y SUBRAMOS ROTURA MAQUINARIA MÓVIL -->
+<div class="subramo-valores-movil">
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaRoturaMaquinaria, 1)">
+    <i class="mdi mdi-window-minimize"></i>
+  </button>
+  <button class="btn btn-dark boton-oscuro" style="float: right"
+    (click)="general.visualizacionInicialSubramoMovil(listaRoturaMaquinaria, 0)">
+    <i class="mdi mdi-window-restore"></i>
+  </button>
+  <br>
+  <div *ngFor="let subramosMovilRM of listaRoturaMaquinaria">
+    <div class="titulo-ramo-movil" (click)="general.visualizacionSubramoMovil(subramosMovilRM.Datos.Codigo)">
+      {{subramosMovilRM.Datos.Nombre}}
+      <span style="float: right;" class="mdi mdi-pencil"></span>
+    </div>
+    <div class="fondo-ramo-movil" id="MOVIL{{subramosMovilRM.Datos.Codigo}}">
+      <div>
+        <div *ngIf="lstDirecciones.length >= 1" tooltip="{{subramosMovilRM.Datos.Rango}}" placement="top" show-delay="1"
+          display-mobile="true" theme="light">
+          <b>{{lstDirecciones[0].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[0].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[0].id}}
+          </span>
+          <span>
+            <input *ngIf="subramosMovilRM.Datos.Seleccion != 1" id="{{subramosMovilRM.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU1.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU1.TextoMovil, subramosMovilRM.Datos.Codigo, 1)">
+            <select *ngIf="subramosMovilRM.Datos.Seleccion == 1" id="{{subramosMovilRM.Valores.ValorU1.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU1.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU1.TextoMovil, subramosMovilRM.Datos.Codigo, 1)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU1.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU1.Valor">
+                {{listaIncendio[1].Valores.ValorU1.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU1.Valor}}
+              </option>
+            </select>
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 2 && subramosMovilRM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[1].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[1].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[1].id}}
+          </span>
+          <span>
+            <input *ngIf="subramosMovilRM.Datos.Seleccion != 1" id="{{subramosMovilRM.Valores.ValorU2.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU2.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU2.TextoMovil, subramosMovilRM.Datos.Codigo, 2)">
+            <select *ngIf="subramosMovilRM.Datos.Seleccion == 1" id="{{subramosMovilRM.Valores.ValorU2.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU2.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU2.TextoMovil, subramosMovilRM.Datos.Codigo, 2)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU2.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU2.Valor">
+                {{listaIncendio[1].Valores.ValorU2.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU2.Valor}}
+              </option>
+            </select>
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 3 && subramosMovilRM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[2].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[2].id}}
+          </span>
+          <span>
+            <input *ngIf="subramosMovilRM.Datos.Seleccion != 1" id="{{subramosMovilRM.Valores.ValorU3.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU3.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU3.TextoMovil, subramosMovilRM.Datos.Codigo, 3)">
+            <select *ngIf="subramosMovilRM.Datos.Seleccion == 1" id="{{subramosMovilRM.Valores.ValorU3.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU3.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU3.TextoMovil, subramosMovilRM.Datos.Codigo, 3)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU3.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU3.Valor">
+                {{listaIncendio[1].Valores.ValorU3.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU3.Valor}}
+              </option>
+            </select>
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 4 && subramosMovilRM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[2].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[3].id}}
+          </span>
+          <span>
+            <input *ngIf="subramosMovilRM.Datos.Seleccion != 1" id="{{subramosMovilRM.Valores.ValorU4.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU4.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU4.TextoMovil, subramosMovilRM.Datos.Codigo, 4)">
+            <select *ngIf="subramosMovilRM.Datos.Seleccion == 1" id="{{subramosMovilRM.Valores.ValorU4.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU4.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU4.TextoMovil, subramosMovilRM.Datos.Codigo, 4)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU4.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU4.Valor">
+                {{listaIncendio[1].Valores.ValorU4.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU4.Valor}}
+              </option>
+            </select>
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="lstDirecciones.length >= 5 && subramosMovilRM.Datos.AgregadoAnual == 0"
+          tooltip="{{subramosMovilRM.Datos.Rango}}" placement="top" show-delay="1" display-mobile="true" theme="light">
+          <b>{{lstDirecciones[4].provincia}}</b><br>
+          <span tooltip="{{lstDirecciones[3].nombre}}" placement="right" show-delay="100" display-mobile="true"
+            theme="light">
+            Ubicación {{lstDirecciones[4].id}}
+          </span>
+          <span>
+            <input *ngIf="subramosMovilRM.Datos.Seleccion != 1" id="{{subramosMovilRM.Valores.ValorU5.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU5.Valor" type="number" step="0.01" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU5.TextoMovil, subramosMovilRM.Datos.Codigo, 5)">
+            <select *ngIf="subramosMovilRM.Datos.Seleccion == 1" id="{{subramosMovilRM.Valores.ValorU5.TextoMovil}}"
+              [(ngModel)]="subramosMovilRM.Valores.ValorU5.Valor" class="form-control texto"
+              (ngModelChange)="gestionRamoRoturaMaquinaria(subramosMovilRM.Valores.ValorU5.TextoMovil, subramosMovilRM.Datos.Codigo, 5)">
+              <option [value]="0">0</option>
+              <option
+                [value]="listaIncendio[1].Valores.ValorU5.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU5.Valor">
+                {{listaIncendio[1].Valores.ValorU5.Valor > limiteRoturaMaquinariaSeleccion ? limiteRoturaMaquinariaSeleccion: listaIncendio[1].Valores.ValorU5.Valor}}
+              </option>
+            </select>
+          </span>
+          <br>
+        </div>
+      </div>
+      <div>
+        <b>TASA</b><br>
+        <kendo-numerictextbox class="form-control texto" [(ngModel)]="subramosMovilRM.Valores.Tasa" [autoCorrect]="true"
+          [step]="0.01" [min]="subramosMovilRM.Valores.TasaMinima"
+          (ngModelChange)="gestionTasaRoturaMaquinaria(subramosMovilRM.Datos.Codigo, subramosMovilRM.Valores.Tasa)">
+        </kendo-numerictextbox>
+        <br><br>
+        <b>PRIMA</b><br>
+        <span class="form-control texto-ramos"><span
+            style="float: left">$</span>{{subramosMovilRM.Valores.Prima}}</span><br>
+        <b>DEDUCIBLE</b><br>
+        <p *ngIf="
+               (subramosMovilRM.Valores.ValorU1.Valor>
+              0 ? true: false) ||
+              (subramosMovilRM.Valores.ValorU2.Valor > 0 ? true: false) ||
+              (subramosMovilRM.Valores.ValorU3.Valor > 0 ? true: false) ||
+              (subramosMovilRM.Valores.ValorU4.Valor > 0 ? true: false) ||
+              (subramosMovilRM.Valores.ValorU5.Valor > 0 ? true: false)" style="text-align: justify">
+          <span *ngIf="riesgo == 2">{{subramosMovilRM.Datos.RiesgoMayor}}</span>
+          <span *ngIf="riesgo == 1">{{subramosMovilRM.Datos.RiesgoMenor}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div *ngIf="usuario.broker.Primas == 1">
+    <div class="titulo-ramo-movil">
+      <b>Prima Neta Rotura de Maquinaria</b>
+    </div>
+    <div class="fondo-ramo-movil">
+      <span class="form-control texto-ramos"><span
+          style="float: left">$</span>{{general.calcularPrimaTotal(listaRoturaMaquinaria)}}</span>
+      <span class="texto-ramos" style="float: right">
+        &nbsp;{{general.mensajePrimaMinima(listaRoturaMaquinaria)}}</span><br>
+    </div>
+  </div>
+</div>
+<!--FIN RAMO Y SUBRAMOS ROTURA MAQUINARIA MÓVIL -->
