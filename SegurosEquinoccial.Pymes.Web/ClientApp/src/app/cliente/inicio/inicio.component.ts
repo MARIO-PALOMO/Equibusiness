@@ -343,7 +343,7 @@ export class InicioClienteComponent implements OnInit {
 
   public generarCodigoCotizacion(numero: any, empresa: any) {
     var inicio = "COTP"
-    var fecha = this.metodos.obtenerFecha("") + "-";
+    var fecha = this.globales.generarNumeroAleatorios() + "-";
     var numeroCotizacion = "0";
     switch (numero.length) {
       case 1:
@@ -386,7 +386,7 @@ export class InicioClienteComponent implements OnInit {
         this.spinner.hide();
         console.log(res);
         if (res.IdCotizacion == 0) {
-          this.valCotizador.mostrarAlerta("Ocurrio un error al generar la cotización.", this.usuario.broker.Color);
+          this.valCotizador.mostrarAlertaInformativa("La cotización no pudo ser generada, debido a una duplicación de códigos.", this.usuario.broker.Color);
         } else {
           this.actualizarCorredorCotizacion(res.IdCotizacion, cotizacion, empresa);
         }

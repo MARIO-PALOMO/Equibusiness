@@ -4,6 +4,9 @@ import { VerificacionService } from '../../servicios/cotizacion/verificacion.ser
 import { ApiService } from '../../servicios/api/api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
+import { FinalizacionService } from '../../servicios/cotizacion/finalizacion.service';
+import { RamosService } from '../../servicios/cotizacion/ramos.service';
+import { CotizacionService } from '../../servicios/cotizacion/cotizacion.service';
 
 declare var $: any;
 @Component({
@@ -21,12 +24,13 @@ export class CotizacionInicioComponent implements OnInit {
   public id = 0;
   public pass = "";
 
-  constructor(private conexion: ApiService, private sesion: SesionService, private kcotizacion: VerificacionService, private spinner: NgxSpinnerService, public globales: GlobalesPipe) { }
+  constructor(private conexion: ApiService, private sesion: SesionService, private kcotizacion: VerificacionService, private spinner: NgxSpinnerService, 
+    public globales: GlobalesPipe, private kramos: RamosService, private kfinalizacion: FinalizacionService, private kcontenido: CotizacionService) { }
 
   ngOnInit() {
     this.sesion.verificarCredencialesRutas();
     this.usuario = this.sesion.obtenerDatos();
-    //this.verificarCotizacionExistente();
+    this.eliminarCache();
     var sesion = this.sesion;
     this.buscarDetalleInicio();
     window.addEventListener("unload", function (e) {
@@ -35,14 +39,6 @@ export class CotizacionInicioComponent implements OnInit {
 
   }
 
-  public verificarCotizacionExistente() {
-    if (this.kcotizacion.verificarKeyCotizacion()) {
-      this.cotizacion = this.kcotizacion.obtenerKeyCotizacion();
-      this.buscarDetalleInicio();
-    } else {
-      this.kcotizacion.regresarObtenerCotizacion();
-    }
-  }
 
   public buscarDetalleInicio() {
     this.spinner.show();
@@ -59,29 +55,11 @@ export class CotizacionInicioComponent implements OnInit {
     );
   }
 
-  public prueba() {
-    var Usuario = {
-      "Identificador": 1,
-      "IdUsuario": 0,
-      "Usuario": "DIANA NEGRETE",
-      "Email": "dnegrete@segurosequinoccial.com",
-      "Contrasena": "1720622560",
-      "Estado": 1,
-      "rol": { "IdRol": 3 },
-      "Foto": "assets/images/usuarios/PRISCILACARPIO.jpg",
-      "broker": { "IdBroker": 1 },
-      "IdPadre": 0,
-      "Ciudad": "QUITO"
-    };
-
-    this.conexion.post("Gestion/SGesTransacciones.svc/usuario/gestion", Usuario, this.usuario.Uid).subscribe(
-      (res: any) => {
-        console.log(res);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  public eliminarCache() {
+    this.kcotizacion.eliminarKeyCotizacion();
+    this.kramos.eliminarKeyRamos();
+    this.kcontenido.eliminarKeyContenido();
+    this.kfinalizacion.eliminarKeyFinalizacion();
   }
 
 }

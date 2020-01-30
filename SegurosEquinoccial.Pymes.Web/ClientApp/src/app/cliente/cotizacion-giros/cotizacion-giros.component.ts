@@ -4,6 +4,8 @@ import { SesionService } from '../../servicios/sesion/sesion.service';
 import { VerificacionService } from '../../servicios/cotizacion/verificacion.service';
 import { CotizacionService } from '../../servicios/cotizacion/cotizacion.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { RamosService } from '../../servicios/cotizacion/ramos.service';
+import { FinalizacionService } from '../../servicios/cotizacion/finalizacion.service';
 
 @Component({
   selector: 'app-cotizacion-giros',
@@ -16,27 +18,17 @@ export class CotizacionGirosComponent implements OnInit {
   public cotizacion: any = {};
   public lstGirosExcluidos: string = "";
   constructor(private conexion: ApiService, private sesion: SesionService, private kcotizacion: VerificacionService,
-    private kcontenido: CotizacionService, private spinner: NgxSpinnerService) { }
+    private kcontenido: CotizacionService, private spinner: NgxSpinnerService, private kramos: RamosService, private kfinalizacion: FinalizacionService) { }
 
   ngOnInit() {
     this.sesion.verificarCredencialesRutas();
     this.usuario = this.sesion.obtenerDatos();
-    
-    //this.verificarCotizacionExistente();
+    this.eliminarCache();
     this.buscarGirosExcluidos();
     var sesion = this.sesion;
     window.addEventListener("unload", function (e) {
       sesion.cerrarSesion();
     });
-  }
-
-  public verificarCotizacionExistente() {
-    if (this.kcotizacion.verificarKeyCotizacion()) {
-      this.cotizacion = this.kcotizacion.obtenerKeyCotizacion();
-      this.buscarGirosExcluidos();
-    } else {
-      this.kcotizacion.regresarObtenerCotizacion();
-    }
   }
 
   public buscarGirosExcluidos() {
@@ -52,6 +44,13 @@ export class CotizacionGirosComponent implements OnInit {
         this.conexion.error(err);
       }
     );
+  }
+
+  public eliminarCache() {
+    this.kcotizacion.eliminarKeyCotizacion();
+    this.kramos.eliminarKeyRamos();
+    this.kcontenido.eliminarKeyContenido();
+    this.kfinalizacion.eliminarKeyFinalizacion();
   }
 
 }

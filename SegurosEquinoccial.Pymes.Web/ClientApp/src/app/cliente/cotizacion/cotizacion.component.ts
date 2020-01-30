@@ -456,6 +456,12 @@ export class CotizacionComponent implements OnInit {
 
   public lstAgente = [];
   public dataAgente: any;
+  public numeroPolizasEmitidas = 0;
+
+  public fechaEmisionRetroactiva;
+  public fechaEmisionVigencia;
+  public fechaEmisionVigenciaSeleccionada = new Date();
+  public fechaEmisionVencimiento;
 
   constructor(private router: Router, private valDiseno: VistaPipe, private valMapa: MapaPipe, private valVehiculos: VehiculosPipe, private globales: GlobalesPipe, private varGlobales: VariablesGlobales, private sesion: SesionService,
     private conexion: ApiService, private general: CotizacionRamoGeneral, private resolver: ComponentFactoryResolver, private spinner: NgxSpinnerService,
@@ -466,6 +472,14 @@ export class CotizacionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.gestionInicioComponente();
+  }
+
+  public gestionFechasEmision() {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
+  }
+
+  public gestionInicioComponente() {
     this.gestioPanelGlobal('Empresa');
     this.valDiseno.gestionPanelRamos('incendio');
     this.sesion.verificarCredencialesRutas();
@@ -483,6 +497,12 @@ export class CotizacionComponent implements OnInit {
     } else {
       this.lstProvincias = ["Azuay", "Bolivar", "Cañar", "Carchi", "Chimborazo", "El Oro", "Esmeraldas", "Guayas", "Imbabura", "Loja", "Los Ríos", "Manabí", "Morona Santiago", "Napo", "Orellana", "Pastaza", "Pichincha", "Sucumbios", "Tungurahua", "Zamora Chinchipe", "Cotopaxi", "Santa Elena", "Santo Domingo de los Tsáchilas"];
     }
+
+    var fecha1 = moment();
+    var fecha2 = moment(fecha1).subtract(29, "days");
+
+    this.fechaEmisionVigencia = new Date(fecha1);
+    this.fechaEmisionRetroactiva = new Date(fecha2);
 
     var sesion = this.sesion;
     window.addEventListener("unload", function (e) {
@@ -738,6 +758,25 @@ export class CotizacionComponent implements OnInit {
 
           this.sucursal_ = JSON.parse(res.Corredor);
 
+          if (this.tipoPago == 1) {
+            this.conductoEmision = 185;
+            this.tppagoEmision = 94;
+          } if (this.tipoPago == 2) {
+            this.conductoEmision = 185;
+            this.tppagoEmision = 94;
+          } else if (this.tipoPago == 3) {
+            this.conductoEmision = 1;
+            this.tppagoEmision = 1;
+          } else if (this.tipoPago == 4) {
+            this.conductoEmision = 0;
+            this.tppagoEmision = 0;
+          }
+
+          this.numeroPolizasEmitidas = this.verificarAlmenosUnaPolizaEmitida();
+
+          if(res.CotizacionResultado.FechaEmision != ""){
+            this.fechaEmisionVigenciaSeleccionada = new Date(res.CotizacionResultado.FechaEmision);
+          }
           console.log(res);
         },
         err => {
@@ -998,43 +1037,6 @@ export class CotizacionComponent implements OnInit {
   // FIN GESTION VEHICULOS
 
   //GUARDAR COTIZACION
-
-  public enviarLinkPagoCotizacion(identificador) {
-    this.spinner.show();
-    var contenido = {
-      "Identificador": 3,
-      "IdCotizacion": this.codigoCotizacion.idCotizacion,
-      "PrimaNetaIva12": 0,
-      "PrimaNetaIva0": 0,
-      "PrimaNetaTotal": 0,
-      "ImpuestoSBS": 0,
-      "ImpuestoCampesino": 0,
-      "DerechosEmision": 0,
-      "Iva": 0,
-      "PrimaTotal": 0,
-      "Broker": { "IdBroker": 0 },
-      "Codigo": "",
-      "Estado": 3,
-      "IdUsuario": 0,
-      "Empresa": { "IdEmpresa": 0 },
-      "Corredor": ""
-    };
-    this.conexion.post("Broker/SBroker.svc/cotizacion/guardar/registro", contenido, this.usuario.Uid).subscribe(
-      (res: any) => {
-        this.spinner.hide();
-        if (res.IdCotizacion != 0) {
-          this.estadoCotizacion = 3;
-          this.enviarDatosPago(identificador);
-        }
-      },
-      err => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error el actulizar estado de la cotización<br>para el envio del link de pagos", "error", "#E74C3C");
-        console.log(err);
-        this.conexion.error(err);
-      }
-    );
-  }
 
   public verificarEstadoPagoCotizacion() {
     this.spinner.show();
@@ -1533,7 +1535,8 @@ export class CotizacionComponent implements OnInit {
       IdPvResponsabilidadCivil: "",
       IdPvTransImportaciones: "",
       IdPvTransInterno: "",
-      IdPvVehiculos: ""
+      IdPvVehiculos: "",
+      FechaEmision: ""
     }
 
     this.spinner.show();
@@ -1591,18 +1594,35 @@ export class CotizacionComponent implements OnInit {
     this.spinner.show();
     this.gestionCotizacion.guardarCotizacionCompromiso(xml).then(res => {
       this.spinner.hide();
-      console.log(res);
+
       this.identificadorGuardado = 1;
       this.kcontenido.registrarKeyContenido({ IdDireccion: IdDireccion, IdVehiculos: IdVehiculos, IdContenido: IdContenido, IdCotizacion: this.codigoCotizacion.idCotizacion });
       var router: any = this.router;
 
-      if (Seleccion.estado == 1) {
+      if (Seleccion.Identificador == 1) {
         this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-        if (Seleccion.tipo == 2) {
-          this.enviarLinkPagoCotizacion(1);
+      } else if (Seleccion.Identificador == 2) {
+        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
+        this.obtenerCodigosAsegurados(Seleccion.Ramo);
+      } else if (Seleccion.Identificador == 3) {
+        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
+        if (this.tipoPago == 1) {
+          this.conductoEmision = 185;
+          this.tppagoEmision = 94;
+          this.obtenerPagoTarjeta();
+        } else if (this.tipoPago == 2) {
+          this.conductoEmision = 185;
+          this.tppagoEmision = 94;
+          this.obtenerPagoTarjeta();
+        } else if (this.tipoPago == 3) {
+          this.conductoEmision = 1;
+          this.tppagoEmision = 1;
+          this.generarPagoContado(3);
+        } else if (this.tipoPago == 4) {
+          /*this.conductoEmision = 0;
+          this.tppagoEmision = 0;
+          this.generarPagoContado(4);*/
         }
-      } else if (Seleccion.estado == 2) {
-        this.obtenerCodigosAsegurados(Seleccion.ramo);
       } else {
         Swal.fire({
           title: 'Cotización',
@@ -1623,13 +1643,30 @@ export class CotizacionComponent implements OnInit {
       this.kcontenido.registrarKeyContenido({ IdDireccion: IdDireccion, IdVehiculos: IdVehiculos, IdContenido: IdContenido, IdCotizacion: this.codigoCotizacion.idCotizacion });
       var router: any = this.router;
 
-      if (Seleccion.estado == 1) {
+      if (Seleccion.Identificador == 1) {
         this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-        if (Seleccion.tipo == 2) {
-          this.enviarLinkPagoCotizacion(1);
+      } else if (Seleccion.Identificador == 2) {
+        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
+        this.obtenerCodigosAsegurados(Seleccion.Ramo);
+      } else if (Seleccion.Identificador == 3) {
+        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
+        if (this.tipoPago == 1) {
+          this.conductoEmision = 185;
+          this.tppagoEmision = 94;
+          this.obtenerPagoTarjeta();
+        } else if (this.tipoPago == 2) {
+          this.conductoEmision = 185;
+          this.tppagoEmision = 94;
+          this.obtenerPagoTarjeta();
+        } else if (this.tipoPago == 3) {
+          this.conductoEmision = 1;
+          this.tppagoEmision = 1;
+          this.generarPagoContado(3);
+        } else if (this.tipoPago == 4) {
+          /*this.conductoEmision = 0;
+          this.tppagoEmision = 0;
+          this.generarPagoContado(4);*/
         }
-      } else if (Seleccion.estado == 2) {
-        this.obtenerCodigosAsegurados(Seleccion.ramo);
       } else {
         Swal.fire({
           title: 'Cotización',
@@ -1652,10 +1689,8 @@ export class CotizacionComponent implements OnInit {
 
   public emitirPoliza(Ramo) {
     var datos = {
-      estado: 2,
-      tipo: 0,
-      forma: 0,
-      ramo: Ramo
+      Identificador: 2,
+      Ramo: Ramo
     }
     this.actualizarEmpresa(datos);
   }
@@ -1664,25 +1699,23 @@ export class CotizacionComponent implements OnInit {
 
     this.bloqueoEmision = true;
 
-    if (this.FormaPago.Tipo == "TARJETA CRÉDITO / DÉBITO") {
-
-      var tramaPago = JSON.parse(this.FormaPago.Trama);
-
-      if (this.FormaPago.Plataforma == "DATAFAST") {
-        this.binEmision = tramaPago.card.bin;
-        this.vencimientoEmision = tramaPago.card.expiryYear + tramaPago.card.expiryMonth;
-      } else if (this.FormaPago.Plataforma == "PAYPHONE") {
-        this.binEmision = tramaPago.bin;
-        this.vencimientoEmision = "202212";
-      }
-
+    if (this.tipoPago == 1) {
       this.conductoEmision = 185;
       this.tppagoEmision = 94;
-
-    } else if (this.FormaPago.Tipo == "CONTADO") {
+    } if (this.tipoPago == 2) {
+      this.conductoEmision = 185;
+      this.tppagoEmision = 94;
+    } else if (this.tipoPago == 3) {
       this.conductoEmision = 1;
       this.tppagoEmision = 1;
+    } else if (this.tipoPago == 4) {
+      this.conductoEmision = 0;
+      this.tppagoEmision = 0;
     }
+
+    var tarjeta = this.globales.obtenerDatosTarjeta(this.FormaPago.Plataforma, this.FormaPago.Trama);
+    this.binEmision = tarjeta.bin;
+    this.vencimientoEmision = tarjeta.vencimiento;
 
     var DatosEmpresa = {
       DocumentoCliente: this.empresa.Ruc,
@@ -1853,11 +1886,13 @@ export class CotizacionComponent implements OnInit {
 
       var cotizacion = this.general.calcularCotizacionTotal(this.listaDerechosEmision, this.listaCalculablesCotizacion, lstRamos, true, [], "");
 
+      this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
+
       var datos = {
         certificado: Certificado,
         ramo: 34,
-        fechaDesde: this.globales.obtenerFechaEmision("/"),
-        fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+        fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+        fechaHasta: this.fechaEmisionVencimiento,
         sumaAsegurada: this.generador.obtenerSumaAseguradaItems(`<items>` + primaMultiriesgo.ubicacion1 + primaMultiriesgo.ubicacion2 + primaMultiriesgo.ubicacion3 + primaMultiriesgo.ubicacion4 + primaMultiriesgo.ubicacion5 + `</items>`),
         primaNetaTotal: cotizacion.primaNetaTotal,
         impuestoSBS: cotizacion.impuestoSBS,
@@ -1899,7 +1934,7 @@ export class CotizacionComponent implements OnInit {
 
       var Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: cotizacion.primaTotal, Transportes: this.usuario.broker.Transporte
+        , Total: cotizacion.primaTotal, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(XML);
 
@@ -1932,7 +1967,7 @@ export class CotizacionComponent implements OnInit {
 
       var Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: equipoMaquinaria.validacion, Transportes: this.usuario.broker.Transporte
+        , Total: equipoMaquinaria.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(equipoMaquinaria.xml);
       this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, equipoMaquinaria.xml, Certificado, Cotizacion, this.lstDirecciones, "EM", this.empresa.Riesgo);
@@ -1964,7 +1999,7 @@ export class CotizacionComponent implements OnInit {
 
       var Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: responsabilidadCivil.validacion, Transportes: this.usuario.broker.Transporte
+        , Total: responsabilidadCivil.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(responsabilidadCivil.xml);
       this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, responsabilidadCivil.xml, Certificado, Cotizacion, this.lstDirecciones, "RC", this.empresa.Riesgo);
@@ -1994,7 +2029,7 @@ export class CotizacionComponent implements OnInit {
 
       var Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: fidelidad.validacion, Transportes: this.usuario.broker.Transporte
+        , Total: fidelidad.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(fidelidad.xml);
       this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, fidelidad.xml, Certificado, Cotizacion, this.lstDirecciones, "FI", this.empresa.Riesgo);
@@ -2042,7 +2077,7 @@ export class CotizacionComponent implements OnInit {
 
       var Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: accidentesPersonales.validacion, GrupoDirectivo: totalDirectivo, GrupoAdministrativo: totalAdministrativo, GrupoOperativo: totalOperativo, Transportes: this.usuario.broker.Transporte
+        , Total: accidentesPersonales.validacion, GrupoDirectivo: totalDirectivo, GrupoAdministrativo: totalAdministrativo, GrupoOperativo: totalOperativo, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
 
       console.log(accidentesPersonales.xml);
@@ -2085,7 +2120,7 @@ export class CotizacionComponent implements OnInit {
 
       var Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: transporteInterno.validacion, Transportes: this.usuario.broker.Transporte
+        , Total: transporteInterno.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(transporteInterno.xml);
 
@@ -2128,7 +2163,7 @@ export class CotizacionComponent implements OnInit {
 
       var Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: transporteImportaciones.validacion, Transportes: this.usuario.broker.Transporte
+        , Total: transporteImportaciones.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
 
       console.log(transporteImportaciones.xml);
@@ -2144,7 +2179,7 @@ export class CotizacionComponent implements OnInit {
 
     this.tramaVehiculo = [];
     var accesorios = 0;
-
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var Cotizacion: any;
 
     for (let i = 0; i < 1; i++) {
@@ -2160,7 +2195,7 @@ export class CotizacionComponent implements OnInit {
       var codigos = this.listaDetallesVehiculos[i].cobertura;
       Cotizacion = {
         IdContenido: this.contenido.IdContenido, IdCotizacion: this.contenido.IdCotizacion, IdDireccion: this.contenido.IdDireccion, IdVehiculos: this.contenido.IdVehiculos, IdEmpresa: this.codigoCotizacion.idEmpresa, IdCotizacionResultado: this.fmrCotizacionResultado.IdCotizacionResultado
-        , Total: cotizacion.primaTotal, Transportes: this.usuario.broker.Transporte
+        , Total: cotizacion.primaTotal, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       };
 
 
@@ -2178,8 +2213,8 @@ export class CotizacionComponent implements OnInit {
           "modelo": this.listaDetallesVehiculos[i].cod_modelo,
           "cod_concesionario": "0",
           "suma_aseg": this.listaDetallesVehiculos[i].valorCasco,
-          "inicio_vigencia": this.globales.obtenerFechaEmision("/"),
-          "fin_vigencia": this.globales.obtenerFechaAnioEmision("/"),
+          "inicio_vigencia": moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+          "fin_vigencia": this.fechaEmisionVencimiento,
           "status": "200",
           "ciudad": "QUITO",
           "companyname": "SEGUROS EQUINOCCIAL",
@@ -2285,8 +2320,8 @@ export class CotizacionComponent implements OnInit {
           "modelo": this.listaDetallesVehiculos[i].cod_modelo,
           "cod_concesionario": "0",
           "suma_aseg": this.listaDetallesVehiculos[i].valorCasco,
-          "inicio_vigencia": this.globales.obtenerFechaEmision("/"),
-          "fin_vigencia": this.globales.obtenerFechaAnioEmision("/"),
+          "inicio_vigencia": moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+          "fin_vigencia": this.fechaEmisionVencimiento,
           "status": "200",
           "ciudad": "QUITO",
           "companyname": "SEGUROS EQUINOCCIAL",
@@ -2629,9 +2664,11 @@ export class CotizacionComponent implements OnInit {
   }
 
   public generarItems(listaRamo, ubicacion, direccion) {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
+
     var datos = {
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
@@ -2645,9 +2682,10 @@ export class CotizacionComponent implements OnInit {
   }
 
   public generarItemsRespCivil(listaRamo, ubicacion, direccion) {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
@@ -2660,9 +2698,10 @@ export class CotizacionComponent implements OnInit {
   }
 
   public generarItemTrasportesImportacionesPlano(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
@@ -2676,9 +2715,10 @@ export class CotizacionComponent implements OnInit {
   }
 
   public generarItemsTransporte(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
@@ -2692,9 +2732,10 @@ export class CotizacionComponent implements OnInit {
   }
 
   public generarItemsTransportePlano(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
@@ -2708,9 +2749,10 @@ export class CotizacionComponent implements OnInit {
   }
 
   public generarItemTrasportesImportaciones(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
@@ -2724,9 +2766,10 @@ export class CotizacionComponent implements OnInit {
   }
 
   public generarItemAccidentesPersonales(listaRamo, ubicacion, direccion) {
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
@@ -2931,11 +2974,13 @@ export class CotizacionComponent implements OnInit {
       cotizacion = this.general.calcularCotizacionTotal(this.listaDerechosEmision, this.listaCalculablesCotizacion, [], false, listaRamo, nombreRamo);
     }
 
+    this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
+
     var datos = {
       certificado: certificado,
       ramo: ramo,
-      fechaDesde: this.globales.obtenerFechaEmision("/"),
-      fechaHasta: this.globales.obtenerFechaAnioEmision("/"),
+      fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
+      fechaHasta: this.fechaEmisionVencimiento,
       sumaAsegurada: this.generador.obtenerSumaAseguradaItems(`<items>` + prima.ubicacion1 + prima.ubicacion2 + prima.ubicacion3 + prima.ubicacion4 + prima.ubicacion5 + `</items>`),
       primaNetaTotal: cotizacion.primaNetaTotal,
       impuestoSBS: cotizacion.impuestoSBS,
@@ -3029,7 +3074,7 @@ export class CotizacionComponent implements OnInit {
               this.empresa = res[0].Empresa;
             }
           }
-          console.log(this.empresa);
+
           this.activacionCamposContratante = this.empresa.Ruc.length;
           this.activacionCamposPagador = this.empresa.Ruc.length;
 
@@ -3344,7 +3389,7 @@ export class CotizacionComponent implements OnInit {
 
           this.calcularCotizacionTotalGlobal();
 
-        }, 3000);
+        }, 4000);
         if (this.validarPrimasMinimas() == true) {
           if (this.validarVehiculos() == true) {
             this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
@@ -3353,6 +3398,7 @@ export class CotizacionComponent implements OnInit {
       }
     } if (panel == 'Pago') {
       this.verificarRamos();
+
       setTimeout(() => {
 
         this.cotizacionMultiriesgo = this.general.calcularCotizacionTotal(this.listaDerechosEmision, this.listaCalculablesCotizacion, this.lstRamos, true, [], "");
@@ -3369,21 +3415,10 @@ export class CotizacionComponent implements OnInit {
       this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
     } if (panel == 'Emision') {
 
+      setTimeout(() => {
+        this.verificarFormularioViculacion(panel);
+      }, 3000);
 
-
-      Swal.fire({
-        html: "<div style='text-align: center; font-size: 18px;'><b>NOTA ACLARATORIA</b><br></div><div style='font-size: 14px; text-align: justify'; padding: 50px; color: black><br>No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas</div>",
-        showCancelButton: false,
-        confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
-        cancelButtonColor: '#d33',
-        cancelButtonText: "Cancelar",
-        confirmButtonText: 'Aceptar'
-      }).then((result) => {
-        if (result.value) {
-          this.verificarRamos();
-          this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
-        }
-      })
 
     }
 
@@ -3562,6 +3597,7 @@ export class CotizacionComponent implements OnInit {
     }
   }
 
+  //------------ INICIO FORMAS PAGO ---------------
   public formaPagoSeleccionada(forma) {
     if (forma == 1) {
       $('#1').css({ "color": "rgb(" + this.usuario.broker.Color + ")", "border": "1.5px solid rgb(" + this.usuario.broker.Color + ")" });
@@ -3659,6 +3695,7 @@ export class CotizacionComponent implements OnInit {
         this.regenerarPagoTarjeta(forma);
       } else if (estado == 2) {
         this.valCotizador.notificacion("Transacción exitosa", "success", "#29A82C");
+        this.verificarPago();
       } else if (estado == 3) {
         this.valCotizador.notificacion("Transacción rechazada, enviando un nuevo link de pago", "success", "#29A82C");
         this.generarPagoTarjeta(forma, pago);
@@ -3733,6 +3770,10 @@ export class CotizacionComponent implements OnInit {
       (res: any) => {
         this.spinner.hide();
         this.FormaPago.IdFormaPago = res.IdFormaPago;
+        if (this.tipoPago == 3 || this.tipoPago == 4) {
+          this.actualizarEstadoCotizacionFormaPago();
+        }
+
       },
       err => {
         this.spinner.hide();
@@ -3759,21 +3800,18 @@ export class CotizacionComponent implements OnInit {
   }
 
   public verificarPago() {
-    if (this.tipoPago == 1) {
-      this.obtenerPagoTarjeta();
-    } else if (this.tipoPago == 2) {
-      this.obtenerPagoTarjeta();
-    } else if (this.tipoPago == 3) {
-      this.actualizarEstadoCotizacionFormaPago();
-    } else if (this.tipoPago == 4) {
-      this.actualizarEstadoCotizacionFormaPago();
+    var datos = {
+      Identificador: 3,
+      Ramo: ""
     }
+    this.actualizarEmpresa(datos);
   }
 
   public obtenerPagoTarjeta() {
     this.spinner.show();
     this.generico.obtenerPagoTarjeta(this.FormaPago.IdPago).then(pago => {
       this.spinner.hide();
+      this.FormaPago.Estado = pago.Estado;
 
       if (pago.Estado == 0) {
         this.valCotizador.mostrarAlertaDinamica("El link de pagos aún no se ha enviado al cliente.", "info", this.usuario.broker.Color);
@@ -3794,26 +3832,12 @@ export class CotizacionComponent implements OnInit {
         this.FormaPago.Referencia = pago.Referencia;
         this.FormaPago.Lote = pago.Lote;
         this.FormaPago.Voucher = pago.Voucher;
-        this.FormaPago.Diferidos = pago.NumeroDiferidos;
+        this.FormaPago.Diferidos = pago.Diferidos;
         this.FormaPago.Intereses = pago.Intereses;
-        this.FormaPago.Trama = pago.ResultadoTrama;
-        this.FormaPago.Fecha = pago.FechaTransaccion;
+        this.FormaPago.Trama = pago.Trama;
+        this.FormaPago.Fecha = pago.Fecha;
         this.binEmision = pago.Bin;
         this.vencimientoEmision = pago.Vencimiento;
-
-        if (this.tipoPago == 1) {
-          this.conductoEmision = 185;
-          this.tppagoEmision = 94;
-        } if (this.tipoPago == 2) {
-          this.conductoEmision = 185;
-          this.tppagoEmision = 94;
-        } else if (this.tipoPago == 3) {
-          this.conductoEmision = 1;
-          this.tppagoEmision = 1;
-        } else if (this.tipoPago == 4) {
-          this.conductoEmision = 0;
-          this.tppagoEmision = 0;
-        }
 
         this.actualizarFormaPago();
       }
@@ -3824,7 +3848,7 @@ export class CotizacionComponent implements OnInit {
   }
 
   public actualizarEstadoCotizacionFormaPago() {
-    
+
     this.spinner.show();
     var contenido = {
       "Identificador": 3,
@@ -3862,7 +3886,6 @@ export class CotizacionComponent implements OnInit {
           this.conductoEmision = 0;
           this.tppagoEmision = 0;
         }
-        this.verificarFormularioViculacion();
       },
       err => {
         this.spinner.hide();
@@ -3880,7 +3903,7 @@ export class CotizacionComponent implements OnInit {
       "IdFormaPago": this.FormaPago.IdFormaPago,
       "IdPago": 0,
       "Tipo": "",
-      "Estado": 0,
+      "Estado": this.FormaPago.Estado,
       "Adjunto": "",
       "Plataforma": this.FormaPago.Plataforma,
       "CodigoAutenticacion": this.FormaPago.CodigoAutenticacion,
@@ -3893,15 +3916,12 @@ export class CotizacionComponent implements OnInit {
       "Fecha": this.FormaPago.Fecha,
       "Cotizacion": { "IdCotizacion": this.codigoCotizacion.idCotizacion }
     };
-    
-    console.log(datos);
 
     this.conexion.post("Broker/SBroker.svc/cotizacion/forma/pago/gestion", datos, this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
         this.estadoCotizacion = 4;
         this.valCotizador.notificacion("Los datos del pago han sido<br>actualizados exitosamente.", "success", "#29A82C");
-        this.verificarFormularioViculacion();
       },
       err => {
         this.spinner.hide();
@@ -3912,7 +3932,98 @@ export class CotizacionComponent implements OnInit {
     );
   }
 
-  public verificarFormularioViculacion() {
+  public obtenerTipoPago(tipo) {
+
+    if (tipo == "TARJETA DE CRÉDITO") {
+      this.tipoPago = 1;
+      this.seleccionarFormaPago(1);
+    } else if (tipo == "TARJETA DE DÉBITO") {
+      this.tipoPago = 2;
+      this.seleccionarFormaPago(2);
+    } else if (tipo == "CONTADO") {
+      this.tipoPago = 3;
+      this.seleccionarFormaPago(3);
+    } else if (tipo == "DÉBITO BANCARIO") {
+      this.tipoPago = 4;
+      this.seleccionarFormaPago(4);
+    }
+
+  }
+
+  public cambiarFormaPago() {
+    this.spinner.show();
+    this.generico.verificarPagoTarjeta(this.FormaPago.IdPago).then(estado => {
+      this.spinner.hide();
+
+      if (estado == 2) {
+        this.valCotizador.notificacion("La cotización ya se encuentra pagada.", "success", "#29A82C");
+      } else {
+        this.spinner.show();
+        var datos = {
+          "Identificador": 7,
+          "IdFormaPago": this.FormaPago.IdFormaPago,
+          "IdPago": 0,
+          "Tipo": "",
+          "Estado": 0,
+          "Adjunto": "",
+          "Plataforma": "",
+          "CodigoAutenticacion": "",
+          "Referencia": "",
+          "Lote": "",
+          "Voucher": "",
+          "Diferidos": "",
+          "Intereses": "",
+          "Trama": "",
+          "Fecha": "",
+          "Cotizacion": { "IdCotizacion": this.codigoCotizacion.idCotizacion }
+        };
+
+        this.conexion.post("Broker/SBroker.svc/cotizacion/forma/pago/gestion", datos, this.usuario.Uid).subscribe(
+          (res: any) => {
+            this.spinner.hide();
+
+            this.estadoCotizacion = 3;
+            this.tipoPago = 0;
+            this.FormaPago = {
+              IdFormaPago: 0,
+              IdPago: 0,
+              Tipo: "",
+              TipoOtros: "",
+              Estado: 0,
+              Cotizacion: { IdCotizacion: 0 },
+              Adjunto: "",
+              AdjuntoTipo: "",
+              Plataforma: "",
+              CodigoAutenticacion: "",
+              Referencia: "",
+              Lote: "",
+              Voucher: "",
+              Diferidos: "",
+              Intereses: "",
+              Trama: "",
+              Fecha: ""
+            }
+          },
+          err => {
+            this.spinner.hide();
+            this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al actualizar los datos de la forma de pago.", "error", "#E74C3C");
+            console.log(err);
+            this.conexion.error(err);
+          }
+        );
+      }
+
+    }).catch(err => {
+      this.spinner.hide();
+    });
+  }
+
+
+  public verificarFormularioViculacion(panel) {
+
+    var formularioContratante = "false";
+    var formularioPagador = "false";
+    var mensaje = "<b>Pago</b><br><u>Descripción:</u> Pago Realizado Exitosamente<br><br>";
 
     var DatosEmpresa = {
       DocumentoCliente: this.empresa.Ruc,
@@ -3943,432 +4054,146 @@ export class CotizacionComponent implements OnInit {
       EnviarEmail: 1
     };
 
-    if (this.empresa.Ruc == this.pagadores.Cedula) {
-      this.spinner.show();
-      this.generico.verificarFormulario(DatosPagador).then(res => {
-        this.spinner.hide();
-        console.log(res);
-        if (res != 0) {
-          this.globales.mostarAlerta("Pago Realizado Correctamente<br>Formulario del asegurado y pagador gestionado exitosamente.", "success", "bottom");
-        } else {
-          this.globales.mostrarNotificacion("Error con la gestión del formulario del asegurado y pagador", "warning", "bottom");
-        }
+    if (this.numeroPolizasEmitidas == 0) {
+      if (this.empresa.Ruc == this.pagadores.Cedula) {
+        this.spinner.show();
+        this.generico.verificarFormulario(DatosPagador).then(res => {
+          this.spinner.hide();
 
-      }).catch(err => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
-      });
-    } else {
-      this.spinner.show();
-      this.generico.verificarFormulario(DatosEmpresa).then(res => {
-        this.spinner.hide();
+          if (res != 0) {
 
-        if (res != 0) {
+            if (res == "true") {
+              this.globales.mostrarNotificacion("Pago Realizado Correctamente. El formulario de vinculación del asegurado y pagador ya se encuentran firmados.", "success", "bottom");
 
-          this.globales.mostarAlerta("Pago Realizado Correctamente<brFormulario de la empresa gestionado exitosamente.", "success", "bottom");
-
-          this.spinner.show();
-          this.generico.verificarFormulario(DatosPagador).then(res => {
-            this.spinner.hide();
-
-            if (res != 0) {
-              this.globales.mostarAlerta("Pago Realizado Correctamente<brFormulario del pagador gestionado exitosamente.", "success", "bottom");
-            } else {
-              this.globales.mostrarNotificacion("Error con la gestión del formulario del pagador", "warning", "bottom");
-            }
-
-          }).catch(err => {
-            this.spinner.hide();
-            this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
-          });
-
-        } else {
-          this.globales.mostrarNotificacion("Error con la gestión del formulario de la empresa", "warning", "bottom");
-        }
-
-      }).catch(err => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Empresa", "error", "#E74C3C");
-      });
-    }
-  }
-
-  public obtenerTipoPago(tipo) {
-
-    if (tipo == "TARJETA DE CRÉDITO") {
-      this.tipoPago = 1;
-      this.seleccionarFormaPago(1);
-    } else if (tipo == "TARJETA DE DÉBITO") {
-      this.tipoPago = 2;
-      this.seleccionarFormaPago(2);
-    } else if (tipo == "CONTADO") {
-      this.tipoPago = 3;
-      this.seleccionarFormaPago(3);
-    } else if (tipo == "DÉBITO BANCARIO") {
-      this.tipoPago = 4;
-      this.seleccionarFormaPago(4);
-    }
-
-  }
-
-  //---------------------------
-  public seleccionarTipoPago() {
-    if (this.tipoPago == 1) {
-      this.FormaPago.Estado = 2;
-      var pago = {
-        estado: 1,
-        tipo: this.tipoPago,
-        forma: this.FormaPago.Estado
-      }
-      this.actualizarEmpresa(pago);
-    } else if (this.tipoPago == 2) {
-      this.FormaPago.Estado = 1;
-      var pago = {
-        estado: 1,
-        tipo: this.tipoPago,
-        forma: this.FormaPago.Estado
-      }
-      this.actualizarEmpresa(pago);
-    }
-  }
-
-  public enviarDatosPago(identificador) {
-    if (identificador == 1) {
-      this.valoresPagar = this.general.enviarValoresPagar(this.cotizacionTotal.primaTotal, this.listaCalculablesCotizacion);
-      var ramos = "";
-      for (let ramo_ of this.valDiseno.panelesValoresRamos) {
-        ramos += this.valDiseno.gestionPanelesValoresRamosSeleccionadosTexto(ramo_) + ", ";
-      }
-      var mensaje = this.email.generarEmailOtro(
-        this.pagadores.Nombre, this.usuario.broker.RazonSocial,
-        this.empresa.Ruc, this.empresa.RazonSocial, this.empresa.Telefono,
-        ramos, this.globales.formatearNumero(this.valoresPagar.total, 2), this.usuario.broker.Color, this.FormaPago.Tipo
-      );
-
-      //this.enviarCorreoElectronico(this.pagadores.Email, "EQUIPAYMENT COTIZACIÓN No. " + this.codigoCotizacion.codigoCotizacion, mensaje);
-      //this.enviarCorreoElectronico(this.usuario.Email, "EQUIPAYMENT COTIZACIÓN No. " + this.codigoCotizacion.codigoCotizacion, mensaje);
-
-      this.gestionFormaPago(0, 0, this.FormaPago.TipoOtros, 1, "", this.codigoCotizacion.idCotizacion);
-      this.FormaPago.Estado = 1;
-    } else if (identificador == 2) {
-      if (this.FormaPago.IdPago == 0) {
-
-        this.valoresPagar = this.general.enviarValoresPagar(this.cotizacionTotal.primaTotal, this.listaCalculablesCotizacion);
-
-        var Pago = {
-          Factura: {
-            Cliente: {
-              Identificacion: this.pagadores.Cedula,
-              PrimerNombre: this.pagadores.Nombre,
-              SegundoNombre: "",
-              Apellido: this.pagadores.PrimerApellido,
-              Email: this.pagadores.Email,
-              Telefono: this.pagadores.Telefono,
-              Aplicacion: { IdAplicacion: this.usuario.broker.Pago, Identificacion: 3 }
-            },
-            Numero: this.codigoCotizacion.idCotizacion + "",
-            Comercio: "PAGO PÓLIZA PYMES " + this.codigoCotizacion.idCotizacion,
-            Subtotal12: this.valoresPagar.subtotal.toFixed(2),
-            Subtotal0: 0,
-            Iva: this.valoresPagar.iva.toFixed(2),
-            Total: this.valoresPagar.total.toFixed(2),
-            UrlRetorno: "0"
-          }
-        };
-        console.log(Pago);
-        this.conexion.postPay("Gestion/SGesGestion.svc/pago/factura/ingresar/datos", Pago).subscribe(
-          (res: any) => {
-
-            var datosPago = res;
-
-            if (datosPago.IdPago == "0") {
-              this.valCotizador.mostrarAlertaDinamica(datosPago.Descripcion, "warning", this.usuario.broker.Color);
-            } else {
-              this.valCotizador.notificacion("El pago ha sido enviado<br>satisfactoriamente a la plataforma", "success", "#29A82C");
-              var url = datosPago.Url;
-
-              var ramos = "";
-              for (let ramo_ of this.valDiseno.panelesValoresRamos) {
-                ramos += this.valDiseno.gestionPanelesValoresRamosSeleccionadosTexto(ramo_) + ", ";
+              if (this.numeroPolizasEmitidas == 0) {
+                Swal.fire({
+                  html: "<div style='text-align: center; font-size: 18px;'><b>NOTA ACLARATORIA</b><br></div><div style='font-size: 14px; text-align: justify'; padding: 50px; color: black><br>No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas</div>",
+                  showCancelButton: false,
+                  confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
+                  cancelButtonColor: '#d33',
+                  cancelButtonText: "Cancelar",
+                  confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                  if (result.value) {
+                    this.verificarRamos();
+                    this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+                  }
+                });
+              } else {
+                this.verificarRamos();
+                this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
               }
-              var mensaje = this.email.generarEmail(
-                this.pagadores.Nombre + " " + this.pagadores.PrimerApellido + " " + this.pagadores.SegundoApellido, this.usuario.broker.RazonSocial,
-                this.empresa.Ruc, this.empresa.RazonSocial, this.empresa.Telefono,
-                ramos, this.globales.formatearNumero(this.valoresPagar.total, 2), this.usuario.broker.Color, url, this.usuario.broker.Foto
-              );
-              this.FormaPago.IdPago = parseInt(atob(datosPago.IdPago));
-              this.gestionFormaPago(0, parseInt(atob(datosPago.IdPago)), "TARJETA CRÉDITO / DÉBITO", 2, "", this.codigoCotizacion.idCotizacion);
 
-              this.enviarCorreoElectronico(Pago.Factura.Cliente.Email, "EQUIPAYMENT COTIZACIÓN No. " + this.codigoCotizacion.codigoCotizacion, mensaje);
-              this.enviarCorreoElectronico(this.usuario.Email, "EQUIPAYMENT COTIZACIÓN No. " + this.codigoCotizacion.codigoCotizacion, mensaje);
-
-              this.FormaPago.Estado = 2;
+            } else {
+              this.globales.mostarAlerta("", "Pago Realizado Correctamente<br>El formulario del asegurado y pagador no se encuentran firmados.<br><small>Se envió un correo electrónico para que el formulario de vinculación sea completado.</small>", "success");
             }
-          },
-          err => {
-            this.spinner.hide();
-            this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error de conexión con el servicio de pagos.<br>No se generó el link", "error", "#E74C3C");
-            console.log(err);
-            this.conexion.error(err);
+
+          } else {
+            this.globales.mostrarNotificacion("Error con la gestión del formulario del asegurado y pagador", "warning", "bottom");
           }
-        );
+
+        }).catch(err => {
+          this.spinner.hide();
+          this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+        });
       } else {
-        this.valCotizador.mostrarAlertaDinamica("El link de pago ya ha sido enviado al cliente", "info", this.usuario.broker.Color);
-      }
-    }
-  }
-
-  public gestionFormaPago(idFormaPago: number, idPago: number, tipo: string, estado: number, adjunto: string, idCotizacion: number) {
-    this.spinner.show();
-    var identificador = 0;
-    if (this.FormaPago.IdFormaPago == 0) {
-      identificador = 1;
-    } else {
-      identificador = 5;
-    }
-    var datos = {
-      "Identificador": identificador,
-      "IdFormaPago": this.FormaPago.IdFormaPago == 0 ? idFormaPago : this.FormaPago.IdFormaPago,
-      "IdPago": idPago,
-      "Tipo": tipo,
-      "Estado": estado,
-      "Adjunto": adjunto,
-      "Plataforma": "",
-      "CodigoAutenticacion": "",
-      "Referencia": "",
-      "Lote": "",
-      "Voucher": "",
-      "Diferidos": "",
-      "Intereses": "",
-      "Trama": "",
-      "Fecha": "",
-      "Cotizacion": { "IdCotizacion": idCotizacion }
-    };
-    this.conexion.post("Broker/SBroker.svc/cotizacion/forma/pago/gestion", datos, this.usuario.Uid).subscribe(
-      (res: any) => {
-        this.spinner.hide();
-        this.FormaPago.IdFormaPago = res.IdFormaPago;
-        console.log(res);
-      },
-      err => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al gestionar la forma de pago", "error", "#E74C3C");
-        console.log(err);
-        this.conexion.error(err);
-      }
-    );
-  }
-
-  public verificarEstadoPagoCotizacionEquiPayment() {
-    this.spinner.show();
-    this.conexion.getPay("Gestion/SGesGestion.svc/pago/pago/listar/" + this.FormaPago.IdPago).subscribe(
-      (res: any) => {
-        this.spinner.hide();
-        console.log(res);
-
-        if (res.Estado == 1) {
-          this.valCotizador.mostrarAlertaDinamica("El cliente aún no realiza el pago de la cotización realizada.", "info", this.usuario.broker.Color);
-        } else if (res.Estado == 3) {
-          this.valCotizador.mostrarAlertaDinamica("El pago realizado por el cliente ha sido rechazado.", "info", this.usuario.broker.Color);
-        } else if (res.Estado == 4) {
-          this.valCotizador.mostrarAlertaDinamica("El pago realizado por el cliente ha sido reversado.", "info", this.usuario.broker.Color);
-        } else if (res.Estado == 0) {
-          this.valCotizador.mostrarAlertaDinamica("El link de pagos aún no se ha enviado al pagador.", "info", this.usuario.broker.Color);
-        } else if (res.Estado == 2) {
-          this.FormaPago.Plataforma = res.Plataforma;
-          this.FormaPago.CodigoAutenticacion = res.CodigoAutenticacion;
-          this.FormaPago.Referencia = res.Referencia;
-          this.FormaPago.Lote = res.Lote;
-          this.FormaPago.Voucher = res.Voucher;
-          this.FormaPago.Diferidos = res.NumeroDiferidos;
-          this.FormaPago.Intereses = res.Intereses;
-          this.FormaPago.Trama = res.ResultadoTrama;
-          this.FormaPago.Fecha = this.globales.obtenerFechaValor(res.FechaTransaccion, "-");
-          this.FormaPago.Tipo = "TARJETA CRÉDITO / DÉBITO";
-
-          if (this.FormaPago.Tipo == "TARJETA CRÉDITO / DÉBITO") {
-
-            var tramaPago = JSON.parse(this.FormaPago.Trama);
-
-            if (this.FormaPago.Plataforma == "DATAFAST") {
-              this.binEmision = tramaPago.card.bin;
-              this.vencimientoEmision = tramaPago.card.expiryYear + tramaPago.card.expiryMonth;
-            } else if (this.FormaPago.Plataforma == "PAYPHONE") {
-              this.binEmision = tramaPago.bin;
-              this.vencimientoEmision = "202212";
+        this.spinner.show();
+        this.generico.verificarFormulario(DatosEmpresa).then(res => {
+          this.spinner.hide();
+         
+          if (res != 0) {
+            formularioContratante = res;
+            if (res == "false") {
+              mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+            } else {
+              mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de vinculación ya se encuentra firmado.<br><br>";
             }
 
-            this.conductoEmision = 185;
-            this.tppagoEmision = 94;
-
-          } else if (this.FormaPago.Tipo == "CONTADO") {
-            this.conductoEmision = 1;
-            this.tppagoEmision = 1;
-          }
-
-          this.actualizarEstadoPago(res.Plataforma, res.CodigoAutenticacion, res.Referencia, res.Lote, res.Voucher, res.NumeroDiferidos, res.Intereses, res.ResultadoTrama, this.globales.obtenerFechaValor(res.FechaTransaccion, "-"), "TARJETA CRÉDITO / DÉBITO");
-        }
-      },
-      err => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error de conexión con el servicio de pagos.<br>Error al verificar el estado de la cotización", "error", "#E74C3C");
-        console.log(err);
-      }
-    );
-  }
-
-  public gestionFormaPagoEquipayment(plataforma, codigoAutenticacion, referencia, lote, voucher, diferidos, intereses, trama, fecha) {
-    this.spinner.show();
-    var datos = {
-      "Identificador": 6,
-      "IdFormaPago": this.FormaPago.IdFormaPago,
-      "IdPago": 0,
-      "Tipo": "",
-      "Estado": 0,
-      "Adjunto": "",
-      "Plataforma": plataforma,
-      "CodigoAutenticacion": codigoAutenticacion,
-      "Referencia": referencia,
-      "Lote": lote,
-      "Voucher": voucher,
-      "Diferidos": diferidos,
-      "Intereses": intereses,
-      "Trama": trama,
-      "Fecha": fecha,
-      "Cotizacion": { "IdCotizacion": this.codigoCotizacion.idCotizacion }
-    };
-    this.conexion.post("Broker/SBroker.svc/cotizacion/forma/pago/gestion", datos, this.usuario.Uid).subscribe(
-      (res: any) => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Los datos del pago han sido<br>actualizados exitosamente.", "success", "#29A82C");
-      },
-      err => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al actualizar los datos de la forma de pago.", "error", "#E74C3C");
-        console.log(err);
-        this.conexion.error(err);
-      }
-    );
-  }
-
-  public actualizarEstadoPago(plataforma, codigoAutenticacion, referencia, lote, voucher, diferidos, intereses, trama, fecha, tipo) {
-    this.spinner.show();
-    var contenido = {
-      "Identificador": 3,
-      "IdCotizacion": this.codigoCotizacion.idCotizacion,
-      "PrimaNetaIva12": 0,
-      "PrimaNetaIva0": 0,
-      "PrimaNetaTotal": 0,
-      "ImpuestoSBS": 0,
-      "ImpuestoCampesino": 0,
-      "DerechosEmision": 0,
-      "Iva": 0,
-      "PrimaTotal": 0,
-      "Broker": { "IdBroker": 0 },
-      "Codigo": "",
-      "Estado": 4,
-      "IdUsuario": 0,
-      "Empresa": { "IdEmpresa": 0 },
-      "Corredor": ""
-    };
-    this.conexion.post("Broker/SBroker.svc/cotizacion/guardar/registro", contenido, this.usuario.Uid).subscribe(
-      (res: any) => {
-        this.spinner.hide();
-        this.FormaPago.Tipo = tipo;
-        if (res.IdCotizacion != 0) {
-          this.estadoCotizacion = 4;
-
-          this.gestionFormaPagoEquipayment(plataforma, codigoAutenticacion, referencia, lote, voucher, diferidos, intereses, trama, fecha);
-
-          var DatosEmpresa = {
-            DocumentoCliente: this.empresa.Ruc,
-            EmailAgente: this.usuario.Email,
-            CodigoAgente: this.sucursal_.Agente,
-            CodigoTipoAgente: this.sucursal_.TipoAgente,
-            EmailCliente: this.empresa.Email,
-            NombreCliente: this.empresa.RazonSocial,
-            EnviarEmail: 1
-          };
-
-          /*var DatosContratante = {
-            DocumentoCliente: this.contratante.Cedula,
-            EmailAgente: this.usuario.Email,
-            CodigoAgente: this.sucursal_.Agente,
-            CodigoTipoAgente: this.sucursal_.TipoAgente,
-            EmailCliente: this.contratante.Email,
-            NombreCliente: this.contratante.Nombre,
-          };*/
-
-          var DatosPagador = {
-            DocumentoCliente: this.pagadores.Cedula,
-            EmailAgente: this.usuario.Email,
-            CodigoAgente: this.sucursal_.Agente,
-            CodigoTipoAgente: this.sucursal_.TipoAgente,
-            EmailCliente: this.pagadores.Email,
-            NombreCliente: this.pagadores.Nombre,
-            EnviarEmail: 1
-          };
-
-          if (this.empresa.Ruc == this.pagadores.Cedula) {
             this.spinner.show();
             this.generico.verificarFormulario(DatosPagador).then(res => {
               this.spinner.hide();
 
               if (res != 0) {
-                this.globales.mostrarNotificacion("Formulario del asegurado y pagador gestionado exitosamente.", "success", "bottom");
+                formularioPagador = res;
+                
+                if (res == "false") {
+                  mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+                } else {
+                  mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de vinculación ya se encuentra firmado.<br><br>";
+                }
+
+                this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
+                
+                if (formularioContratante == "true" && formularioPagador == "true") {
+                  if (this.numeroPolizasEmitidas == 0) {
+                    Swal.fire({
+                      html: "<div style='text-align: center; font-size: 18px;'><b>NOTA ACLARATORIA</b><br></div><div style='font-size: 14px; text-align: justify'; padding: 50px; color: black><br>No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas</div>",
+                      showCancelButton: false,
+                      confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
+                      cancelButtonColor: '#d33',
+                      cancelButtonText: "Cancelar",
+                      confirmButtonText: 'Aceptar'
+                    }).then((result) => {
+                      if (result.value) {
+                        this.verificarRamos();
+                        this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+                      }
+                    });
+                  } else {
+                    this.verificarRamos();
+                    this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+                  }
+                                   
+                }
+
               } else {
-                this.globales.mostrarNotificacion("Error con la gestión del formulario del asegurado y pagador", "warning", "bottom");
+                this.globales.mostrarNotificacion("Error con la gestión del formulario del pagador", "warning", "bottom");
               }
 
             }).catch(err => {
               this.spinner.hide();
               this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
             });
+
           } else {
-            this.spinner.show();
-            this.generico.verificarFormulario(DatosEmpresa).then(res => {
-              this.spinner.hide();
-
-              if (res != 0) {
-
-                this.globales.mostrarNotificacion("Formulario de la empresa gestionado exitosamente.", "success", "bottom");
-
-                this.spinner.show();
-                this.generico.verificarFormulario(DatosPagador).then(res => {
-                  this.spinner.hide();
-
-                  if (res != 0) {
-                    this.globales.mostrarNotificacion("Formulario del pagador gestionado exitosamente.", "success", "bottom");
-                  } else {
-                    this.globales.mostrarNotificacion("Error con la gestión del formulario del pagador", "warning", "bottom");
-                  }
-
-                }).catch(err => {
-                  this.spinner.hide();
-                  this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
-                });
-
-              } else {
-                this.globales.mostrarNotificacion("Error con la gestión del formulario de la empresa", "warning", "bottom");
-              }
-
-            }).catch(err => {
-              this.spinner.hide();
-              this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Empresa", "error", "#E74C3C");
-            });
+            this.globales.mostrarNotificacion("Error con la gestión del formulario de la empresa", "warning", "bottom");
           }
-        }
 
-      },
-      err => {
-        this.spinner.hide();
-        this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al actualizar el estado del pago en la cotización", "error", "#E74C3C");
-        console.log(err);
-        this.conexion.error(err);
+        }).catch(err => {
+          this.spinner.hide();
+          this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Empresa", "error", "#E74C3C");
+        });
       }
-    );
+    } else {
+      this.verificarRamos();
+      this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+    }
+
   }
 
+  public verificarAlmenosUnaPolizaEmitida() {
+    var polizas = [
+      this.fmrCotizacionResultado.EstadoAccidentesPersonales,
+      this.fmrCotizacionResultado.EstadoEquipoMaquinaria,
+      this.fmrCotizacionResultado.EstadoFidelidad,
+      this.fmrCotizacionResultado.EstadoMultiriesgo,
+      this.fmrCotizacionResultado.EstadoResponsabilidadCivil,
+      this.fmrCotizacionResultado.EstadoTransImportaciones,
+      this.fmrCotizacionResultado.EstadoTransInterno,
+      this.fmrCotizacionResultado.EstadoVehiculos,
+    ];
+
+    var numero = 0;
+    for (let i = 0; i < polizas.length; i++) {
+      if (polizas[i] == 1) {
+        numero++
+      }
+
+    }
+    return numero;
+  }
+
+  //------------ FIN FORMAS PAGO ---------------
 
   //GESTION MAPAS
   public inicializarMapa() {

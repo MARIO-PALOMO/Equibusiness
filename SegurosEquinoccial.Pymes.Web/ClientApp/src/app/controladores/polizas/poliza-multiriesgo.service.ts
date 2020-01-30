@@ -329,7 +329,7 @@ export class PolizaMultiriesgoService {
 
   public insertarPolizas(Cotizacion, IdPV, Certificado, Ramo) {
     this.spinner.show();
-    this.generico.insertarPolizas(Cotizacion.IdCotizacionResultado, Cotizacion.IdCotizacion, JSON.stringify({ polIdPv: IdPV, polCertificado: Certificado, polTotal: Cotizacion.Total }), Ramo).then(res => {
+    this.generico.insertarPolizas(Cotizacion.IdCotizacionResultado, Cotizacion.IdCotizacion, JSON.stringify({ polIdPv: IdPV, polCertificado: Certificado, polTotal: Cotizacion.Total }), Ramo, Cotizacion.FechaEmision).then(res => {
       this.spinner.hide();
       console.log(res);
     }).catch(err => {

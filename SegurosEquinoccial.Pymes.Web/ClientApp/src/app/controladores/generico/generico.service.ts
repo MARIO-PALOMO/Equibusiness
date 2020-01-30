@@ -373,7 +373,7 @@ export class GenericoService {
     });
   }
 
-  public insertarPolizas(IdCotizacionResultado, IdCotizacion, IdPV, Ramo) {
+  public insertarPolizas(IdCotizacionResultado, IdCotizacion, IdPV, Ramo, FechaEmision) {
 
     var Identificador = 0;
 
@@ -419,6 +419,7 @@ export class GenericoService {
       IdPvTransImportaciones: IdPV,
       IdPvTransInterno: IdPV,
       IdPvVehiculos: IdPV,
+      FechaEmision: FechaEmision,
     }
 
     return new Promise<any>((resolve, reject) => {
@@ -460,6 +461,7 @@ export class GenericoService {
       IdPvTransImportaciones: "",
       IdPvTransInterno: "",
       IdPvVehiculos: "",
+      FechaEmision: ""
     }
 
     return new Promise<any>((resolve, reject) => {
@@ -501,6 +503,7 @@ export class GenericoService {
       IdPvTransImportaciones: "",
       IdPvTransInterno: "",
       IdPvVehiculos: "",
+      FechaEmision: ""
     }
 
     return new Promise<any>((resolve, reject) => {
@@ -732,18 +735,17 @@ export class GenericoService {
     return new Promise<any>((resolve, reject) => {
       this.conexion.getPay("Gestion/SGesGestion.svc/pago/pago/listar/" + pago).subscribe(
         (res: any) => {
-          console.log(res);
-
+          
           var tramaPago: any;
           var bin = "";
           var vencimiento = "";
 
-          if (res.ResultadoTrama != "") {
+          if(res.Estado == 2){
             tramaPago = JSON.parse(res.ResultadoTrama);
             if (res.Plataforma == "DATAFAST") {
               bin = tramaPago.card.bin;
               vencimiento = tramaPago.card.expiryYear + tramaPago.card.expiryMonth;
-            } else if (res == "PAYPHONE") {
+            } else if (res.Plataforma == "PAYPHONE") {
               bin = tramaPago.bin;
               vencimiento = "202212";
             }

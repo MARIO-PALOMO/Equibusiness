@@ -1631,50 +1631,63 @@
                       {{ globales.formatearNumero(cotizacionTotal.primaTotal,2) }}</span>
                   </td>
                 </tr>
+
                 <tr>
                   <td colspan="2">
-                    <button class="btn" [ngStyle]="{'background-color': 'rgb('+usuario.broker.Color+')'}"
-                      data-toggle="collapse" data-target="#metodos" aria-expanded="false" aria-controls="metodos"
-                      style="width: 100%; height: 40px; color: white">
+                    <hr>
+                    <div *ngIf="(estadoCotizacion != 4 && estadoCotizacion != 5) && tipoPago == 0"
+                      [ngStyle]="{'background-color': 'rgb('+usuario.broker.Color+')'}" class="cambiar-forma-pago">
                       Formas de Pago
-                    </button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td colspan="2">
-
-                    <div>
-                      <div class="row" style="text-align: center !important">
-                        <div class="col-3" (click)="seleccionarFormaPago(1)">
-                          <div id="1" class="icono pagos-boton">
-                            <i class="mdi mdi-credit-card iconos-pago"></i>
-                            <br><small><b>Tarjeta de Crédito</b></small>
+                    </div>
+                    <div *ngIf="(estadoCotizacion != 4 && estadoCotizacion != 5) && tipoPago == 0">
+                      <div class="mensaje-estado-pago bg-secondary" style="padding: 20px !important;">
+                        <div class="row" style="text-align: center !important">
+                          <div class="col-3" (click)="seleccionarFormaPago(1)" style="cursor: pointer;">
+                            <div id="1" class="icono pagos-boton">
+                              <img src="../../../assets/images/CreditoDebito.png" width="50">
+                              <br><small><b>Tarjeta de Crédito</b></small>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col-3" (click)="seleccionarFormaPago(2)">
-                          <div id="2" class="icono pagos-boton">
-                            <i class="mdi mdi-credit-card iconos-pago"></i>
-                            <br><small><b>Tarjeta de Débito</b></small>
+                          <div class="col-3" (click)="seleccionarFormaPago(2)" style="cursor: pointer;">
+                            <div id="2" class="icono pagos-boton">
+                              <img src="../../../assets/images/CreditoDebito.png" width="50">
+                              <br><small><b>Tarjeta de Débito</b></small>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col-3" (click)="seleccionarFormaPago(3)">
-                          <div id="3" class="icono pagos-boton">
-                            <i class="mdi mdi-cash iconos-pago"></i>
-                            <br><small><b>Contado</b></small>
+                          <div class="col-3" (click)="seleccionarFormaPago(3)" style="cursor: pointer;">
+                            <div id="3" class="icono pagos-boton">
+                              <img src="../../../assets/images/Contado.png" width="50">
+                              <br><small><b>Contado</b></small>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col-3" (click)="seleccionarFormaPago(4)">
-                          <div id="4" class="icono pagos-boton">
-                            <i class="mdi mdi-bank iconos-pago"></i>
-                            <br><small><b>Débito Bancario</b></small>
+                          <div class="col-3" style="cursor: not-allowed !important;">
+                            <!--(click)="seleccionarFormaPago(4)"-->
+                            <div id="4" class="icono pagos-boton-deshabilitado">
+                              <img src="../../../assets/images/DebitoBancarioDes.png" width="50">
+                              <br><small><b>Débito Bancario</b></small>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <br>
+                    <br *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
                     <div>
-                      <div *ngIf="tipoPago == 1" class="mensaje-estado-pago bg-secondary">
+
+                      <div *ngIf="tipoPago != 0" [ngStyle]="{'background-color': 'rgb('+usuario.broker.Color+')'}"
+                        class="cambiar-forma-pago">
+                        <div class="row">
+                          <div class="col-6" style="text-align: left !important;">
+                            <b>Gestión Pago</b>
+                          </div>
+                          <div class="col-6" style="text-align: right !important; cursor: pointer;"
+                            (click)="cambiarFormaPago()">
+                            <small><i class="mdi mdi-pencil"></i> Cambiar Forma de Pago</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div *ngIf="tipoPago == 1" class="mensaje-estado-pago bg-secondary"
+                        style="padding: 20px !important;">
                         <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
                           <b>Forma de Pago:</b><br>
                           <span>Tarjeta de Crédito</span>
@@ -1683,21 +1696,23 @@
                           <b>Estado:</b><br>
                           <span *ngIf="FormaPago.Estado == 0">Sin Gestionar</span>
                           <span *ngIf="FormaPago.Estado == 1">Pago Sin Realizar</span>
-                          <span *ngIf="FormaPago.Estado == 2">Pago Realizando</span>
+                          <span *ngIf="FormaPago.Estado == 2" style="color: #00ce68 !important;"><b>PAGO
+                              REALIZADO</b></span>
                           <span *ngIf="FormaPago.Estado == 3">Pago Rechazado</span>
                           <span *ngIf="FormaPago.Estado == 4">Pago Reversado</span>
                           <span *ngIf="FormaPago.Estado == 5">Pago Anulado</span>
                           <span *ngIf="FormaPago.Estado == 6">Pago Expirado</span>
                         </div>
 
-                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                        <div *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" class="form-group"
+                          style="font-size: 14px !important; color: #000000 !important;">
                           <b>Link de Pago:</b><br>
-                          <div *ngIf="FormaPago.IdPago == 0" style="padding-top: 8px !important;">
+                          <div *ngIf="FormaPago.IdPago == 0 && tipoPago == 1" style="padding-top: 8px !important;">
                             <button class="btn btn-success" (click)="enviarFormaPago(1)">
                               Enviar
                             </button>
                           </div>
-                          <div *ngIf="FormaPago.IdPago != 0" style="padding-top: 8px !important;">
+                          <div *ngIf="FormaPago.IdPago != 0 && tipoPago == 1" style="padding-top: 8px !important;">
                             <button class="btn btn-dark" (click)="verificarPagoTarjeta(1)">
                               Reenviar
                             </button>
@@ -1705,171 +1720,75 @@
                         </div>
                       </div>
 
+                      <div *ngIf="tipoPago == 2" class="mensaje-estado-pago bg-secondary"
+                        style="padding: 20px !important">
+                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Forma de Pago:</b><br>
+                          <span>Tarjeta de Débito</span>
+                        </div>
+                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Estado:</b><br>
+                          <span *ngIf="FormaPago.Estado == 0">Sin Gestionar</span>
+                          <span *ngIf="FormaPago.Estado == 1">Pago Sin Realizar</span>
+                          <span *ngIf="FormaPago.Estado == 2" style="color: #00ce68 !important"><b>PAGO
+                              REALIZADO</b></span>
+                          <span *ngIf="FormaPago.Estado == 3">Pago Rechazado</span>
+                          <span *ngIf="FormaPago.Estado == 4">Pago Reversado</span>
+                          <span *ngIf="FormaPago.Estado == 5">Pago Anulado</span>
+                          <span *ngIf="FormaPago.Estado == 6">Pago Expirado</span>
+                        </div>
 
-                      <div *ngIf="tipoPago == 2" class="mensaje-estado-pago bg-secondary">
-
-                      </div>
-                      <div *ngIf="tipoPago == 3" class="mensaje-estado-pago bg-secondary">
-
-                      </div>
-                      <div *ngIf="tipoPago == 4" class="mensaje-estado-pago bg-secondary">
-
-                      </div>
-                    </div>
-                    <button (click)="verificarPago()">
-                      Probar
-                    </button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td colspan="2">
-                    <div class="" id="metodos">
-                      <div class="mensaje-estado-pago bg-secondary">
-                        <span *ngIf="estadoCotizacion == 1" class="text-danger"><b> ESTADO: </b> NOTIFICACIÓN DE PAGO
-                          PENDIENTE</span>
-                        <span *ngIf="estadoCotizacion == 2" class="text-danger"><b> ESTADO: </b> NOTIFICACIÓN DE PAGO
-                          PENDIENTE</span>
-                        <span *ngIf="estadoCotizacion == 3" class="text-warning"><b> ESTADO: </b> NOTIFICACIÓN DE PAGO
-                          ENVIADA</span>
-                        <span *ngIf="estadoCotizacion == 4" class="text-success"><b> ESTADO: </b> EL CLIENTE REALIZÓ EL
-                          PAGO
-                          CORRESPONDIENTE</span>
-                        <span *ngIf="estadoCotizacion == 5" class="text-success"><b> ESTADO: </b> EL CLIENTE REALIZÓ EL
-                          PAGO
-                          CORRESPONDIENTE</span>
-                      </div>
-
-                      <div *ngIf="FormaPago.Estado == 0" class="mensaje-estado-pago bg-secondary"
-                        style="color: black !important">
-                        <p><b>Seleccionar la forma de pago</b></p>
-
-                        <kendo-dropdownlist [(ngModel)]="tipoPago" [data]="lstTipoPago" [textField]="'Nombre'"
-                          [valueField]="'Valor'" [valuePrimitive]="true"
-                          style="width: 50%; border: 1px solid #000000; font-size: 13px; height: 35px;">
-                          <ng-template kendoDropDownListItemTemplate let-dataItem>
-                            <i [ngClass]="dataItem.Icono" style="padding-right: 10px"></i> {{ dataItem.Nombre }}
-                          </ng-template>
-                        </kendo-dropdownlist>
-                        <br><br>
-                        <button class="btn btn-dark" (click)="seleccionarTipoPago()">
-                          Continuar
-                        </button>
-
-                        <hr>
-                        <small>
-                          <b>NOTA:</b> Una vez seleccionado el método de pago, ya no se podrá volver a seleccionar otro.
-                        </small>
-                      </div>
-
-                      <div *ngIf="FormaPago.Estado == 2">
-                        <br>
-                        <button class="btn btn-secondary" data-toggle="collapse" data-target="#tarjeta"
-                          aria-expanded="false" aria-controls="tarjeta" style="width: 100%; text-align: left">
-                          <i class="mdi mdi-credit-card"></i>
-                          <b>Tarjeta de Crédito / Débito</b>
-                          <i class="mdi mdi-chevron-down" style="float: right"></i>
-                        </button>
-                        <div class="contenido-metodos-pago" id="tarjeta">
-                          <span *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
-                            Se prodecerá a generar un link de pago, el cual recibirá el cliente/pagador al correo
-                            electrónico proporcionado:
-                          </span>
-                          <span *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5">
-                            <b>EL CLIENTE REALIZÓ EL PAGO CORRESPONDIENTE</b>
-                          </span>
-                          <br><br>
-                          <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" type="button"
-                            class="btn-broker btn btn-effect-white" (mouseenter)="gestionColoresEnterBroker()"
-                            (mouseleave)="gestionColoresLeaveBroker()" (click)="enviarLinkPagoCotizacion(2)"
-                            style="width: 100%; height: 42px;">
-                            <i class="mdi mdi-credit-card-multiple"></i> Enviar Link de Pagos
-                          </button>
-                          <br><br>
-                          <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" class="btn btn-success"
-                            (click)="verificarEstadoPagoCotizacionEquiPayment()" style="width: 100%; height: 42px;">
-                            <i class="mdi mdi-check"></i> Verificar Pago
-                          </button>
+                        <div *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" class="form-group"
+                          style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Link de Pago:</b><br>
+                          <div *ngIf="FormaPago.IdPago == 0 && tipoPago == 2" style="padding-top: 8px !important;">
+                            <button class="btn btn-success" (click)="enviarFormaPago(2)">
+                              Enviar
+                            </button>
+                          </div>
+                          <div *ngIf="FormaPago.IdPago != 0 && tipoPago == 2" style="padding-top: 8px !important;">
+                            <button class="btn btn-dark" (click)="verificarPagoTarjeta(2)">
+                              Reenviar
+                            </button>
+                          </div>
                         </div>
                       </div>
 
-                      <div *ngIf="FormaPago.Estado == 1">
-                        <br>
-                        <button class="btn btn-secondary" data-toggle="collapse" data-target="#otros"
-                          aria-expanded="false" aria-controls="otros" style="width: 100%; text-align: left">
-                          <i class="mdi mdi-cash-multiple"></i>
-                          <b>Otros Métodos de Pago</b>
-                          <i class="mdi mdi-chevron-down" style="float: right"></i>
-                        </button>
-                        <div class="collapse contenido-metodos-pago" id="otros">
-                          <p *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
-                            Para el siguiente método de pago la persona encargada de realizar la cotización,
-                            deberá adjuntar un archivo válido para continuar con el proceso.
-                          </p>
-                          <hr>
-                          <div *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5">
-
-                            <div *ngIf="FormaPago.Tipo == 'DÉBITO BANCARIO'" class="form-group">
-                              <label><b>Adjunto:</b></label><br>
-                              <a *ngIf="FormaPago.Adjunto != '' || FormaPago.Adjunto != null || FormaPago.Adjunto != undefined"
-                                class="btn btn-dark" [href]="verArchivoPagoOtros(FormaPago.Adjunto)"
-                                download="Adjunto.{{FormaPago.AdjuntoTipo}}">Visualizar</a>
-                            </div>
-
-                            <div *ngIf="FormaPago.Tipo == 'CONTADO'">
-                              <span><b>FORMA DE PAGO: </b>CONTADO</span><br><br>
-                              <span>Adjunto no disponible para esta forma de pago</span>
-                            </div>
-
-                          </div>
-                          <div *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
-                            <div class="form-group">
-                              <label><b>Forma de Pago:</b></label>
-                              <kendo-dropdownlist [data]="lstFormasPago" [(ngModel)]="FormaPago.TipoOtros"
-                                style="width: 100%; border: 1px solid #000000; font-size: 13px; height: 35px;">
-                              </kendo-dropdownlist>
-                            </div>
-
-                            <div *ngIf="FormaPago.TipoOtros == 'DÉBITO BANCARIO'" class="form-group">
-                              <label><b>Archivo Adjunto (AUTORIZACIÓN DE DÉBITO)</b></label><br>
-
-                              <small>Formatos: PDF, JPG, JPEG, PNG, DOC, ETC</small>
-                              <div class="input-group mb-3">
-                                <input id="file" type="file" class="form-control" aria-describedby="basic-addon2">
-                                <div class="input-group-append">
-                                  <a class="btn btn-dark" [href]="verArchivoPagoOtros(FormaPago.Adjunto)"
-                                    download="Adjunto.{{FormaPago.AdjuntoTipo}}">Visualizar</a>
-                                </div>
-                              </div>
-                            </div>
-
-
-                            <div class="form-group">
-                              <button class="btn btn-dark" (click)="adjuntarArchivoPagoOtros()">
-                                Actualizar
-                              </button>
-                            </div>
-                          </div>
-                          <hr style="display: none">
-                          <p style="display: none">
-                            <b>NOTA:</b>
-                            El corredor de seguros certifica que la Autorización de Débito en formato digital ha sido
-                            debidamente aceptada y firmada por el titular de la cuenta o tarjeta de crédito. <br>
-                            <small>Este documento es reflejo veraz y exacto del documento existente en formato
-                              papel.</small>
-                          </p>
-                          <hr>
-                          <button *ngIf="FormaPago.Estado == 1 && (estadoCotizacion != 4 && estadoCotizacion != 5)"
-                            class="btn btn-success"
-                            (click)="actualizarEstadoPago('','','','','','','','', '', FormaPago.TipoOtros)">
-                            Finalizar
-                          </button>
-
+                      <div *ngIf="tipoPago == 3" class="mensaje-estado-pago bg-secondary"
+                        style="padding: 20px !important">
+                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Forma de Pago:</b><br>
+                          <span>Contado</span>
                         </div>
+                        <div class="form-group" style="font-size: 14px !important; color: #000000 !important;">
+                          <b>Estado:</b><br>
+                          <span style="color: #00ce68 !important">
+                            <b>PAGO REALIZADO</b>
+                          </span>
+                        </div>
+
                       </div>
+
+                      <div *ngIf="tipoPago == 4" class="mensaje-estado-pago bg-secondary"
+                        style="padding: 20px !important; color: black !important;">
+                        <b>Forma de Pago en Desarrollo</b>
+                      </div>
+
+                      <br *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
+
+                      <div *ngIf="tipoPago != 0">
+                        <button *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" class="btn btn-success"
+                          (click)="verificarPago()" style="width: 100%;">
+                          <i class="mdi mdi-check"></i>
+                          <span *ngIf="tipoPago == 1 || tipoPago == 2">Verificar y Guardar Pago</span>
+                          <span *ngIf="tipoPago == 3 || tipoPago == 4">Guardar Pago</span>
+                        </button>
+                      </div>
+
                     </div>
                   </td>
                 </tr>
+
               </table>
             </div>
             <br>
@@ -1904,7 +1823,7 @@
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                   <div class="table-responsive borde-redondeado-cotizacion">
 
-                    <table *ngIf="FormaPago.Tipo == 'CONTADO'" id="tablaPago" class="table">
+                    <table *ngIf="tipoPago == 3" id="tablaPago" class="table">
                       <tr>
                         <td><b><span class="estilo-cotizacion">N° Cotización</span></b></td>
                         <td><span class="estilo-cotizacion">{{codigoCotizacion.codigoCotizacion}}</span></td>
@@ -1922,7 +1841,7 @@
                       </tr>
                     </table>
 
-                    <table *ngIf="FormaPago.Tipo == 'TARJETA CRÉDITO / DÉBITO'" id="tablaPago" class="table">
+                    <table *ngIf="tipoPago == 1 || tipoPago == 2" id="tablaPago" class="table">
                       <tr>
                         <td><b><span class="estilo-cotizacion">N° Cotización</span></b></td>
                         <td><span class="estilo-cotizacion">{{codigoCotizacion.codigoCotizacion}}</span></td>
@@ -1983,6 +1902,16 @@
                   <div class="table-responsive borde-redondeado-cotizacion"
                     [ngStyle]="{'pointer-events': bloqueoEmision == false ? 'auto' : 'none'}">
                     <table class="table">
+                      <tr>
+                        <td>
+                          <b><span class="estilo-cotizacion">Fecha Emisión</span></b>
+                        </td>
+                        <td style="text-align: right !important">
+                          <kendo-datepicker [min]="fechaEmisionRetroactiva" [max]="fechaEmisionVigencia"
+                            [(ngModel)]="fechaEmisionVigenciaSeleccionada" (ngModelChange)="gestionFechasEmision()">
+                          </kendo-datepicker>
+                        </td>
+                      </tr>
                       <tr>
                         <td><b><span class="estilo-cotizacion">Multiriesgo</span></b></td>
                         <td style="text-align: right !important">
@@ -2094,7 +2023,7 @@
                           </span>
                         </td>
                       </tr>
-                      <tr *ngIf="FormaPago.Tipo == 'CONTADO'">
+                      <tr *ngIf="tipoPago == 3 || tipoPago == 4">
                         <td colspan="2">
                           <span class="estilo-cotizacion">
                             <b>NOTA IMPORTANTE:</b> La aplicación del pago se lo deberá realizar de forma manual.
@@ -2102,7 +2031,7 @@
                         </td>
                       </tr>
                       <tr
-                        *ngIf="estadoAplicarPago == true && fmrCotizacionResultado.EstadoPagoGlobal == 0 && FormaPago.Tipo == 'TARJETA CRÉDITO / DÉBITO'">
+                        *ngIf="estadoAplicarPago == true && fmrCotizacionResultado.EstadoPagoGlobal == 0 && (tipoPago == 1 || tipoPago == 2)">
                         <td colspan="2">
                           <span class="estilo-cotizacion">
                             <button type="button" class="btn btn-dark" style="width: 100%"
@@ -2113,7 +2042,7 @@
                         </td>
                       </tr>
                       <tr
-                        *ngIf="estadoAplicarPago == true && fmrCotizacionResultado.EstadoPagoGlobal == 1 && FormaPago.Tipo == 'TARJETA CRÉDITO / DÉBITO'">
+                        *ngIf="estadoAplicarPago == true && fmrCotizacionResultado.EstadoPagoGlobal == 1 && (tipoPago == 1 || tipoPago == 2)">
                         <td colspan="2" style="text-align: center !important">
                           <span class="estilo-cotizacion" style="color: green">
                             <i class="mdi mdi-credit-card"></i> Pago Aplicado Correctamente
