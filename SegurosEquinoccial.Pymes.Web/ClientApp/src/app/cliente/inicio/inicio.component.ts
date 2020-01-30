@@ -1066,12 +1066,12 @@ export class InicioClienteComponent implements OnInit {
           this.generico.verificarCompromisoSise(Datos).then(compromiso => {
             this.spinner.hide();
 
-            if (compromiso == 0) {
+            if (compromiso == "0" || compromiso == "-1") {
               this.spinner.show();
               this.generico.verificarPolizaSise(Datos).then(polizasise => {
                 this.spinner.hide();
 
-                if (polizasise == 0) {
+                if (polizasise == "0" || polizasise == "-1") {
 
                   this.spinner.show();
                   this.generico.verificarListasNegras(this.fmrEmpresa.Ruc).then(listanegra => {
