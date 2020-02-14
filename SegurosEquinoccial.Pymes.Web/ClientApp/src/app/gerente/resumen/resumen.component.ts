@@ -82,12 +82,11 @@ export class ResumenGerenteComponent implements OnInit {
       (res: any) => {
         this.spinner.hide();
         this.lstSupervisores = res;
-
         this.lstUsuariosSupervisores = "";
         for (let usuario of this.lstSupervisores) {
           this.lstUsuariosSupervisores += ('IdPadre = ' + usuario.IdUsuario + ' OR ');
+          
         }
-
         this.listarResumenSupervisor();
       },
       err => {
@@ -157,6 +156,7 @@ export class ResumenGerenteComponent implements OnInit {
         }
       }
     }
+    console.log(this.lstUsuariosOperadores);
     this.groupedData = groupBy(this.lstUsuariosOperadores, [{ field: "UsuarioPadre" }]);
   }
 

@@ -79,6 +79,9 @@ import { PagoService } from './controladores/pago/pago.service';
 import { GestionService } from './controladores/gestion/gestion.service';
 import { UsuarioComponent } from './gerente/usuario/usuario.component';
 import { GeneradorCompromisosService } from './metodos/generador-compromiso/generador-compromiso.service';
+import { ReporteComponent } from './gerente/reporte/reporte.component';
+import { MultiViewCalendarModule } from '@progress/kendo-angular-dateinputs';
+import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 
 @NgModule({
   declarations: [
@@ -126,7 +129,8 @@ import { GeneradorCompromisosService } from './metodos/generador-compromiso/gene
     ZCotizacionReporteEmailClienteComponent,
     ZCotizacionReporteEmailUsuarioComponent,
     CotizacionReporteEmailComponent,
-    UsuarioComponent
+    UsuarioComponent,
+    ReporteComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -140,10 +144,12 @@ import { GeneradorCompromisosService } from './metodos/generador-compromiso/gene
     ExcelModule,
     PDFModule,
     NumericTextBoxModule,
+    DateInputsModule,
     SwitchModule,
     TooltipModule,
     NgxSpinnerModule,
     PDFExportModule,
+    MultiViewCalendarModule,
     DatePickerModule,
     InputsModule,
     NgxMaskModule.forRoot(),
@@ -164,7 +170,8 @@ import { GeneradorCompromisosService } from './metodos/generador-compromiso/gene
       { path: 'gerencia/inicio', component: InicioGerenciaComponent },
       { path: 'gerencia/resumen', component: ResumenGerenteComponent },
       { path: 'gerencia/usuario', component: UsuarioComponent },
-      { path: 'cotizacion', component: CotizacionReporteEmailComponent },
+      { path: 'gerencia/reporte', component: ReporteComponent},
+      { path: 'cotizacion', component: CotizacionReporteEmailComponent }
     ])
   ],
   providers: [CotizacionRamoGeneral, ApiService, SesionService, VerificacionService, RamosService, CotizacionService, FinalizacionService, GeneradorService, EmisionService, ResumenService, GenericoService, GeneradorVehiculosService, PolizaMultiriesgoService, PagoService, GestionService, GeneradorCompromisosService,{ provide: LOCALE_ID, useValue: 'es' }],

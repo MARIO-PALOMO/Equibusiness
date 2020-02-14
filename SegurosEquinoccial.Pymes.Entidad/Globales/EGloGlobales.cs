@@ -19,7 +19,7 @@ namespace SegurosEquinoccial.Pymes.Entidad.Globales
                 reCredenciales.HostDB = "10.160.1.125";
                 reCredenciales.NameDB = "CotizadorPymes";
                 reCredenciales.UserDB = "sa";
-                reCredenciales.PasswordDB = "123";
+                reCredenciales.PasswordDB = "123";                
             }
             else if (ambiente == "PRUEBAS")
             {

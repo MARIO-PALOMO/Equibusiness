@@ -23,9 +23,14 @@
             <i class="mdi mdi-file eicon"></i>Resumen</a>
         </li>
         <li *ngIf="panelMenu.menu" class="contenido-web"
+          [ngStyle]="{'background-color': url == '/gerencia/reporte' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
+            [routerLink]="['/gerencia/reporte']">
+            <i class="mdi mdi-file-multiple eicon"></i> Reportes</a>
+        </li>
+        <li *ngIf="panelMenu.menu" class="contenido-web"
           [ngStyle]="{'background-color': url == '/gerencia/usuario' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
             [routerLink]="['/gerencia/usuario']">
-            <i class="mdi mdi-account"></i> Usuario</a>
+            <i class="mdi mdi-account-multiple-plus eicon"></i> Usuarios</a>
         </li>
 
         <li class="abrir-menu contenido-movil" (click)="gestionPanelSideNav()">
@@ -64,6 +69,14 @@
   <a [routerLink]="['/gerencia/resumen']"
     [ngStyle]="{'background-color': url == '/gerencia/resumen' ? 'rgba(8, 8, 8, 0.2)': ''}">
     <i class="mdi mdi-file eicon-sidebar"></i>Resumen
+  </a>
+  <a [routerLink]="['/gerencia/reporte']"
+    [ngStyle]="{'background-color': url == '/gerencia/reporte' ? 'rgba(8, 8, 8, 0.2)': ''}">
+    <i class="mdi mdi-file-multiple eicon-sidebar"></i>Reportes
+  </a>
+  <a [routerLink]="['/gerencia/usuario']"
+    [ngStyle]="{'background-color': url == '/gerencia/usuario' ? 'rgba(8, 8, 8, 0.2)': ''}">
+    <i class="mdi  mdi-account-multiple-plus eicon-sidebar"></i>Usuarios
   </a>
 
   <a>
