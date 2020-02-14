@@ -57,5 +57,8 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
         [DataMember]
         public int EstadoPagoGlobal { get; set; }
 
+        [DataMember]
+        public string FechaEmision { get; set; }
+
     }
 }

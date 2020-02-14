@@ -398,6 +398,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                     rsCotizacionResultado.EstadoVehiculos = rdr["EstadoVehiculos"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoVehiculos"]);
                     rsCotizacionResultado.EstadoGlobal = rdr["EstadoGlobal"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoGlobal"]);
                     rsCotizacionResultado.EstadoPagoGlobal = rdr["EstadoPagoGlobal"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoPagoGlobal"]);
+                    rsCotizacionResultado.FechaEmision = rdr["FechaEmision"].ToString();
 
                     rsCotizacion.Broker = rsBroker;
                     rsCotizacion.Empresa = rsEmpresa;

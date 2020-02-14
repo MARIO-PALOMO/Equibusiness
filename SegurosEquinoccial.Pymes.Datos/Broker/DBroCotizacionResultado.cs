@@ -52,6 +52,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 cmd.Parameters.Add("@pagoGlobal", SqlDbType.Int);
                 cmd.Parameters.Add("@estadoGlobal", SqlDbType.Int);
 
+                cmd.Parameters.Add("@fechaEmision", SqlDbType.NVarChar, -1);
+
                 cmd.Parameters.Add("@valor", SqlDbType.NVarChar, -1).Direction = ParameterDirection.Output;
 
                 cmd.Parameters["@identificador"].Value = pCotResultado.Identificador;
@@ -76,6 +78,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 cmd.Parameters["@EstadoVehiculos"].Value = pCotResultado.EstadoVehiculos;
                 cmd.Parameters["@pagoGlobal"].Value = pCotResultado.EstadoPagoGlobal;
                 cmd.Parameters["@estadoGlobal"].Value = pCotResultado.EstadoGlobal;
+                cmd.Parameters["@fechaEmision"].Value = pCotResultado.FechaEmision;
 
                 cmd.ExecuteNonQuery();
 

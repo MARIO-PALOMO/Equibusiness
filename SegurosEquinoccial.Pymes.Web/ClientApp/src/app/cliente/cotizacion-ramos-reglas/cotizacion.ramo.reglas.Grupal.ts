@@ -37,8 +37,6 @@ export class CotizacionRamoReglasGrupal {
       for (var agrupacion_ of cuadriculaIdentificador) {
         var totales = this.sumatoriaIdentificador(agrupacion_)[0];
         for (var global of cuadricula) {
-          console.log(totales.Identificador);
-          console.log(global.Identificador);
           if (totales.Identificador == global.Identificador) {
             if (totales.Total > global.Regla) {
               estado = false;

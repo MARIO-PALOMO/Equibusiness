@@ -27,36 +27,73 @@ export class PolizaMultiriesgoService {
   }
 
   public verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo) {
+
+    var formularioContratante = "false";
+    var formularioPagador = "false";
+    var mensaje = "<b>Pago</b><br><u>Descripción:</u> Pago Realizado Exitosamente<br><br>";
+
     this.spinner.show();
-    this.generico.verificarFormulario(DatosEmpresa).then(res => {
-      this.spinner.hide();
-      if (res == "true") {
+    if (DatosEmpresa.DocumentoCliente == DatosPagador.DocumentoCliente) {
+      this.generico.verificarFormulario(DatosEmpresa).then(res => {
+        this.spinner.hide();
+
+        if (res == "false") {
+          mensaje = mensaje + "<b>Contratante / Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+          this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
+        } else {
+          this.globales.mostrarNotificacion("Contratante / Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+          this.buscarCotizacion(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo);
+        }
+
+      }).catch(err => {
+        this.spinner.hide();
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+      });
+
+    } else {
+      this.spinner.show();
+      this.generico.verificarFormulario(DatosEmpresa).then(res => {
+        this.spinner.hide();
+
+        formularioContratante = res;
+        if (formularioContratante == "false") {
+          mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+        } else {
+          this.globales.mostrarNotificacion("Contratante: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+        }
+
         this.spinner.show();
         this.generico.verificarFormulario(DatosPagador).then(res => {
           this.spinner.hide();
-          if (res == "true") {
+
+          formularioPagador = res;
+          if (formularioPagador == "false") {
+            mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+          } else {
+            this.globales.mostrarNotificacion("Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+          }
+
+          if (formularioContratante == "true" && formularioPagador == "true") {
             this.buscarCotizacion(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo);
           } else {
-            this.globales.mostrarNotificacion("El formulario del pagador aún no se encuentra firmado", "warning", "bottom");
+            this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
           }
 
         }).catch(err => {
           this.spinner.hide();
-          this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Empresa", "error", "#E74C3C");
+          this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
         });
-      } else {
-        this.globales.mostrarNotificacion("El formulario de la empresa aún no se encuentra firmado", "warning", "bottom");
-      }
 
-    }).catch(err => {
-      this.spinner.hide();
-      this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
-    });
+      }).catch(err => {
+        this.spinner.hide();
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+      });
+    }
   }
 
   public buscarCotizacion(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo) {
     this.spinner.show();
-    this.resumen.buscarCotizacion(Cotizacion.IdContenido, Cotizacion.IdCotizacion, Cotizacion.IdDireccion, Cotizacion.IdVehiculos, Cotizacion.IdEmpresa, Riesgo, RamoValidacion, Cotizacion.Transportes).then(res => {
+    this.resumen.buscarCotizacion(Cotizacion.IdContenido, Cotizacion.IdCotizacion, Cotizacion.IdDireccion, Cotizacion.IdVehiculos, Cotizacion.IdEmpresa, Riesgo, RamoValidacion, Cotizacion.Transportes, Cotizacion.FechaEmision).then(res => {
       this.spinner.hide();
       var Incisos = res.textoIncisos;
       var Aclaratorios = res.textoAclaratorio;
@@ -329,7 +366,7 @@ export class PolizaMultiriesgoService {
 
   public insertarPolizas(Cotizacion, IdPV, Certificado, Ramo) {
     this.spinner.show();
-    this.generico.insertarPolizas(Cotizacion.IdCotizacionResultado, Cotizacion.IdCotizacion, JSON.stringify({ polIdPv: IdPV, polCertificado: Certificado, polTotal: Cotizacion.Total }), Ramo).then(res => {
+    this.generico.insertarPolizas(Cotizacion.IdCotizacionResultado, Cotizacion.IdCotizacion, JSON.stringify({ polIdPv: IdPV, polCertificado: Certificado, polTotal: Cotizacion.Total }), Ramo, Cotizacion.FechaEmision).then(res => {
       this.spinner.hide();
       console.log(res);
     }).catch(err => {

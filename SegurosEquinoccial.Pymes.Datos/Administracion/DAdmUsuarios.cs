@@ -48,7 +48,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                     rsBroker.Primas = Convert.ToInt32(rdr["Primas"]);
                     rsBroker.RazonSocial = rdr["RazonSocial"].ToString();
                     rsBroker.Pago = Convert.ToInt32(rdr["Pago"]);
-                    rsBroker.Comision = rdr["Comision"].ToString();
+                    rsBroker.Comision = rdr["ComisionBroker"].ToString();
                     rsBroker.Transporte = rdr["Transporte"].ToString();
 
                     rsUsuario.Uid = DAdmEncriptacion.CrearKeyAutorizacion(rdr["IdUsuario"].ToString());

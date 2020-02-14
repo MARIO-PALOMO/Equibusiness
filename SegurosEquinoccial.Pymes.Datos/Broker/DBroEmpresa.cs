@@ -206,6 +206,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 {
                     rsEmpresa.Ruc = rdr["Ruc"].ToString();
                     rsBroker.IdBroker = Convert.ToInt32(rdr["IdBroker"]);
+                    rsCotizacion.Antiguedad = rdr["Antiguedad"].ToString();
                     rsCotizacion.Broker = rsBroker;
                     rsCotizacion.Empresa = rsEmpresa;
                 }

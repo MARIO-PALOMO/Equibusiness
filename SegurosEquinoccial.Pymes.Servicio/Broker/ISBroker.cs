@@ -595,5 +595,21 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "cotizacion/actualizar/fecha/{IdCotizacion}")]
         int BroGestionCotizacionActualizacion(string IdCotizacion);
+
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "cotizacion/forma/debito/bancos")]
+        string BroObtenerBancoConductos();
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "cotizacion/forma/debito/cuotas/{conducto}")]
+        string BroObtenerPlanPagoCuotas(string conducto);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "cotizacion/forma/debito/numero/{codigo}")]
+        string BroObtenerNumeroCuotas(string codigo);
     }
 }

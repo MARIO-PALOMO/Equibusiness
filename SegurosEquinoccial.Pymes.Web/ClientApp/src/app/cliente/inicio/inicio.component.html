@@ -31,9 +31,11 @@
                       <div class="input-group">
                         <input type="text" [(ngModel)]="fmrEmpresa.Ruc" class="form-control texto-busqueda"
                           style="width: 7%"
-                          (keyup)="fmrEmpresa.Ruc = valCotizador.formatoCampo(fmrEmpresa.Ruc, '0123456789', 13, 2)"
+                          (keyup)="fmrEmpresa.Ruc = valCotizador.formatoCampo(fmrEmpresa.Ruc, '0123456789', 13, 2); mostrarIdetificacion()"
                           placeholder="Ingresar RUC o Cédula para obtener datos de la empresa" autocomplete="off">
-                        <div class="input-group-append busqueda-ruc" (click)="consultarAsegurado()">
+                        <div class="input-group-append busqueda-ruc"
+                          [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white', 'cursor': 'pointer'}"
+                          (click)="consultarAsegurado()">
                           <span class="input-group-text">
                             <i class="mdi mdi-search-web" style="color: white"></i>
                           </span>
@@ -251,7 +253,7 @@
               <kendo-grid-column media="(min-width: 800px)" field="Empresa.RazonSocial" title="Empresa / Persona"
                 width="240" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
               </kendo-grid-column>
-              <kendo-grid-column media="(min-width: 800px)" field="Fecha" title="Fecha" width="150" type="date"
+              <kendo-grid-column media="(min-width: 800px)" field="Fecha" title="Fecha" width="130" type="date"
                 [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
               </kendo-grid-column>
               <kendo-grid-column media="(min-width: 800px)" field="Antiguedad" title="Vigencia" width="130"
@@ -279,6 +281,14 @@
                 <ng-template kendoGridCellTemplate let-dataItem>
                   <span style="font-size: 13px !important; text-align: center !important">
                     {{ convertirNumeroEstado(dataItem.Estado, dataItem.CotizacionResultado.EstadoPagoGlobal)[3].toUpperCase() }}
+                  </span>
+                </ng-template>
+              </kendo-grid-column>
+              <kendo-grid-column media="(min-width: 800px)" field="FormaPago.Tipo" title="Pago" width="100"
+                type="date" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <span style="font-size: 13px !important; text-align: center !important">
+                    {{dataItem.FormaPago.Tipo}}
                   </span>
                 </ng-template>
               </kendo-grid-column>

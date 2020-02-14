@@ -139,7 +139,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Polizas.Pago
             string Resultado = "";
 
             string Body = ("<pagoTarjetaMasivos  xmlns=\"http://tempuri.org/\">"
-                      + "<usuario>"+ aux.canal + "</usuario>"
+                      + "<usuario>" + aux.canal + "</usuario>"
                       + "<cod_suc_pago>" + aux.sucursal + "</cod_suc_pago>"
                       + "<cod_pagador>" + aux.pagador + "</cod_pagador>"
                       + "<nro_couta>1</nro_couta>"
@@ -155,6 +155,50 @@ namespace SegurosEquinoccial.Pymes.Datos.Polizas.Pago
 
             Resultado = DAdmConexionSOAP.BroEjecutarSolicitudWebSOAP(ServicioURL, AccionSOAP, Body);
 
+            return Resultado;
+        }
+
+
+        public static string BroObtenerBancoConductos()
+        {
+            EAdmCatalogoCredenciales credenciales = DAdmCredenciales.AdmConsultarCatalogoCredenciales("BANCOCONDUCTOS", EGloGlobales.ambiente);
+
+            string ServicioURL = credenciales.Url; ;
+            string AccionSOAP = credenciales.Accion;
+            string Body = ("<ConsultarConductosPagoPorTipo xmlns=\"http://tempuri.org/\">"
+                          + "<codTtipoConducto>3</codTtipoConducto>"
+                        + "</ConsultarConductosPagoPorTipo>");
+
+            string Resultado = DAdmConexionSOAP.BroEjecutarSolicitudWebSOAP(ServicioURL, AccionSOAP, Body);
+            return Resultado;
+        }
+
+        public static string BroObtenerPlanPagoCuotas(string conducto)
+        {
+            EAdmCatalogoCredenciales credenciales = DAdmCredenciales.AdmConsultarCatalogoCredenciales("CUOTASCONDUCTO", EGloGlobales.ambiente);
+
+            string ServicioURL = credenciales.Url; ;
+            string AccionSOAP = credenciales.Accion;
+            string Body = ("<ConsultarPlanesPagoPorConductoPago xmlns=\"http://tempuri.org/\">"
+                                + "<codConducto>" + conducto + "</codConducto>"
+                                + "<tipoNegocio>" + credenciales.UsuarioNombre + "</tipoNegocio>"
+                        + "</ConsultarPlanesPagoPorConductoPago>");
+
+            string Resultado = DAdmConexionSOAP.BroEjecutarSolicitudWebSOAP(ServicioURL, AccionSOAP, Body);
+            return Resultado;
+        }
+
+        public static string BroObtenerNumeroCuotas(string codigo)
+        {
+            EAdmCatalogoCredenciales credenciales = DAdmCredenciales.AdmConsultarCatalogoCredenciales("NUMEROCUOTAS", EGloGlobales.ambiente);
+
+            string ServicioURL = credenciales.Url; ;
+            string AccionSOAP = credenciales.Accion;
+            string Body = ("<ConsultarNumCuotasPorPlanPago xmlns=\"http://tempuri.org/\">"
+                                + "<codPpago>" + codigo + "</codPpago>"
+                        + "</ConsultarNumCuotasPorPlanPago>");
+
+            string Resultado = DAdmConexionSOAP.BroEjecutarSolicitudWebSOAP(ServicioURL, AccionSOAP, Body);
             return Resultado;
         }
 

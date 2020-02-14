@@ -53,7 +53,7 @@ export class GlobalesPipe implements PipeTransform {
       if (
         result.dismiss === Swal.DismissReason.timer
       ) {
-        console.log('I was closed by the timer')
+      
       }
     })
   }
@@ -145,6 +145,13 @@ export class GlobalesPipe implements PipeTransform {
     return res1;
   }
 
+  public limpiar(dato) {
+    var str = dato;
+    var res = str.replace("&", "");
+    var res1 = res.replace("amp;", "");
+    return res1;
+  }
+
   public limpiarDatos(datos, caracter, remplazo) {
     var str = datos;
     var res = str.replace(caracter, remplazo);
@@ -222,6 +229,25 @@ export class GlobalesPipe implements PipeTransform {
     );
 
     return mensaje;
+  }
+
+  public obtenerDatosTarjeta(Plataforma, Trama) {
+    var tramaPago: any;
+    var bin = "0";
+    var vencimiento = "0";
+
+    if (Trama != "") {
+      tramaPago = JSON.parse(Trama);
+      if (Plataforma == "DATAFAST") {
+        bin = tramaPago.card.bin;
+        vencimiento = tramaPago.card.expiryYear + tramaPago.card.expiryMonth;
+      } else if (Plataforma == "PAYPHONE") {
+        bin = tramaPago.bin;
+        vencimiento = "202212";
+      }
+    }
+
+    return { bin: bin, vencimiento: vencimiento }
   }
 
 }
