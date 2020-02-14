@@ -2,7 +2,7 @@
 <div class="steps" style="cursor: pointer">
   <ol class="cd-breadcrumb triangle">
 
-    <!-- BOTONES SIN FUNCIONALIDAD -->
+    <!-- BOTONES SIN FUNCIONALIDAD 
     <li *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" [(ngClass)]="panelesGlobales.empresa.valor">
       <a style="font-size: 14px"><i class="mdi mdi-bank" style="font-size: 16px"></i>&nbsp; Empresa</a>
     </li>
@@ -14,23 +14,19 @@
     </li>
     <li *ngIf="estadoCotizacion == 4 || estadoCotizacion == 5" [(ngClass)]="panelesGlobales.valores.valor">
       <a style="font-size: 14px"><i class="mdi mdi-pencil-box" style="font-size: 16px"></i>&nbsp; Coberturas</a>
-    </li>
+    </li>-->
 
     <!-- BOTONES CON FUNCIONALIDAD -->
-    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.empresa.valor"
-      (click)="gestioPanelGlobal('Empresa')">
+    <li [(ngClass)]="panelesGlobales.empresa.valor" (click)="gestioPanelGlobal('Empresa')">
       <a style="font-size: 14px"><i class="mdi mdi-bank" style="font-size: 16px"></i>&nbsp; Empresa</a>
     </li>
-    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.direcciones.valor"
-      (click)="gestioPanelGlobal('Direcciones')">
+    <li [(ngClass)]="panelesGlobales.direcciones.valor" (click)="gestioPanelGlobal('Direcciones')">
       <a style="font-size: 14px"><i class="mdi mdi-google-maps" style="font-size: 16px"></i>&nbsp; Direcciones</a>
     </li>
-    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.ramos.valor"
-      (click)="gestioPanelGlobal('Ramos')">
+    <li [(ngClass)]="panelesGlobales.ramos.valor" (click)="gestioPanelGlobal('Ramos')">
       <a style="font-size: 14px"><i class="mdi mdi-sitemap" style="font-size: 16px"></i>&nbsp; Ramos</a>
     </li>
-    <li *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5" [(ngClass)]="panelesGlobales.valores.valor"
-      (click)="gestioPanelGlobal('Valores')">
+    <li [(ngClass)]="panelesGlobales.valores.valor" (click)="gestioPanelGlobal('Valores')">
       <a style="font-size: 14px"><i class="mdi mdi-pencil-box" style="font-size: 16px"></i>&nbsp; Coberturas</a>
     </li>
 
@@ -78,7 +74,8 @@
           </div>
           <br>
           <!--DATOS EMPRESA-->
-          <div *ngIf="valDiseno.panelesEmpresa.empresa.estado">
+          <div *ngIf="valDiseno.panelesEmpresa.empresa.estado"
+            [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto'}">
             <h4>Datos del Asegurado</h4>
             <div class="forms-sample">
               <div class="row">
@@ -163,7 +160,8 @@
           </div>
 
           <!--DATOS CONTRATANTE-->
-          <div *ngIf="valDiseno.panelesEmpresa.contratante.estado">
+          <div *ngIf="valDiseno.panelesEmpresa.contratante.estado"
+            [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto'}">
             <h4>Datos del Contratante</h4>
             <div class="forms-sample" style="text-align: left">
               <div class="row">
@@ -254,7 +252,8 @@
           </div>
 
           <!--DATOS PAGADORES-->
-          <div *ngIf="valDiseno.panelesEmpresa.pagadores.estado">
+          <div *ngIf="valDiseno.panelesEmpresa.pagadores.estado"
+            [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto'}">
             <h4>Datos del Pagador</h4>
             <div class="forms-sample" style="text-align: left">
               <div class="row">
@@ -329,15 +328,7 @@
       <div *ngIf="panelesGlobales.direcciones.estado" class="row">
         <div class="col-md-8">
           <h4 style="color: white">Gestión de Ubicaciones</h4>
-          <!--<div class="input-group">
-            <input #buscador type="text" class="form-control" style="font-size: 15px" placeholder="Buscar Dirección...">
-            <div class="input-group-append">
-              <span class="input-group-text">
-                <i class="mdi mdi-search-web"></i>
-              </span>
-            </div>
-          </div>-->
-          <div>
+          <div [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto'}">
             <div id="acordionDirecciones">
               <div class="card" style="background-color: rgba(255,255,255,0.2) !important">
                 <div class="panel-direcciones-header" id="cabeceraUnoDireccion"
@@ -389,7 +380,8 @@
         </div>
         <div class="col-md-4">
           <br>
-          <div class="table-responsive">
+          <div class="table-responsive"
+            [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto'}">
             <table>
               <thead class="thead-dark">
                 <tr style="text-align: center">
@@ -406,7 +398,7 @@
                   <td *ngIf="usuario.broker.Provincias == 1">{{direccion.provincia}}</td>
                   <td>
                     <button class="btn btn-danger"
-                      (click)="valMapa.eliminarMarcadorTabla(direccion.id, marcadores, lstDirecciones)">
+                      (click)="eliminarMarcadorTabla(direccion.id, marcadores, lstDirecciones, i)">
                       <i class="mdi mdi-delete"></i>
                     </button>
                   </td>
@@ -428,7 +420,8 @@
           <h4 style="color: white">Gestión Ramos</h4>
         </div>
         <div class="col-md-9 contenido-ramos-escritorio" style="font-size: 14px; text-align: center; color: white;">
-          <div class="row">
+          <div class="row"
+            [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto'}">
             <div *ngIf="valDiseno.panelesVistaRamos.incendio.estado" class="col-md-3">
               <div [ngClass]="valDiseno.panelesRamos.incendio.escritorio" [ngStyle]="{'border': 'rgb(0,0,0)'}">
                 <img src="../../../assets/images/ramos/incendio.png" /><br>Incendio y <br>Lineas Aliadas
@@ -537,7 +530,8 @@
           </div>
         </div>
 
-        <div class="col-md-9 contenido-ramos-movil">
+        <div class="col-md-9 contenido-ramos-movil"
+          [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto'}">
           <ul class="list-group">
             <li *ngIf="valDiseno.panelesVistaRamos.incendio.estado" [ngClass]="valDiseno.panelesRamos.incendio.movil">
               <img src="../../../assets/images/ramos/incendio.png" width="30" height="30" />&nbsp;&nbsp;&nbsp;
@@ -622,6 +616,7 @@
           </ul>
           <br>
         </div>
+
         <div class="col-md-3">
           <table class="table ">
             <thead class="thead-dark">
@@ -746,7 +741,8 @@
             </li>
           </ul>
         </div>
-        <div class="col-sm-12 col-md-12" style="top: 85px; overflow-y:hidden">
+        <div class="col-sm-12 col-md-12"
+          [ngStyle]="{'pointer-events': (estadoCotizacion == 4 || estadoCotizacion == 5) ? 'none' : 'auto', 'top': '85px', 'overflow-y': 'hidden'}">
           <div class="table-responsive" *ngIf="valDiseno.panelesValoresRamos_.incendio.estado">
             <template #ramoIncendio></template>
           </div>
@@ -839,6 +835,7 @@
           <br><br><br><br>
         </div>
       </div>
+
       <!-- VALORES DE LA COTIZACIÓN -->
       <div *ngIf="panelesGlobales.cotizacion.estado">
         <div class="row">
@@ -1494,6 +1491,7 @@
           <div class="col-md-3"></div>
         </div>
       </div>
+
       <!-- RESUMEN DETALLADO DE LA COTIZACION -->
       <div *ngIf="panelesGlobales.resumen.estado">
         <div class="row">
@@ -1600,6 +1598,7 @@
         </div>
       </div>
 
+      <!-- PANEL PAGOS -->
       <div *ngIf="panelesGlobales.pago.estado && deuda == '0'">
         <div class="row">
           <div class="col-md-3"></div>
@@ -1660,10 +1659,10 @@
                               <br><small><b>Contado</b></small>
                             </div>
                           </div>
-                          <div class="col-3" style="cursor: not-allowed !important;">
+                          <div class="col-3" (click)="seleccionarFormaPago(4)" style="cursor: pointer;">
                             <!--(click)="seleccionarFormaPago(4)"-->
-                            <div id="4" class="icono pagos-boton-deshabilitado">
-                              <img src="../../../assets/images/DebitoBancarioDes.png" width="50">
+                            <div id="4" class="icono pagos-boton">
+                              <img src="../../../assets/images/DebitoBancario.png" width="50">
                               <br><small><b>Débito Bancario</b></small>
                             </div>
                           </div>
@@ -1679,8 +1678,8 @@
                           <div class="col-6" style="text-align: left !important;">
                             <b>Gestión Pago</b>
                           </div>
-                          <div class="col-6" style="text-align: right !important; cursor: pointer;"
-                            (click)="cambiarFormaPago()">
+                          <div *ngIf="numeroPolizasEmitidas == 0" class="col-6"
+                            style="text-align: right !important; cursor: pointer;" (click)="cambiarFormaPago()">
                             <small><i class="mdi mdi-pencil"></i> Cambiar Forma de Pago</small>
                           </div>
                         </div>
@@ -1770,8 +1769,75 @@
                       </div>
 
                       <div *ngIf="tipoPago == 4" class="mensaje-estado-pago bg-secondary"
-                        style="padding: 20px !important; color: black !important;">
-                        <b>Forma de Pago en Desarrollo</b>
+                        [ngStyle]="{'padding': '20px', 'color': 'black', 'pointer-events': (estadoCotizacion != 4 && estadoCotizacion != 5) ? 'auto' : 'none'}">
+
+                        <div class="form-group" style="font-size: 14px !important;">
+                          <b>Forma de Pago:</b><br>
+                          <span>Débito Bancario</span>
+                        </div>
+                        <div class="form-group" style="font-size: 14px !important;">
+                          <b>Tipo Cuenta:</b><br>
+                          <kendo-dropdownlist [(ngModel)]="DebitoBancario.TipoCuenta" [data]="lstTipoCuentaDebito"
+                            [textField]="'text'" [valueField]="'value'" [valuePrimitive]="true"
+                            (ngModelChange)="listarBancos()"
+                            style="width: 100%; height: 35px !important; font-size: 14px !important; border: 1px solid #000 !important;">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                              <span style="font-size: 14px !important">{{ dataItem.text }}</span>
+                            </ng-template>
+                          </kendo-dropdownlist>
+                        </div>
+
+                        <div class="form-group" style="font-size: 14px !important;">
+                          <b>Banco:</b><br>
+                          <kendo-dropdownlist [(ngModel)]="DebitoBancario.Banco" [data]="lstBancosDebitoFiltrar"
+                            [filterable]="true" [textField]="'nombreConducto'" [valueField]="'codigoConducto'"
+                            [valuePrimitive]="true" (filterChange)="filtrarBanco($event)"
+                            (ngModelChange)="listarCuotas()"
+                            style="width: 100%; height: 35px !important; font-size: 14px !important; border: 1px solid #000 !important;">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                              <span style="font-size: 14px !important">{{ dataItem.nombreConducto }}</span>
+                            </ng-template>
+                          </kendo-dropdownlist>
+                        </div>
+
+                        <div class="form-group" style="font-size: 14px !important;">
+                          <b>Cuotas:</b><br>
+                          <kendo-dropdownlist [(ngModel)]="DebitoBancario.Cuotas" [data]="lstCuotasDebitoFiltrar"
+                            [filterable]="true" [textField]="'nombreCuota'" [valueField]="'codigoPago'"
+                            [valuePrimitive]="true" (filterChange)="filtrarCuotas($event)"
+                            (ngModelChange)="listarNumeroCuotas()"
+                            style="width: 100%; height: 35px !important; font-size: 14px !important; border: 1px solid #000 !important;">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                              <span style="font-size: 14px !important">{{ dataItem.nombreCuota }}</span>
+                            </ng-template>
+                          </kendo-dropdownlist>
+                        </div>
+
+                        <div class="form-group" style="font-size: 14px !important;">
+                          <b>Número de Cuenta:</b><br>
+                          <input type="text" [(ngModel)]="DebitoBancario.NumeroCuenta" class="form-control texto"
+                            placeholder="Ingresar Número de Cuenta"
+                            (keyup)="DebitoBancario.NumeroCuenta = valCotizador.formatoCampo(DebitoBancario.NumeroCuenta, '0123456789', 15, 2)">
+                        </div>
+
+                        <div class="form-group" style="font-size: 14px !important;">
+                          <b>Fecha de Débito:</b><br>
+                          <kendo-dropdownlist [(ngModel)]="DebitoBancario.FechaDebito" [data]="lstFechaDebito"
+                            [textField]="'text'" [valueField]="'value'" [valuePrimitive]="true"
+                            style="width: 100%; height: 35px !important; font-size: 14px !important; border: 1px solid #000 !important;">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                              <span style="font-size: 14px !important">{{ dataItem.text }}</span>
+                            </ng-template>
+                          </kendo-dropdownlist>
+                        </div>
+
+                        <div class="form-group" style="font-size: 14px !important;">
+                          <b>Valor Mensualizado:</b><br>
+                          <span>
+                            $ {{ globales.formatearNumero((DebitoBancario.NumeroCuotas), 2) }}
+                          </span>
+                        </div>
+
                       </div>
 
                       <br *ngIf="estadoCotizacion != 4 && estadoCotizacion != 5">
@@ -1804,11 +1870,12 @@
         </div>
       </div>
 
+      <!-- PANEL EMISION -->
       <div *ngIf="panelesGlobales.emision.estado">
         <div class="row">
           <div class="col-md-3"></div>
           <div class="col-md-6">
-            <h4 style="color: white">Emitir Póliza PYMES</h4>
+            <h4 style="color: white">Emitir Póliza</h4>
             <br>
 
 
@@ -1820,10 +1887,10 @@
                   Datos Cotización
                 </div>
 
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                  <div class="table-responsive borde-redondeado-cotizacion">
+                <div id="collapseOne" [ngClass]="numeroPolizasEmitidas == 0 ? 'collapse show' : 'collapse'" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div class="borde-redondeado-cotizacion">
 
-                    <table *ngIf="tipoPago == 3" id="tablaPago" class="table">
+                    <table *ngIf="tipoPago == 3" id="tablaPago">
                       <tr>
                         <td><b><span class="estilo-cotizacion">N° Cotización</span></b></td>
                         <td><span class="estilo-cotizacion">{{codigoCotizacion.codigoCotizacion}}</span></td>
@@ -1839,9 +1906,81 @@
                         <td class="estilo-cotizacion"><b>Forma</b></td>
                         <td class="estilo-cotizacion">CONTADO</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" style="font-size: 15px; text-align: center"><b>DATOS EMISIÓN</b></td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Tipo Agente</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.tipoAgente }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Agente</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.agente }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Comisión</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.comision }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Punto de Venta - Sucursal</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.sucursal }}</td>
+                      </tr>
+                      <td colspan="2">
+                        <span class="estilo-cotizacion">
+                          <small>
+                            <b style="color: #A93226;">NOTA IMPORTANTE:</b>
+                            <b>Si los datos de emisión no son correctos, contactese con la unidad de soporte.</b>
+                          </small>
+                        </span>
+                      </td>
                     </table>
 
-                    <table *ngIf="tipoPago == 1 || tipoPago == 2" id="tablaPago" class="table">
+                    <table *ngIf="tipoPago == 4" id="tablaPago">
+                      <tr>
+                        <td><b><span class="estilo-cotizacion">N° Cotización</span></b></td>
+                        <td><span class="estilo-cotizacion">{{codigoCotizacion.codigoCotizacion}}</span></td>
+                      </tr>
+                      <tr>
+                        <td><b><span class="estilo-cotizacion">Fecha Cotización</span></b></td>
+                        <td><span class="estilo-cotizacion">{{ fechaCotizacion }}</span></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="font-size: 15px; text-align: center"><b>DATOS PAGO</b></td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Forma</b></td>
+                        <td class="estilo-cotizacion">DÉBITO BANCARIO</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="font-size: 15px; text-align: center"><b>DATOS EMISIÓN</b></td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Tipo Agente</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.tipoAgente }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Agente</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.agente }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Comisión</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.comision }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Punto de Venta - Sucursal</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.sucursal }}</td>
+                      </tr>
+                      <td colspan="2">
+                        <span class="estilo-cotizacion">
+                          <small>
+                            <b style="color: #A93226;">NOTA IMPORTANTE:</b>
+                            <b>Si los datos de emisión no son correctos, contactese con la unidad de soporte.</b>
+                          </small>
+                        </span>
+                      </td>
+                    </table>
+
+                    <table *ngIf="tipoPago == 1 || tipoPago == 2" id="tablaPago">
                       <tr>
                         <td><b><span class="estilo-cotizacion">N° Cotización</span></b></td>
                         <td><span class="estilo-cotizacion">{{codigoCotizacion.codigoCotizacion}}</span></td>
@@ -1888,26 +2027,54 @@
                         <td class="estilo-cotizacion"><b>Fecha Pago</b></td>
                         <td class="estilo-cotizacion">{{ FormaPago.Fecha }}</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" style="font-size: 15px; text-align: center"><b>DATOS EMISIÓN</b></td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Tipo Agente</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.tipoAgente }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Agente</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.agente }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Comisión</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.comision }}</td>
+                      </tr>
+                      <tr>
+                        <td class="estilo-cotizacion"><b>Punto de Venta - Sucursal</b></td>
+                        <td class="estilo-cotizacion">{{ informacionEmision.sucursal }}</td>
+                      </tr>
+                      <td colspan="2">
+                        <span class="estilo-cotizacion">
+                          <small>
+                            <b style="color: #A93226;">NOTA IMPORTANTE:</b>
+                            <b>Si los datos de emisión no son correctos, contactese con la unidad de soporte.</b>
+                          </small>
+                        </span>
+                      </td>
                     </table>
                   </div>
                 </div>
               </div>
               <div class="card">
-                <div class="card-header" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo"
+                <div class="card-header boton-emision" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo"
                   aria-expanded="false" aria-controls="collapseTwo"
                   [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white', 'cursor': 'pointer'}">
                   Emisión
                 </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                  <div class="table-responsive borde-redondeado-cotizacion"
+                <div id="collapseTwo" [ngClass]="numeroPolizasEmitidas != 0 ? 'collapse show' : 'collapse'" aria-labelledby="headingTwo" data-parent="#accordion">
+                  <div class="borde-redondeado-cotizacion"
                     [ngStyle]="{'pointer-events': bloqueoEmision == false ? 'auto' : 'none'}">
-                    <table class="table">
+                    <table>
                       <tr>
                         <td>
                           <b><span class="estilo-cotizacion">Fecha Emisión</span></b>
                         </td>
-                        <td style="text-align: right !important">
-                          <kendo-datepicker [min]="fechaEmisionRetroactiva" [max]="fechaEmisionVigencia"
+                        <td [ngStyle]="{'text-align': 'right', 'pointer-events': cotizacionDetalles.CotizacionResultado.FechaEmision != '' ? 'none' : 'auto'}">
+                          <kendo-datepicker [min]="fechaEmisionRetroactiva" [max]="fechaEmisionFutura"
+                            [format]="'yyyy-MM-dd'" onkeydown="return false;"
                             [(ngModel)]="fechaEmisionVigenciaSeleccionada" (ngModelChange)="gestionFechasEmision()">
                           </kendo-datepicker>
                         </td>
@@ -2023,13 +2190,6 @@
                           </span>
                         </td>
                       </tr>
-                      <tr *ngIf="tipoPago == 3 || tipoPago == 4">
-                        <td colspan="2">
-                          <span class="estilo-cotizacion">
-                            <b>NOTA IMPORTANTE:</b> La aplicación del pago se lo deberá realizar de forma manual.
-                          </span>
-                        </td>
-                      </tr>
                       <tr
                         *ngIf="estadoAplicarPago == true && fmrCotizacionResultado.EstadoPagoGlobal == 0 && (tipoPago == 1 || tipoPago == 2)">
                         <td colspan="2">
@@ -2058,6 +2218,7 @@
           <div class="col-md-3"></div>
         </div>
       </div>
+
     </div>
   </div>
 </div>

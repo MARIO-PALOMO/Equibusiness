@@ -2,6 +2,7 @@ import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { VariablesGlobales } from "../../variables/globales/globales";
+import { retry } from "rxjs/operators";
 
 @Injectable()
 export class ApiService extends VariablesGlobales {
@@ -21,7 +22,7 @@ export class ApiService extends VariablesGlobales {
         "Authorization": "" + token + ""
       })
     };
-    return this.http.post(this.url + "" + endpoint, body, httpOptions);
+    return this.http.post(this.url + "" + endpoint, body, httpOptions).pipe(retry(3));;
   }
 
   get(endpoint: string, token: any, params?: any, reqOpts?: any): Observable<any> {
@@ -45,7 +46,7 @@ export class ApiService extends VariablesGlobales {
       })
     };
 
-    return this.http.get(this.url + "" + endpoint, reqOpts);
+    return this.http.get(this.url + "" + endpoint, reqOpts).pipe(retry(3));
   }
 
   postPay(endpoint: string, body: any): Observable<any> {
@@ -55,7 +56,7 @@ export class ApiService extends VariablesGlobales {
         "Authorization": "A1TLHztUKEZRl5YnMU8fqnFcyFMsIXeF"
       })
     };
-    return this.http.post(this.obtenerCredenciales("").conexionAPILinkPago + "" + endpoint, body, httpOptions);
+    return this.http.post(this.obtenerCredenciales("").conexionAPILinkPago + "" + endpoint, body, httpOptions).pipe(retry(3));;
   }
 
   getPay(endpoint: string, params?: any, reqOpts?: any): Observable<any> {
@@ -79,7 +80,7 @@ export class ApiService extends VariablesGlobales {
       })
     };
 
-    return this.http.get(this.obtenerCredenciales("").conexionAPILinkPago + "" + endpoint, reqOpts);
+    return this.http.get(this.obtenerCredenciales("").conexionAPILinkPago + "" + endpoint, reqOpts).pipe(retry(3));;
   }
 
   error(errores: any) {

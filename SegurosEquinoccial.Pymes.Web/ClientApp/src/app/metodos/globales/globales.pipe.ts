@@ -53,7 +53,7 @@ export class GlobalesPipe implements PipeTransform {
       if (
         result.dismiss === Swal.DismissReason.timer
       ) {
-        console.log('I was closed by the timer')
+      
       }
     })
   }
@@ -140,6 +140,13 @@ export class GlobalesPipe implements PipeTransform {
 
   public limpiarDireccion(direccion) {
     var str = direccion;
+    var res = str.replace("&", "");
+    var res1 = res.replace("amp;", "");
+    return res1;
+  }
+
+  public limpiar(dato) {
+    var str = dato;
     var res = str.replace("&", "");
     var res1 = res.replace("amp;", "");
     return res1;

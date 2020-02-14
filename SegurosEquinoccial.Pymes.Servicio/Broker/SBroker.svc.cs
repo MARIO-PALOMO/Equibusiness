@@ -496,5 +496,20 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         {
             return CBroCotizacion.BroGestionCotizacionActualizacion(Convert.ToInt32(IdCotizacion));
         }
+
+        public string BroObtenerBancoConductos()
+        {
+            return CPolPago.BroObtenerBancoConductos();
+        }
+
+        public string BroObtenerPlanPagoCuotas(string conducto)
+        {
+            return CPolPago.BroObtenerPlanPagoCuotas(conducto);
+        }
+
+        public string BroObtenerNumeroCuotas(string codigo)
+        {
+            return CPolPago.BroObtenerNumeroCuotas(codigo);
+        }
     }
 }

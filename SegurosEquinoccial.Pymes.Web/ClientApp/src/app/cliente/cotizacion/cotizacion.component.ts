@@ -435,7 +435,7 @@ export class CotizacionComponent implements OnInit {
   public vencimientoEmision = "0";
   public conductoEmision = 0;
   public tppagoEmision = 0;
-  public sucursal_ = { "Sucursal": "0", "PuntoVenta": "0", "Comision": 0, "TipoAgente": 0, "Agente": "0" };
+  public sucursal_ = { "Sucursal": "0", "PuntoVenta": "0", "Comision": 20, "TipoAgente": 0, "Agente": "0" };
   public cotizacionDetalles: any;
 
   public numeroCotizacion = "";
@@ -459,9 +459,36 @@ export class CotizacionComponent implements OnInit {
   public numeroPolizasEmitidas = 0;
 
   public fechaEmisionRetroactiva;
+  public fechaEmisionFutura;
   public fechaEmisionVigencia;
   public fechaEmisionVigenciaSeleccionada = new Date();
   public fechaEmisionVencimiento;
+
+  public lstTipoCuentaDebito: Array<{ text: string, value: number }> = [
+    { text: "AHORROS", value: 1 },
+    { text: "CORRIENTE", value: 2 }
+  ];
+  public lstFechaDebito: Array<{ text: string, value: number }> = [
+    { text: "PRIMERA QUINCENA", value: 1 },
+    { text: "SEGUNDA QUINCENA", value: 2 }
+  ];
+  public lstBancosDebito = [];
+  public lstBancosDebitoFiltrar: any;
+  public lstCuotasDebito = [];
+  public lstCuotasDebitoFiltrar: any;
+
+  public DebitoBancario = {
+    TipoCuenta: null,
+    Banco: null,
+    Cuotas: null,
+    NumeroCuenta: null,
+    FechaDebito: null,
+    Adjunto: "",
+    NumeroCuotas: 0
+  };
+
+  public informacionEmision: any
+  public informacionDebitoBancario: any;
 
   constructor(private router: Router, private valDiseno: VistaPipe, private valMapa: MapaPipe, private valVehiculos: VehiculosPipe, private globales: GlobalesPipe, private varGlobales: VariablesGlobales, private sesion: SesionService,
     private conexion: ApiService, private general: CotizacionRamoGeneral, private resolver: ComponentFactoryResolver, private spinner: NgxSpinnerService,
@@ -490,7 +517,7 @@ export class CotizacionComponent implements OnInit {
     this.listarEmpresa();
     this.usuario.broker.Provincias == 0 ? this.estadoUbicaciones = 'ubicacion-global' : this.estadoUbicaciones = 'ubicacion-provincias';
 
-    this.verificarFinalizacionCotizacion();
+    //this.verificarFinalizacionCotizacion();
 
     if (this.usuario.broker.Provincias == 0) {
       this.lstProvincias = ["Global"];
@@ -499,10 +526,12 @@ export class CotizacionComponent implements OnInit {
     }
 
     var fecha1 = moment();
-    var fecha2 = moment(fecha1).subtract(29, "days");
+    var fecha2 = moment(fecha1).subtract(30, "days");
+    var fecha3 = moment(fecha1).add(30, "days");
 
     this.fechaEmisionVigencia = new Date(fecha1);
     this.fechaEmisionRetroactiva = new Date(fecha2);
+    this.fechaEmisionFutura = new Date(fecha3)
 
     var sesion = this.sesion;
     window.addEventListener("unload", function (e) {
@@ -575,10 +604,45 @@ export class CotizacionComponent implements OnInit {
     this.valDiseno.gestionPanelRamos(dato);
   }
 
+  public eliminarMarcadorTabla(id, marcador, direcciones, ubi) {
+    this.valMapa.eliminarMarcadorTabla(id, marcador, direcciones);
+    var ubicacion = ubi + 1;
+    this.vaciarValoresUbicacion(ubicacion);
+  }
+
+  public vaciarValoresUbicacion(ubicacion) {
+    this.reiniciarValores(ubicacion, this.listaIncendio);
+    this.reiniciarValores(ubicacion, this.listaEquipoElectronico);
+    this.reiniciarValores(ubicacion, this.listaRoturaMaquinaria);
+    this.reiniciarValores(ubicacion, this.listaLucroRoturaMaquinaria);
+    this.reiniciarValores(ubicacion, this.listaLucroIncendio);
+    this.reiniciarValores(ubicacion, this.listaRoboAsalto);
+    this.reiniciarValores(ubicacion, this.listaDineroValores);
+    this.reiniciarValores(ubicacion, this.listaEquipoMaquinaria);
+    this.reiniciarValores(ubicacion, this.listaResponsabilidadCivil);
+    this.reiniciarValores(ubicacion, this.listaFidelidad);
+    this.reiniciarValores(ubicacion, this.listaAccidentesPersonales);
+    this.reiniciarValores(ubicacion, this.listaTransportes);
+    this.reiniciarValores(ubicacion, this.listaTransporteImportaciones);
+    this.reiniciarValores(ubicacion, this.listaVehiculos);
+  }
+
+  public reiniciarValores(ubicacion, ramo) {
+    for (var subramos of ramo) {
+      subramos.Valores.ValorU1.Valor = 0;
+      subramos.Valores.ValorU2.Valor = 0;
+      subramos.Valores.ValorU3.Valor = 0;
+      subramos.Valores.ValorU4.Valor = 0;
+      subramos.Valores.ValorU5.Valor = 0;
+
+      subramos.Valores.Prima = 0;
+    }
+  }
+
   //INICIALIZACION DE VALORES EN CADA RAMO Y SUS COBERTURAS
 
   public inicializarRamosCoberturas() {
-    console.log("LLEGO")
+
     if (this.kcontenido.verificarKeyContenido()) {
       this.verificarContenidoGuardado();
     } else {
@@ -768,15 +832,25 @@ export class CotizacionComponent implements OnInit {
             this.conductoEmision = 1;
             this.tppagoEmision = 1;
           } else if (this.tipoPago == 4) {
-            this.conductoEmision = 0;
-            this.tppagoEmision = 0;
+            this.conductoEmision = res.FormaPago.CodigoAutenticacion;
+            this.tppagoEmision = res.FormaPago.Referencia;
           }
 
           this.numeroPolizasEmitidas = this.verificarAlmenosUnaPolizaEmitida();
+          if(this.numeroPolizasEmitidas == 0){
+            $("#headingOne").attr("aria-expanded", "true");
+            $("#headingTwo").attr("aria-expanded", "false");
+          }else{
+            $("#headingOne").attr("aria-expanded", "false");
+            $("#headingTwo").attr("aria-expanded", "true");
+          }
 
-          if(res.CotizacionResultado.FechaEmision != ""){
+          if (res.CotizacionResultado.FechaEmision != "") {
             this.fechaEmisionVigenciaSeleccionada = new Date(res.CotizacionResultado.FechaEmision);
           }
+
+          this.obtenerDatosPagoDebitoBancario(res.FormaPago);
+
           console.log(res);
         },
         err => {
@@ -786,7 +860,89 @@ export class CotizacionComponent implements OnInit {
           this.conexion.error(err);
         }
       );
+    } else {
+      this.verificarFinalizacionCotizacion();
     }
+  }
+
+  public obtenerDatosPagoDebitoBancario(FormaPago) {
+
+    var tipo = "";
+    var banco = "";
+    var cuotas = "";
+    var cuenta = "";
+    var fechaDebito = "";
+    var valorMensualizado = 0;
+
+    if (FormaPago.Tipo == "DÉBITO BANCARIO") {
+      this.DebitoBancario.NumeroCuenta = FormaPago.Voucher;
+      cuenta = FormaPago.Voucher;
+
+      for (let ltipoc of this.lstTipoCuentaDebito) {
+        if (ltipoc.value == parseInt(FormaPago.Plataforma)) {
+          this.DebitoBancario.TipoCuenta = ltipoc.value;
+          tipo = ltipoc.text;
+        }
+      }
+
+      this.spinner.show();
+      this.generico.listarBancos().then(lista => {
+        this.spinner.hide();
+        this.organizarBancos(lista);
+        for (let lbanco of lista) {
+          if (lbanco.codigoConducto == FormaPago.CodigoAutenticacion) {
+            this.DebitoBancario.Banco = lbanco.codigoConducto;
+            banco = lbanco.nombreConducto;
+          }
+        }
+
+        this.spinner.show();
+        this.generico.listarCuotas(this.DebitoBancario.Banco).then(lista => {
+          this.spinner.hide();
+
+          this.lstCuotasDebito = lista;
+          this.lstCuotasDebitoFiltrar = this.lstCuotasDebito.slice();
+
+          for (let lcuotas of lista) {
+            if (lcuotas.codigoPago == FormaPago.Referencia) {
+              this.DebitoBancario.Cuotas = lcuotas.codigoPago;
+              cuotas = lcuotas.nombreCuota;
+            }
+          }
+
+          for (let lfecha of this.lstFechaDebito) {
+            if (lfecha.value == FormaPago.Lote) {
+              this.DebitoBancario.FechaDebito = lfecha.value;
+              fechaDebito = lfecha.text;
+            }
+          }
+
+          this.spinner.show();
+          this.generico.listarNumeroCuotas(this.DebitoBancario.Cuotas).then(numero => {
+            this.spinner.hide();
+
+            this.DebitoBancario.NumeroCuotas = Math.round((this.cotizacionTotal.primaTotal / numero) * 100) / 100;
+            valorMensualizado = Math.round((this.cotizacionTotal.primaTotal / numero) * 100) / 100;
+
+            this.informacionDebitoBancario = { tipo: tipo, banco: banco, cuotas: cuotas, cuenta: cuenta, fechaDebito: fechaDebito, valorMensualizado: valorMensualizado };
+
+            this.verificarFinalizacionCotizacion();
+
+          }).catch(err => {
+            this.spinner.hide();
+          });
+
+        }).catch(err => {
+          this.spinner.hide();
+        });
+
+      }).catch(err => {
+        this.spinner.hide();
+      });
+    } else {
+      this.verificarFinalizacionCotizacion();
+    }
+
   }
 
   //GESTION INCENDIOS
@@ -1042,9 +1198,26 @@ export class CotizacionComponent implements OnInit {
     this.spinner.show();
     this.conexion.get("Broker/SBroker.svc/cotizacion/buscar/estado/" + this.codigoCotizacion.idCotizacion, this.usuario.Uid).subscribe(
       (res: any) => {
+        this.spinner.hide();
         this.estadoCotizacion = res.Estado;
         if (res.Estado == 4 || res.Estado == 5) {
-          this.gestioPanelGlobal('Emision');
+          if (this.numeroPolizasEmitidas == 0) {
+            Swal.fire({
+              html: "<div style='text-align: center; font-size: 18px;'><b>NOTA ACLARATORIA</b><br></div><div style='font-size: 14px; text-align: justify'; padding: 50px; color: black><br>No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas</div>",
+              showCancelButton: false,
+              confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
+              cancelButtonColor: '#d33',
+              cancelButtonText: "Cancelar",
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              if (result.value) {
+                this.gestioPanelGlobal('Emision');
+              }
+            });
+          } else {
+            this.gestioPanelGlobal('Emision');
+          }
+
         }
       },
       err => {
@@ -1435,6 +1608,7 @@ export class CotizacionComponent implements OnInit {
       this.guardarCotizacion(IdContratante, IdPagador, IdDireccion, IdVehiculos, id, Seleccion);
     }).catch(err => {
       this.spinner.hide();
+      console.log(err);
       var datos = {
         IdContratante: IdContratante,
         IdPagador: IdPagador,
@@ -1463,10 +1637,10 @@ export class CotizacionComponent implements OnInit {
     if (this.usuario.Corredores == "1") {
 
       var suc = this.Sucursal.Union.split("-");
-      Corredor = { Sucursal: suc[0], PuntoVenta: suc[1], Comision: this.Comision + "", TipoAgente: this.TipoAgente.value, Agente: this.Agente.codigoAgente };
+      Corredor = { Sucursal: suc[0], PuntoVenta: suc[1], Comision: this.Agente.codigoAgente == "99" ? 0 : parseInt(this.Comision), TipoAgente: this.TipoAgente.value, Agente: this.Agente.codigoAgente };
 
     } else {
-      Corredor = Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: this.usuario.Comision + "", TipoAgente: this.usuario.CodigoTipoAgente, Agente: this.usuario.CodigoAgente };
+      Corredor = Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: this.usuario.CodigoAgente == "99" ? 0 : parseInt(this.usuario.Comision), TipoAgente: parseInt(this.usuario.CodigoTipoAgente), Agente: this.usuario.CodigoAgente };
     }
 
     var contenido = {
@@ -1619,9 +1793,10 @@ export class CotizacionComponent implements OnInit {
           this.tppagoEmision = 1;
           this.generarPagoContado(3);
         } else if (this.tipoPago == 4) {
-          /*this.conductoEmision = 0;
-          this.tppagoEmision = 0;
-          this.generarPagoContado(4);*/
+
+          this.generarPagoDebitoBancario(this.tipoPago);
+          this.conductoEmision = this.DebitoBancario.Banco;
+          this.tppagoEmision = this.DebitoBancario.Cuotas;
         }
       } else {
         Swal.fire({
@@ -1692,7 +1867,34 @@ export class CotizacionComponent implements OnInit {
       Identificador: 2,
       Ramo: Ramo
     }
-    this.actualizarEmpresa(datos);
+
+    var fechaSeleccionada = moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD");
+    var fechaAcual = moment().format("YYYY-MM-DD");
+
+    if (this.numeroPolizasEmitidas == 0) {
+      if (fechaSeleccionada < fechaAcual) {
+
+        Swal.fire({
+          type: "info",
+          text: "El asegurado declara que no ha tenido siniestros ocurridos, conocidos ni reportados a la fecha de la emisión del presente programa de seguros.",
+          showCancelButton: true,
+          confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
+          cancelButtonColor: '#d33',
+          cancelButtonText: "Cancelar",
+          confirmButtonText: 'Aceptar'
+        }).then((result) => {
+          if (result.value) {
+            this.actualizarEmpresa(datos);
+          }
+        });
+
+      } else {
+        this.actualizarEmpresa(datos);
+      }
+    } else {
+      this.actualizarEmpresa(datos);
+    }
+
   }
 
   public obtenerCodigosAsegurados(Ramo) {
@@ -1709,13 +1911,19 @@ export class CotizacionComponent implements OnInit {
       this.conductoEmision = 1;
       this.tppagoEmision = 1;
     } else if (this.tipoPago == 4) {
-      this.conductoEmision = 0;
-      this.tppagoEmision = 0;
+      this.conductoEmision = this.DebitoBancario.Banco;
+      this.tppagoEmision = this.DebitoBancario.Cuotas;
     }
 
     var tarjeta = this.globales.obtenerDatosTarjeta(this.FormaPago.Plataforma, this.FormaPago.Trama);
-    this.binEmision = tarjeta.bin;
-    this.vencimientoEmision = tarjeta.vencimiento;
+
+    if (this.tipoPago == 4) {
+      this.binEmision = this.DebitoBancario.NumeroCuenta;
+      this.vencimientoEmision = "0";
+    } else {
+      this.binEmision = tarjeta.bin;
+      this.vencimientoEmision = tarjeta.vencimiento;
+    }
 
     var DatosEmpresa = {
       DocumentoCliente: this.empresa.Ruc,
@@ -1723,8 +1931,8 @@ export class CotizacionComponent implements OnInit {
       CodigoAgente: this.sucursal_.Agente,
       CodigoTipoAgente: this.sucursal_.TipoAgente,
       EmailCliente: this.empresa.Email,
-      NombreCliente: this.empresa.RazonSocial,
-      EnviarEmail: 0
+      NombreCliente: this.globales.limpiar(this.empresa.RazonSocial),
+      EnviarEmail: 1
     };
 
     var DatosContratante = {
@@ -1733,8 +1941,8 @@ export class CotizacionComponent implements OnInit {
       CodigoAgente: this.sucursal_.Agente,
       CodigoTipoAgente: this.sucursal_.TipoAgente,
       EmailCliente: this.empresa.Email,
-      NombreCliente: this.empresa.RazonSocial,
-      EnviarEmail: 0
+      NombreCliente: this.globales.limpiar(this.empresa.RazonSocial),
+      EnviarEmail: 1
     };
 
     var DatosPagador = {
@@ -1743,8 +1951,8 @@ export class CotizacionComponent implements OnInit {
       CodigoAgente: this.sucursal_.Agente,
       CodigoTipoAgente: this.sucursal_.TipoAgente,
       EmailCliente: this.pagadores.Email,
-      NombreCliente: this.pagadores.Nombre,
-      EnviarEmail: 0
+      NombreCliente: this.globales.limpiar(this.pagadores.Nombre),
+      EnviarEmail: 1
     };
 
     this.spinner.show();
@@ -2234,7 +2442,7 @@ export class CotizacionComponent implements OnInit {
           "direccion3": this.empresa.Direccion,
           "telf_particular": this.empresa.Telefono,
           "indicativo": this.empresa.Email,
-          "cod_plan_pago": 94,
+          "cod_plan_pago": this.tppagoEmision,
           "fecha_nacim": "00000000 00:00",
           "cero": "0",
           "uno": "1",
@@ -2278,7 +2486,7 @@ export class CotizacionComponent implements OnInit {
           "sn_inspeccion": "0",
           "cod_estado_procesado": "0",
           "id_proceso_slx": "0",
-          "fec_procreso": this.globales.obtenerFecha(""),
+          "fec_procreso": moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
           "cod_usuario": "USRPYMES",
           "cod_estado_veh": "0",
           "cod_estado_clte": "0",
@@ -2341,7 +2549,7 @@ export class CotizacionComponent implements OnInit {
           "direccion3": this.empresa.Direccion,
           "telf_particular": this.empresa.Telefono,
           "indicativo": this.empresa.Email,
-          "cod_plan_pago": 94,
+          "cod_plan_pago": this.tppagoEmision,
           "fecha_nacim": "00000000 00:00",
           "cero": "0",
           "uno": "1",
@@ -3112,6 +3320,7 @@ export class CotizacionComponent implements OnInit {
   }
 
   public listarCorredores(corredor) {
+
     this.Sucursal = { Union: corredor.Sucursal + "-" + corredor.PuntoVenta };
     this.Comision = corredor.Comision;
     this.TipoAgente = { value: corredor.TipoAgente };
@@ -3369,8 +3578,10 @@ export class CotizacionComponent implements OnInit {
       this.calcularCotizacionTotalGlobal();
 
       if (this.validarPrimasMinimas() == true) {
-        if (this.validarVehiculos() == true) {
-          this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+        if (this.validarCombosTransportes() == true) {
+          if (this.validarVehiculos() == true) {
+            this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+          }
         }
       }
 
@@ -3391,8 +3602,10 @@ export class CotizacionComponent implements OnInit {
 
         }, 4000);
         if (this.validarPrimasMinimas() == true) {
-          if (this.validarVehiculos() == true) {
-            this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+          if (this.validarCombosTransportes() == true) {
+            if (this.validarVehiculos() == true) {
+              this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+            }
           }
         }
       }
@@ -3415,10 +3628,49 @@ export class CotizacionComponent implements OnInit {
       this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
     } if (panel == 'Emision') {
 
-      setTimeout(() => {
-        this.verificarFormularioViculacion(panel);
-      }, 3000);
+      var sucursal = "";
+      var comision = this.sucursal_.Comision;
+      var tipoAgente = "";
+      var agente = "";
 
+      this.spinner.show();
+      this.generico.listarSucursales().then(lista => {
+        this.spinner.hide();
+
+        for (let suc of lista) {
+          if (suc.Union == this.sucursal_.PuntoVenta + "-" + this.sucursal_.Sucursal) {
+            sucursal = suc.Nombre;
+          }
+        }
+
+        for (let tipo of this.lstTipoAgente) {
+          if (tipo.value == this.sucursal_.TipoAgente) {
+            tipoAgente = tipo.text;
+          }
+        }
+
+        this.spinner.show();
+        this.generico.listarAgentes(this.sucursal_.TipoAgente).then(lista => {
+          this.spinner.hide();
+
+          for (let age of lista) {
+            if (age.codigoAgente == this.sucursal_.Agente) {
+              agente = age.nombreAgente;
+            }
+          }
+
+          this.informacionEmision = { sucursal: sucursal, comision: comision, tipoAgente: tipoAgente, agente: agente };
+          this.verificarRamos();
+          this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
+
+        }).catch(err => {
+          this.spinner.hide();
+        });
+
+
+      }).catch(err => {
+        this.spinner.hide();
+      });
 
     }
 
@@ -3554,6 +3806,42 @@ export class CotizacionComponent implements OnInit {
     return estado;
   }
 
+  public validarCombosTransportes() {
+    var estado = true;
+    var texto = "";
+
+    if (this.usuario.broker.Transporte == '0') {
+
+      if (this.valDiseno.panelesValoresRamos.includes('transportes') == true) {
+        for (let transporteIn of this.listaTransportes) {
+          if (transporteIn.Datos.Codigo == "STR2") {
+            if (transporteIn.Valores.ITransporte == 0) {
+              estado = false;
+              texto += "* Transporte Interno<br>";
+            }
+          }
+        }
+      }
+
+      if (this.valDiseno.panelesValoresRamos.includes('transporteImportaciones') == true) {
+        for (let transporteIm of this.listaTransporteImportaciones) {
+          if (transporteIm.Datos.Codigo == "STR4") {
+            if (transporteIm.Valores.ITransporte == 0) {
+              estado = false;
+              texto += "* Transporte Importaciones<br>";
+            }
+          }
+        }
+      }
+    }
+
+    if (estado == false) {
+      this.globales.mostarAlerta("Transportes", "<div style='text-align: left !important'>No se seleccionó el límite por embarque, de los siguientes ramos:<br><br><div style='font-weight: bold'>" + texto + "</div></div>", "warning");
+    }
+
+    return estado;
+  }
+
   public gestionPanelesEmpresa(panel, color) {
     setTimeout(() => { this.valDiseno.gestionPanelesEmpresa(panel, color); }, 100);
   }
@@ -3624,8 +3912,92 @@ export class CotizacionComponent implements OnInit {
   }
 
   public seleccionarFormaPago(forma) {
-    this.formaPagoSeleccionada(forma);
-    this.tipoPago = forma;
+
+    var DatosEmpresa = {
+      DocumentoCliente: this.empresa.Ruc,
+      EmailAgente: this.usuario.Email,
+      CodigoAgente: this.sucursal_.Agente,
+      CodigoTipoAgente: this.sucursal_.TipoAgente,
+      EmailCliente: this.empresa.Email,
+      NombreCliente: this.globales.limpiar(this.empresa.RazonSocial),
+      EnviarEmail: 1
+    };
+
+    var DatosPagador = {
+      DocumentoCliente: this.pagadores.Cedula,
+      EmailAgente: this.usuario.Email,
+      CodigoAgente: this.sucursal_.Agente,
+      CodigoTipoAgente: this.sucursal_.TipoAgente,
+      EmailCliente: this.pagadores.Email,
+      NombreCliente: this.globales.limpiar(this.pagadores.Nombre),
+      EnviarEmail: 1
+    };
+
+    //PRIMERO SE VERIFICA FORMULARIO DE VINCULACION
+    var formularioContratante = "false";
+    var formularioPagador = "false";
+    var mensaje = "";
+
+    this.spinner.show();
+    if (DatosEmpresa.DocumentoCliente == DatosPagador.DocumentoCliente) {
+      this.generico.verificarFormulario(DatosEmpresa).then(res => {
+        this.spinner.hide();
+
+        if (res == "false") {
+          mensaje = mensaje + "<b>Contratante / Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+          this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
+        } else {
+          this.globales.mostrarNotificacion("Contratante / Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+          this.formaPagoSeleccionada(forma);
+          this.tipoPago = forma;
+        }
+
+      }).catch(err => {
+        this.spinner.hide();
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+      });
+
+    } else {
+      this.spinner.show();
+      this.generico.verificarFormulario(DatosEmpresa).then(res => {
+        this.spinner.hide();
+
+        formularioContratante = res;
+        if (formularioContratante == "false") {
+          mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+        } else {
+          this.globales.mostrarNotificacion("Contratante: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+        }
+
+        this.spinner.show();
+        this.generico.verificarFormulario(DatosPagador).then(res => {
+          this.spinner.hide();
+
+          formularioPagador = res;
+          if (formularioPagador == "false") {
+            mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+          } else {
+            this.globales.mostrarNotificacion("Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+          }
+
+          if (formularioContratante == "true" && formularioPagador == "true") {
+            this.formaPagoSeleccionada(forma);
+            this.tipoPago = forma;
+          } else {
+            this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
+          }
+
+        }).catch(err => {
+          this.spinner.hide();
+          this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+        });
+
+      }).catch(err => {
+        this.spinner.hide();
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+      });
+    }
+
   }
 
   public enviarFormaPago(forma) {
@@ -3659,7 +4031,6 @@ export class CotizacionComponent implements OnInit {
     } else if (forma == 3) {
       this.generarPagoContado(forma);
     } else if (forma == 4) {
-
     }
   }
 
@@ -3745,7 +4116,24 @@ export class CotizacionComponent implements OnInit {
     this.guardarFormaPago(0, "CONTADO", forma);
   }
 
-  public guardarFormaPago(idPago, tipo, estado) {
+  public generarPagoDebitoBancario(forma) {
+    if (this.DebitoBancario.TipoCuenta == null || this.DebitoBancario.TipoCuenta == undefined) {
+      this.globales.mostarAlertaTiempo("", "Seleccionar Tipo de Cuenta", "info");
+    } else if (this.DebitoBancario.Banco == null || this.DebitoBancario.Banco == undefined) {
+      this.globales.mostarAlertaTiempo("", "Seleccionar Banco", "info");
+    } else if (this.DebitoBancario.Cuotas == null || this.DebitoBancario.Cuotas == undefined) {
+      this.globales.mostarAlertaTiempo("", "Seleccionar Cuotas", "info");
+    } else if (this.DebitoBancario.NumeroCuenta == null || this.DebitoBancario.NumeroCuenta == "") {
+      this.globales.mostarAlertaTiempo("", "Ingresar Número de Cuenta", "info");
+    } else if (this.DebitoBancario.FechaDebito == null || this.DebitoBancario.FechaDebito == undefined) {
+      this.globales.mostarAlertaTiempo("", "Seleccionar Fecha de Débito", "info");
+    } else {
+      this.guardarFormaPago(0, "DÉBITO BANCARIO", forma);
+    }
+
+  }
+
+  public guardarFormaPago(idPago, tipo, forma) {
 
     this.spinner.show();
     var datos = {
@@ -3754,12 +4142,12 @@ export class CotizacionComponent implements OnInit {
       "IdPago": idPago,
       "Tipo": tipo,
       "Estado": 1,
-      "Adjunto": "",
-      "Plataforma": "",
-      "CodigoAutenticacion": "",
-      "Referencia": "",
-      "Lote": "",
-      "Voucher": "",
+      "Adjunto": forma == 4 ? this.DebitoBancario.Adjunto : "",
+      "Plataforma": forma == 4 ? this.DebitoBancario.TipoCuenta : "",
+      "CodigoAutenticacion": forma == 4 ? this.DebitoBancario.Banco : "",
+      "Referencia": forma == 4 ? this.DebitoBancario.Cuotas : "",
+      "Lote": forma == 4 ? this.DebitoBancario.FechaDebito : "",
+      "Voucher": forma == 4 ? this.DebitoBancario.NumeroCuenta : "",
       "Diferidos": "",
       "Intereses": "",
       "Trama": "",
@@ -3936,16 +4324,16 @@ export class CotizacionComponent implements OnInit {
 
     if (tipo == "TARJETA DE CRÉDITO") {
       this.tipoPago = 1;
-      this.seleccionarFormaPago(1);
+      this.formaPagoSeleccionada(1);
     } else if (tipo == "TARJETA DE DÉBITO") {
       this.tipoPago = 2;
-      this.seleccionarFormaPago(2);
+      this.formaPagoSeleccionada(2);
     } else if (tipo == "CONTADO") {
       this.tipoPago = 3;
-      this.seleccionarFormaPago(3);
+      this.formaPagoSeleccionada(3);
     } else if (tipo == "DÉBITO BANCARIO") {
       this.tipoPago = 4;
-      this.seleccionarFormaPago(4);
+      this.formaPagoSeleccionada(4);
     }
 
   }
@@ -4003,6 +4391,15 @@ export class CotizacionComponent implements OnInit {
               Trama: "",
               Fecha: ""
             }
+            this.DebitoBancario = {
+              TipoCuenta: null,
+              Banco: null,
+              Cuotas: null,
+              NumeroCuenta: null,
+              FechaDebito: null,
+              Adjunto: "",
+              NumeroCuotas: 0
+            }
           },
           err => {
             this.spinner.hide();
@@ -4016,159 +4413,6 @@ export class CotizacionComponent implements OnInit {
     }).catch(err => {
       this.spinner.hide();
     });
-  }
-
-
-  public verificarFormularioViculacion(panel) {
-
-    var formularioContratante = "false";
-    var formularioPagador = "false";
-    var mensaje = "<b>Pago</b><br><u>Descripción:</u> Pago Realizado Exitosamente<br><br>";
-
-    var DatosEmpresa = {
-      DocumentoCliente: this.empresa.Ruc,
-      EmailAgente: this.usuario.Email,
-      CodigoAgente: this.sucursal_.Agente,
-      CodigoTipoAgente: this.sucursal_.TipoAgente,
-      EmailCliente: this.empresa.Email,
-      NombreCliente: this.empresa.RazonSocial,
-      EnviarEmail: 1
-    };
-
-    /*var DatosContratante = {
-      DocumentoCliente: this.contratante.Cedula,
-      EmailAgente: this.usuario.Email,
-      CodigoAgente: this.sucursal_.Agente,
-      CodigoTipoAgente: this.sucursal_.TipoAgente,
-      EmailCliente: this.contratante.Email,
-      NombreCliente: this.contratante.Nombre,
-    };*/
-
-    var DatosPagador = {
-      DocumentoCliente: this.pagadores.Cedula,
-      EmailAgente: this.usuario.Email,
-      CodigoAgente: this.sucursal_.Agente,
-      CodigoTipoAgente: this.sucursal_.TipoAgente,
-      EmailCliente: this.pagadores.Email,
-      NombreCliente: this.pagadores.Nombre,
-      EnviarEmail: 1
-    };
-
-    if (this.numeroPolizasEmitidas == 0) {
-      if (this.empresa.Ruc == this.pagadores.Cedula) {
-        this.spinner.show();
-        this.generico.verificarFormulario(DatosPagador).then(res => {
-          this.spinner.hide();
-
-          if (res != 0) {
-
-            if (res == "true") {
-              this.globales.mostrarNotificacion("Pago Realizado Correctamente. El formulario de vinculación del asegurado y pagador ya se encuentran firmados.", "success", "bottom");
-
-              if (this.numeroPolizasEmitidas == 0) {
-                Swal.fire({
-                  html: "<div style='text-align: center; font-size: 18px;'><b>NOTA ACLARATORIA</b><br></div><div style='font-size: 14px; text-align: justify'; padding: 50px; color: black><br>No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas</div>",
-                  showCancelButton: false,
-                  confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
-                  cancelButtonColor: '#d33',
-                  cancelButtonText: "Cancelar",
-                  confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                  if (result.value) {
-                    this.verificarRamos();
-                    this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
-                  }
-                });
-              } else {
-                this.verificarRamos();
-                this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
-              }
-
-            } else {
-              this.globales.mostarAlerta("", "Pago Realizado Correctamente<br>El formulario del asegurado y pagador no se encuentran firmados.<br><small>Se envió un correo electrónico para que el formulario de vinculación sea completado.</small>", "success");
-            }
-
-          } else {
-            this.globales.mostrarNotificacion("Error con la gestión del formulario del asegurado y pagador", "warning", "bottom");
-          }
-
-        }).catch(err => {
-          this.spinner.hide();
-          this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
-        });
-      } else {
-        this.spinner.show();
-        this.generico.verificarFormulario(DatosEmpresa).then(res => {
-          this.spinner.hide();
-         
-          if (res != 0) {
-            formularioContratante = res;
-            if (res == "false") {
-              mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
-            } else {
-              mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de vinculación ya se encuentra firmado.<br><br>";
-            }
-
-            this.spinner.show();
-            this.generico.verificarFormulario(DatosPagador).then(res => {
-              this.spinner.hide();
-
-              if (res != 0) {
-                formularioPagador = res;
-                
-                if (res == "false") {
-                  mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
-                } else {
-                  mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de vinculación ya se encuentra firmado.<br><br>";
-                }
-
-                this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
-                
-                if (formularioContratante == "true" && formularioPagador == "true") {
-                  if (this.numeroPolizasEmitidas == 0) {
-                    Swal.fire({
-                      html: "<div style='text-align: center; font-size: 18px;'><b>NOTA ACLARATORIA</b><br></div><div style='font-size: 14px; text-align: justify'; padding: 50px; color: black><br>No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas</div>",
-                      showCancelButton: false,
-                      confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
-                      cancelButtonColor: '#d33',
-                      cancelButtonText: "Cancelar",
-                      confirmButtonText: 'Aceptar'
-                    }).then((result) => {
-                      if (result.value) {
-                        this.verificarRamos();
-                        this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
-                      }
-                    });
-                  } else {
-                    this.verificarRamos();
-                    this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
-                  }
-                                   
-                }
-
-              } else {
-                this.globales.mostrarNotificacion("Error con la gestión del formulario del pagador", "warning", "bottom");
-              }
-
-            }).catch(err => {
-              this.spinner.hide();
-              this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
-            });
-
-          } else {
-            this.globales.mostrarNotificacion("Error con la gestión del formulario de la empresa", "warning", "bottom");
-          }
-
-        }).catch(err => {
-          this.spinner.hide();
-          this.valCotizador.notificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Empresa", "error", "#E74C3C");
-        });
-      }
-    } else {
-      this.verificarRamos();
-      this.panelesGlobales = this.valDiseno.gestionPanelesGlobales(panel);
-    }
-
   }
 
   public verificarAlmenosUnaPolizaEmitida() {
@@ -4194,6 +4438,78 @@ export class CotizacionComponent implements OnInit {
   }
 
   //------------ FIN FORMAS PAGO ---------------
+
+  //------------ INICIO GESTION CODIGOS DEBITO BANCARIO  ---------------
+
+  public listarBancos() {
+    this.DebitoBancario.Banco = null;
+    this.DebitoBancario.Cuotas = null;
+    this.DebitoBancario.NumeroCuenta = null;
+
+    this.spinner.show();
+    this.generico.listarBancos().then(lista => {
+      this.spinner.hide();
+      this.organizarBancos(lista);
+    }).catch(err => {
+      this.spinner.hide();
+    });
+  }
+
+  public listarCuotas() {
+    this.DebitoBancario.Cuotas = null;
+    this.DebitoBancario.NumeroCuotas = 0;
+    this.spinner.show();
+    this.generico.listarCuotas(this.DebitoBancario.Banco).then(lista => {
+      this.spinner.hide();
+      this.lstCuotasDebito = lista;
+      this.lstCuotasDebitoFiltrar = this.lstCuotasDebito.slice();
+
+    }).catch(err => {
+      this.spinner.hide();
+    });
+  }
+
+  public listarNumeroCuotas() {
+    this.spinner.show();
+    this.generico.listarNumeroCuotas(this.DebitoBancario.Cuotas).then(numero => {
+      this.spinner.hide();
+
+      this.DebitoBancario.NumeroCuotas = Math.round((this.cotizacionTotal.primaTotal / numero) * 100) / 100;
+
+    }).catch(err => {
+      this.spinner.hide();
+    });
+  }
+
+  public filtrarBanco(value) {
+    this.lstBancosDebitoFiltrar = this.lstBancosDebito.filter((s) => s.nombreConducto.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+
+  public filtrarCuotas(value) {
+    this.lstCuotasDebitoFiltrar = this.lstCuotasDebito.filter((s) => s.nombreCuota.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+
+  public organizarBancos(lista) {
+
+    this.lstBancosDebito = [];
+
+    if (this.DebitoBancario.TipoCuenta == 1) {
+      for (let bancos of lista) {
+        if (bancos.nombreConducto.match(/CTA.AHO./g) || !bancos.nombreConducto.match(/CTA.CTE./g)) {
+          this.lstBancosDebito.push(bancos);
+        }
+      }
+    } else if (this.DebitoBancario.TipoCuenta == 2) {
+      for (let bancos of lista) {
+        if (bancos.nombreConducto.match(/CTA.CTE./g) || !bancos.nombreConducto.match(/CTA.AHO./g)) {
+          this.lstBancosDebito.push(bancos);
+        }
+      }
+    }
+    this.lstBancosDebitoFiltrar = this.lstBancosDebito.slice();
+  }
+
+  //------------ FIN GESTION CODIGOS DEBITO BANCARIO ---------------
 
   //GESTION MAPAS
   public inicializarMapa() {

@@ -39,5 +39,22 @@ namespace SegurosEquinoccial.Pymes.Controlador.Polizas.Pago
         {
             return DPolPago.BroAplicarPago5Polizas(aux);
         }
+
+
+
+        public static string BroObtenerBancoConductos()
+        {
+            return DPolPago.BroObtenerBancoConductos();
+        }
+
+        public static string BroObtenerPlanPagoCuotas(string conducto)
+        {
+            return DPolPago.BroObtenerPlanPagoCuotas(conducto);
+        }
+
+        public static string BroObtenerNumeroCuotas(string codigo)
+        {
+            return DPolPago.BroObtenerNumeroCuotas(codigo);
+        }
     }
 }

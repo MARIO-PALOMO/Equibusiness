@@ -348,6 +348,15 @@ td {
   background-color: #545454;
 }
 
+@keyframes efecto-boton-emision {
+  0% {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+}
+
 @keyframes efecto-boton-cotizacion {
   0% {
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
@@ -377,6 +386,10 @@ td {
   100% {
     box-shadow: 0 0 0 15px rgba(2231, 76, 60, 0);
   }
+}
+
+.boton-emision {
+  animation: efecto-boton-emision 1s infinite;
 }
 
 .input-error-vehiculo {

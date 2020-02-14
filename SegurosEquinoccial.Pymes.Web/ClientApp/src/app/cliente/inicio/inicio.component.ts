@@ -404,14 +404,20 @@ export class InicioClienteComponent implements OnInit {
     if (this.usuario.Corredores == "1") {
 
       var suc = this.Sucursal.Union.split("-");
-      var Corredor = { Sucursal: suc[0], PuntoVenta: suc[1], Comision: this.Comision, TipoAgente: this.TipoAgente.value, Agente: this.Agente.codigoAgente }
+      var Corredor = {
+        Sucursal: suc[0],
+        PuntoVenta: suc[1],
+        Comision: this.Agente.codigoAgente == "99" ? 0 : parseInt(this.Comision),
+        TipoAgente: parseInt(this.TipoAgente.value),
+        Agente: this.Agente.codigoAgente
+      }
 
       var Datos = {
         Identificador: 1,
         IdCotizacion: idCotizacion,
         Corredor: JSON.stringify(Corredor)
       }
-
+      console.log(Corredor)
       this.spinner.show();
       this.conexion.post('Broker/SBroker.svc/cotizacion/actualizar/corredor', Datos, this.usuario.Uid).subscribe(
         (res: any) => {
@@ -428,12 +434,19 @@ export class InicioClienteComponent implements OnInit {
         }
       );
     } else {
-      var Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: this.usuario.Comision, TipoAgente: this.usuario.CodigoTipoAgente, Agente: this.usuario.CodigoAgente }
+
+      var Corredor_ = {
+        Sucursal: this.usuario.CodigoSucursal,
+        PuntoVenta: this.usuario.CodigoPuntoVenta,
+        Comision: this.usuario.CodigoAgente == "99" ? 0 : parseInt(this.usuario.Comision),
+        TipoAgente: parseInt(this.usuario.CodigoTipoAgente),
+        Agente: this.usuario.CodigoAgente
+      }
 
       var Datos = {
         Identificador: 1,
         IdCotizacion: idCotizacion,
-        Corredor: JSON.stringify(Corredor)
+        Corredor: JSON.stringify(Corredor_)
       }
 
       this.spinner.show();
@@ -444,6 +457,7 @@ export class InicioClienteComponent implements OnInit {
           this.eliminarCache();
           this.kcotizacion.registrarKeyCotizacion({ idCotizacion: idCotizacion, cotizacion, codigoCotizacion: cotizacion, idUsuario: this.usuario.IdUsuario, idEmpresa: empresa });
           this.router.navigate(['/cliente/cotizacion/cotizacion']);
+
         },
         err => {
           this.spinner.hide();
@@ -869,16 +883,24 @@ export class InicioClienteComponent implements OnInit {
       (res: any) => {
         this.spinner.hide();
         var datos = res;
-        if (datos.Broker == null && datos.Empresa == null) {
+
+        var detalleVencimiento = (datos.Antiguedad == null) ? { color: '', texto: '' } : this.verificarVencimientoCotizacion(datos.Antiguedad);
+
+        if (detalleVencimiento.texto == "Cotización Vencida") {
           this.actualizarAsegurado();
-        } else if (datos.Broker.IdBroker == this.usuario.broker.IdBroker && datos.Empresa.Ruc == this.fmrEmpresa.Ruc) {
-          this.actualizarAsegurado();
-        } else if (datos.Broker.IdBroker != this.usuario.broker.IdBroker && datos.Empresa.Ruc == this.fmrEmpresa.Ruc) {
-          this.valCotizador.mostrarAlerta("La cotización que desea realizar a la empresa con el N° RUC " + this.fmrEmpresa.Ruc
-            + " ya se encuentra cotizada por otro corredor.", this.usuario.broker.Color);
         } else {
-          this.valCotizador.mostrarAlerta("Ocurrio un error al validar la cotización, comuniquese con el administrador.", this.usuario.broker.Color);
+          if (datos.Broker == null && datos.Empresa == null) {
+            this.actualizarAsegurado();
+          } else if (datos.Broker.IdBroker == this.usuario.broker.IdBroker && datos.Empresa.Ruc == this.fmrEmpresa.Ruc) {
+            this.actualizarAsegurado();
+          } else if (datos.Broker.IdBroker != this.usuario.broker.IdBroker && datos.Empresa.Ruc == this.fmrEmpresa.Ruc) {
+            this.valCotizador.mostrarAlerta("La cotización que desea realizar a la empresa con el N° de Identificación " + this.fmrEmpresa.Ruc
+              + " ya se encuentra cotizada por otro corredor.", this.usuario.broker.Color);
+          } else {
+            this.valCotizador.mostrarAlerta("Ocurrio un error al validar la cotización, comuniquese con el administrador.", this.usuario.broker.Color);
+          }
         }
+
       },
       err => {
         this.spinner.hide();
@@ -1019,7 +1041,7 @@ export class InicioClienteComponent implements OnInit {
             var suc = this.Sucursal.Union.split("-");
             Corredor = { Sucursal: suc[0], PuntoVenta: suc[1], Comision: this.Comision, TipoAgente: this.TipoAgente.value, Agente: this.Agente.codigoAgente };
           } else {
-            Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: this.usuario.Comision, TipoAgente: this.usuario.CodigoTipoAgente, Agente: this.usuario.CodigoAgente };
+            Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: parseInt(this.usuario.Comision), TipoAgente: parseInt(this.usuario.CodigoTipoAgente), Agente: this.usuario.CodigoAgente };
           }
 
           var Datos = {
@@ -1066,34 +1088,80 @@ export class InicioClienteComponent implements OnInit {
           this.generico.verificarCompromisoSise(Datos).then(compromiso => {
             this.spinner.hide();
 
-            if (compromiso == "0" || compromiso == "-1") {
-              this.spinner.show();
-              this.generico.verificarPolizaSise(Datos).then(polizasise => {
-                this.spinner.hide();
+            this.spinner.show();
+            this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, this.fmrEmpresa.Ruc + "-COMPROMISO").then(reglaC => {
+              this.spinner.hide();
 
-                if (polizasise == "0" || polizasise == "-1") {
+              var pasoCom = false;
+              var goblalCom = false;
+
+              if (compromiso == "0") {
+                pasoCom = true;
+              }
+
+              if (pasoCom == true) {
+                goblalCom = true;
+              } else {
+                if (reglaC.Nombre != null) {
+                  goblalCom = true;
+                }
+              }
+
+              if (goblalCom == true) {
+                this.spinner.show();
+                this.generico.verificarPolizaSise(Datos).then(polizasise => {
+                  this.spinner.hide();
 
                   this.spinner.show();
-                  this.generico.verificarListasNegras(this.fmrEmpresa.Ruc).then(listanegra => {
+                  this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, this.fmrEmpresa.Ruc + "-POLIZA").then(reglaP => {
                     this.spinner.hide();
 
-                    if (listanegra == "false") {
+                    var pasoPol = false;
+                    var goblalPol = false;
+
+                    if (polizasise == "0") {
+                      pasoPol = true;
+                    }
+
+                    if (pasoPol == true) {
+                      goblalPol = true;
+                    } else {
+                      if (reglaP.Nombre != null) {
+                        goblalPol = true;
+                      }
+                    }
+
+                    if (goblalPol == true) {
 
                       this.spinner.show();
-                      this.generico.verificarPolizaPymes(this.fmrEmpresa.Ruc).then(polizapymes => {
+                      this.generico.verificarListasNegras(this.fmrEmpresa.Ruc).then(listanegra => {
                         this.spinner.hide();
-                        if (polizapymes == 0) {
+
+                        if (listanegra == "false") {
 
                           this.spinner.show();
-                          this.generico.actualizarDatosAsegurado(datosAsegurado).then(datos => {
+                          this.generico.verificarPolizaPymes(this.fmrEmpresa.Ruc).then(polizapymes => {
                             this.spinner.hide();
+                            if (polizapymes == 0) {
 
-                            if (datos.Error == 0 && datos.Mensaje == null) {
+                              this.spinner.show();
+                              this.generico.actualizarDatosAsegurado(datosAsegurado).then(datos => {
+                                this.spinner.hide();
 
-                              this.guardarEmpresa();
+                                if (datos.Error == 0 && datos.Mensaje == null) {
+
+                                  this.guardarEmpresa();
+
+                                } else {
+                                  this.valCotizador.mostrarAlerta("Los datos no pudieron ser actualizados.", this.usuario.broker.Color);
+                                }
+
+                              }).catch(err => {
+                                this.spinner.hide();
+                              });
 
                             } else {
-                              this.valCotizador.mostrarAlerta("Los datos no pudieron ser actualizados.", this.usuario.broker.Color);
+                              this.valCotizador.mostrarAlertaInformativa("El cliente " + this.fmrEmpresa.RazonSocial + " tiene una póliza vigente.", this.usuario.broker.Color);
                             }
 
                           }).catch(err => {
@@ -1101,7 +1169,7 @@ export class InicioClienteComponent implements OnInit {
                           });
 
                         } else {
-                          this.valCotizador.mostrarAlertaInformativa("El cliente " + this.fmrEmpresa.RazonSocial + " tiene una póliza vigente.", this.usuario.broker.Color);
+                          this.valCotizador.mostrarAlertaInformativa("No podemos continuar, por favor contáctese con el Asesor Comercial.", this.usuario.broker.Color);
                         }
 
                       }).catch(err => {
@@ -1109,23 +1177,23 @@ export class InicioClienteComponent implements OnInit {
                       });
 
                     } else {
-                      this.valCotizador.mostrarAlertaInformativa("No podemos continuar, por favor contáctese con el Asesor Comercial.", this.usuario.broker.Color);
+                      this.valCotizador.mostrarAlertaInformativa("El cliente " + this.fmrEmpresa.RazonSocial + " tiene una póliza vigente con SEGUROS EQUINOCCIAL.", this.usuario.broker.Color);
                     }
 
                   }).catch(err => {
                     this.spinner.hide();
                   });
 
-                } else {
-                  this.valCotizador.mostrarAlertaInformativa("El cliente " + this.fmrEmpresa.RazonSocial + " tiene una póliza vigente con SEGUROS EQUINOCCIAL.", this.usuario.broker.Color);
-                }
+                }).catch(err => {
+                  this.spinner.hide();
+                });
+              } else {
+                this.valCotizador.mostrarAlertaInformativa("El cliente " + this.fmrEmpresa.RazonSocial + " tiene un compromiso registrado con SEGUROS EQUINOCCIAL.", this.usuario.broker.Color);
+              }
 
-              }).catch(err => {
-                this.spinner.hide();
-              });
-            } else {
-              this.valCotizador.mostrarAlertaInformativa("El cliente " + this.fmrEmpresa.RazonSocial + " tiene un compromiso registrado con SEGUROS EQUINOCCIAL.", this.usuario.broker.Color);
-            }
+            }).catch(err => {
+              this.spinner.hide();
+            });
 
           }).catch(err => {
             this.spinner.hide();
@@ -1165,7 +1233,30 @@ export class InicioClienteComponent implements OnInit {
     }
 
     if (vencimiento == true) {
-      this.verificacionConVencimiento(datos, parametros);
+
+      this.spinner.show();
+      this.conexion.get("Broker/SBroker.svc/empresa/cotizacion/validar/" + datos.Empresa.Ruc, this.usuario.Uid).subscribe(
+        (res: any) => {
+          this.spinner.hide();
+     
+          if (datos.Broker == null && datos.Empresa == null) {
+            this.verificacionConVencimiento(datos, parametros);
+          } else if (datos.Broker.IdBroker == this.usuario.broker.IdBroker && datos.Empresa.Ruc == res.Empresa.Ruc) {
+            this.verificacionConVencimiento(datos, parametros);
+          } else if (datos.Broker.IdBroker != this.usuario.broker.IdBroker && datos.Empresa.Ruc == res.Empresa.Ruc) {
+            this.valCotizador.mostrarAlerta("La cotización que desea editar a la empresa con el N° de Identificación " + this.fmrEmpresa.Ruc
+              + " ya se encuentra cotizada por otro corredor.", this.usuario.broker.Color);
+          } else {
+            this.valCotizador.mostrarAlerta("Ocurrio un error al validar la cotización, comuniquese con el administrador.", this.usuario.broker.Color);
+          }
+        },
+        err => {
+          this.spinner.hide();
+          console.log(err);
+          this.conexion.error(err);
+        }
+      );
+
     } else {
       this.verificacionSinVencimiento(datos, parametros);
     }
@@ -1173,6 +1264,7 @@ export class InicioClienteComponent implements OnInit {
   }
 
   public verificacionSinVencimiento(datos, parametros) {
+
     this.spinner.show();
     this.generico.consultarCodigoAsegurado(datos.Empresa.Ruc).then(asegurado => {
       this.spinner.hide();
@@ -1359,6 +1451,14 @@ export class InicioClienteComponent implements OnInit {
 
   public filtrarAgente(value) {
     this.dataAgente = this.lstAgente.filter((s) => s.nombreAgente.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+
+  public mostrarIdetificacion() {
+    if (this.fmrEmpresa.Ruc.length == 10 || this.fmrEmpresa.Ruc.length == 13) {
+      this.activacionCampos = this.fmrEmpresa.Ruc.length;
+    } else {
+      this.activacionCampos = 0;
+    }
   }
   //***************************** FIN NUEVA LOGICA *****************************
 

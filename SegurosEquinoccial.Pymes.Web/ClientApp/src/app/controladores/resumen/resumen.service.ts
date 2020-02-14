@@ -3,6 +3,7 @@ import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
 import { ApiService } from '../../servicios/api/api.service';
 import { SesionService } from '../../servicios/sesion/sesion.service';
 import { CotizacionRamoGeneral } from '../../cliente/cotizacion-ramos/cotizacion.ramo.general';
+declare var moment: any;
 
 @Injectable()
 export class ResumenService {
@@ -14,7 +15,7 @@ export class ResumenService {
     this.usuario = this.sesion.obtenerDatos();
   }
 
-  public buscarCotizacion(IdContenido, IdCotizacion, IdDireccion, IdVehiculos, IdEmpresa, Riesgo, Ramo, Transportes) {
+  public buscarCotizacion(IdContenido, IdCotizacion, IdDireccion, IdVehiculos, IdEmpresa, Riesgo, Ramo, Transportes, FechaEmision) {
 
     return new Promise<any>((resolve, reject) => {
 
@@ -151,15 +152,21 @@ export class ResumenService {
                 condiciones = this.obtenerCondiciones(condiciones_, "TRIM");
               }
 
+              var fechaSeleccionada = moment(FechaEmision).format("YYYY-MM-DD");
+              var fechaAcual = moment().format("YYYY-MM-DD");
+              var emisionRetroactica = "";
+              if (fechaSeleccionada < fechaAcual) {
+                var emisionRetroactica = "\n- El asegurado declara que no ha tenido siniestros ocurridos, conocidos ni reportados a la fecha de la emisión del presente programa de seguros.";
+              }
 
-              var seguros = "NOTA ACLARATORIA PARA EL PROGRAMA DE SEGUROS:\n*********************************************\n\nNo se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas"
+              var seguros = "NOTA ACLARATORIA PARA EL PROGRAMA DE SEGUROS:\n*********************************************\n\n- No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas."
               var final = "Para Seguros Equinoccial  es muy importante contar con su información actualizada para lo cual constantemente realizamos la confirmación de sus datos, además con la firma en su póliza nos autoriza a enviarle la información relacionada con su seguro y factura además de recolectar, digitalizar, mantener, enviar y recibir información comercial y promocional por canales ordinarios, digitales  y telefónicos\n\nLA PRESENTE PÓLIZA ESTA EMITIDA EN BASE A LAS CONDICIONES GENERALES, ESPECIALES Y  PARTICULARES, LAS MISMAS QUE ADJUNTAMOS Y, EL ASEGURADO DECLARA ESTAR CONFORME CON SU  CONTENIDO Y LO ACEPTA EN SU TOTALIDAD; SIN EMBARGO, LO QUE SE MODIFICA EXPRESAMENTE EN  CONDICIONES ESPECIALES PREVALECE SOBRE LAS CONDICIONES GENERALES, EL ASEGURADO DEBERÁ ENTREGARNOS LA COPIA DE LA PÓLIZA DEBIDAMENTE FIRMADA.";
 
               var aclaratorio =
                 (respuesta.deducibles == "" ? "" : "DEDUCIBLES\n**********\n\n") + respuesta.deducibles +
                 (garantias == "" ? "" : "\n\nGARANTIAS\n*********\n\n") + garantias +
                 (condiciones == "" ? "" : "\n\nCONDICIONES\n***********\n\n") + condiciones +
-                "\n\n" + seguros + "\n\n" + final + "\n\nTEXTO DE CLAUSULAS\n******************\n\n";
+                "\n\n" + seguros + emisionRetroactica + "\n\n" + final + "\n\nTEXTO DE CLAUSULAS\n******************\n\n";
 
               let sinDiacriticos = (function () {
                 let de = 'ÁÃÀÄÂÉËÈÊÍÏÌÎÓÖÒÔÚÜÙÛÑÇáãàäâéëèêíïìîóöòôúüùûñ ç ',

@@ -24,7 +24,7 @@ export class CotizacionInicioComponent implements OnInit {
   public id = 0;
   public pass = "";
 
-  constructor(private conexion: ApiService, private sesion: SesionService, private kcotizacion: VerificacionService, private spinner: NgxSpinnerService, 
+  constructor(private conexion: ApiService, private sesion: SesionService, private kcotizacion: VerificacionService, private spinner: NgxSpinnerService,
     public globales: GlobalesPipe, private kramos: RamosService, private kfinalizacion: FinalizacionService, private kcontenido: CotizacionService) { }
 
   ngOnInit() {
@@ -36,7 +36,6 @@ export class CotizacionInicioComponent implements OnInit {
     window.addEventListener("unload", function (e) {
       sesion.cerrarSesion();
     });
-
   }
 
 

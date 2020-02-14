@@ -735,12 +735,12 @@ export class GenericoService {
     return new Promise<any>((resolve, reject) => {
       this.conexion.getPay("Gestion/SGesGestion.svc/pago/pago/listar/" + pago).subscribe(
         (res: any) => {
-          
+
           var tramaPago: any;
           var bin = "";
           var vencimiento = "";
 
-          if(res.Estado == 2){
+          if (res.Estado == 2) {
             tramaPago = JSON.parse(res.ResultadoTrama);
             if (res.Plataforma == "DATAFAST") {
               bin = tramaPago.card.bin;
@@ -796,6 +796,89 @@ export class GenericoService {
   public anularPagoTarjeta(pago) {
     return new Promise<any>((resolve, reject) => {
       this.conexion.getPay("Gestion/SGesGestion.svc/pago/anulacion/" + pago).subscribe(
+        (res: any) => {
+          resolve(res);
+        },
+        err => {
+          this.globales.mostrarNotificacion("Exite un error con el servidor de datos.<br>Contactese con el administrador del sistema.", "error", "bottom");
+          this.conexion.error(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  public listarBancos() {
+    return new Promise<any>((resolve, reject) => {
+      this.conexion.get('Broker/SBroker.svc/cotizacion/forma/debito/bancos', this.usuario.Uid).subscribe(
+        (res: any) => {
+
+          var xml = $.parseXML(res);
+          var data = [];
+
+          $(xml).find("Table").each(function (i, e) {
+            data.push({ codigoConducto: $(this).find('cod_conducto').text(), nombreConducto: $(this).find('txt_desc_cond').text(), tipoConducto: $(this).find('cod_tipo_conducto').text() });
+          });
+
+          resolve(data);
+        },
+        err => {
+          this.globales.mostrarNotificacion("Exite un error con el servidor de datos.<br>Contactese con el administrador del sistema.", "error", "bottom");
+          this.conexion.error(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  public listarCuotas(conducto) {
+    return new Promise<any>((resolve, reject) => {
+      this.conexion.get('Broker/SBroker.svc/cotizacion/forma/debito/cuotas/' + conducto, this.usuario.Uid).subscribe(
+        (res: any) => {
+          var xml = $.parseXML(res);
+          var data = [];
+
+          $(xml).find("Table").each(function (i, e) {
+            data.push({ codigoPago: $(this).find('cod_ppago').text(), codigoConducto: $(this).find('cod_conducto').text(), nombreCuota: $(this).find('txt_desc').text(), codigoNegocio: $(this).find('id_negocio').text() });
+          });
+
+          resolve(data);
+        },
+        err => {
+          this.globales.mostrarNotificacion("Exite un error con el servidor de datos.<br>Contactese con el administrador del sistema.", "error", "bottom");
+          this.conexion.error(err);
+          console.log(err)
+          reject(err);
+        }
+      );
+    });
+  }
+
+  public listarNumeroCuotas(codigo) {
+    return new Promise<any>((resolve, reject) => {
+      this.conexion.get('Broker/SBroker.svc/cotizacion/forma/debito/numero/' + codigo, this.usuario.Uid).subscribe(
+        (res: any) => {
+          var xml = $.parseXML(res);
+          var numero;
+
+          $(xml).find("Table").each(function (i, e) {
+            numero = $(this).find('nro_cuotas').text();
+          });
+
+          resolve(parseInt(numero));
+        },
+        err => {
+          this.globales.mostrarNotificacion("Exite un error con el servidor de datos.<br>Contactese con el administrador del sistema.", "error", "bottom");
+          this.conexion.error(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
+  public verificarReglasGenerales(idBroker, nombre) {
+    return new Promise<any>((resolve, reject) => {
+      this.conexion.get('Broker/SBroker.svc/broker/reglas/generales/consultar?broker=' + idBroker + '&nombre=' + nombre, this.usuario.Uid).subscribe(
         (res: any) => {
           resolve(res);
         },
