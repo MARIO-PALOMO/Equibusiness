@@ -355,6 +355,9 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     } else if (fmrUsuario.Comision == null ) {
       validacion = false;
       this.mostrarAlerta("El campo comisión no puede estar vacío.", color);
+    } else if (fmrUsuario.Corredores == "") {
+      validacion = false;
+      this.mostrarAlerta("El campo Mostrar Combo - Corredores no puede estar vacío.", color);
     } else {
       validacion = true;
     }

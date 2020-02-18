@@ -34,13 +34,18 @@ export class UsuarioComponent implements OnInit {
   public CodigoAgente: any;
   public Sucursal: any;
   public CodigoTipoAgente: any;
-  public CodigoCorredores: any;
+  public Corredores = null;
   public Ciudad: any;
 
   public lstRol: Array<{ text: string, value: number }> = [
     { text: "PERFIL 1", value: 2 },
     { text: "PERFIL 2", value: 4 },
     { text: "PERFIL 3", value: 3 }
+  ];
+
+  public lstCorredores: Array<{ text: string, value: number }> = [
+    { text: "NO", value: 0 },
+    { text: "SI", value: 1 }
   ];
 
   public lstPadres = [];
@@ -55,10 +60,7 @@ export class UsuarioComponent implements OnInit {
   ];
 
 
-  public lstCorredores: Array<{ text: string, value: string }> = [
-    { text: "NO", value: "0" },
-    { text: "SI", value: "1" }
-  ];
+  
 
   public lstAgente = [];
   public dataAgente: any;
@@ -87,7 +89,7 @@ export class UsuarioComponent implements OnInit {
     "Uid": null,
     "Usuario": "",
     "UsuarioPadre": null,
-    "Corredores": "0",
+    "Corredores": "",
     "broker": {
       "IdBroker": 0
     },
@@ -263,14 +265,15 @@ export class UsuarioComponent implements OnInit {
   }
 
   public mostrarDatos(datos: any) {
+    
     this.fmrUsuario = datos;
     this.fmrUsuario.Comision = parseInt(datos.Comision);
     this.IdRol = { text: "", value: this.fmrUsuario.rol.IdRol };
+    this.Corredores = { text: datos.Corredores == 1 ? "SI" : "NO", value: parseInt(datos.Corredores) };
     this.IdBroker = datos.broker;
     this.IdPadre = { Usuario: "", IdUsuario: datos.IdPadre };
     this.Ciudad = { Nombre: datos.Ciudad };
     this.CodigoTipoAgente = { text: "", value: parseInt(this.fmrUsuario.CodigoTipoAgente) };
-    this.CodigoCorredores = { text: "", value: datos.Corredores };
     this.listarAgentes();
     this.CodigoAgente = { nombreAgente: "", codigoAgente: this.fmrUsuario.CodigoAgente };
     this.Sucursal = { Union: this.fmrUsuario.CodigoPuntoVenta + "-" + this.fmrUsuario.CodigoSucursal, CodigoPuntoVenta: this.fmrUsuario.CodigoPuntoVenta, CodigoSucursal: this.fmrUsuario.CodigoSucursal };
@@ -294,22 +297,16 @@ export class UsuarioComponent implements OnInit {
   }
 
   public gestionUsuario() {
-
-    console.log(this.fmrUsuario);
-
-
+    
     this.fmrUsuario.rol.IdRol = this.IdRol.value;
     this.fmrUsuario.broker.IdBroker = this.IdBroker.IdBroker;
     this.fmrUsuario.IdPadre = this.IdPadre.IdUsuario;
     this.fmrUsuario.Ciudad = this.Ciudad.Nombre;
-    this.fmrUsuario.CodigoAgente = this.CodigoAgente.codigoAgente;
+    this.fmrUsuario.CodigoAgente = this.CodigoAgente == null ? null : this.CodigoAgente.codigoAgente;
     this.fmrUsuario.CodigoTipoAgente = this.CodigoTipoAgente.value;
     this.fmrUsuario.CodigoPuntoVenta = this.Sucursal.CodigoPuntoVenta;
     this.fmrUsuario.CodigoSucursal = this.Sucursal.CodigoSucursal;
-    this.fmrUsuario.Corredores = this.CodigoCorredores;
-
-    console.log(this.fmrUsuario);
-
+    this.fmrUsuario.Corredores = this.Corredores == undefined ? "" : this.Corredores.value;
     if (this.validador.gestionValidarFormularioUsuarios(this.fmrUsuario, this.usuario.broker.Color)) {
       this.spinner.show();
       this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', this.fmrUsuario, "").subscribe(
@@ -317,7 +314,6 @@ export class UsuarioComponent implements OnInit {
           this.spinner.hide();
           $("#modalUsuario").css("display", "none");
           this.listarBroker();
-          console.log(res);
         },
         err => {
           this.spinner.hide();
@@ -348,7 +344,7 @@ export class UsuarioComponent implements OnInit {
       "Uid": null,
       "Usuario": "",
       "UsuarioPadre": null,
-      "Corredores": "0",
+      "Corredores": "",
       "broker": {
         "IdBroker": 0
       },
@@ -408,7 +404,7 @@ export class UsuarioComponent implements OnInit {
       "Uid": null,
       "Usuario": "",
       "UsuarioPadre": null,
-      "Corredores": "0",
+      "Corredores": "",
       "broker": {
         "IdBroker": 0
       },
