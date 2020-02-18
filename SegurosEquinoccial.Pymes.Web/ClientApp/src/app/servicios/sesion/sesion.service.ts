@@ -29,6 +29,7 @@ export class SesionService {
       "CodigoSucursal": "",
       "CodigoTipoAgente": "",
       "Comision": 0,
+      "Corredores": "0",
       rol: {
         IdRol: 0
       },

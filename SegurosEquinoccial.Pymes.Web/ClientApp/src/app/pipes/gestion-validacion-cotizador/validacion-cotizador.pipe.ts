@@ -1,5 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import Swal from 'sweetalert2';
+
+
+
+
 @Pipe({
   name: 'validacionCotizador'
 })
@@ -260,6 +264,7 @@ export class ValidacionCotizadorPipe implements PipeTransform {
   }
 
   public mostrarAlertaDinamica(descripcion: any, tipo, color: any) {
+    
     Swal.fire({
       type: tipo,
       text: descripcion,
@@ -308,5 +313,55 @@ export class ValidacionCotizadorPipe implements PipeTransform {
       background: fondo
     })
   }
+
+  public gestionValidarFormularioUsuarios(fmrUsuario:any,color:any){
+    var validacion = true;
+    if (fmrUsuario.Usuario == "") { 
+      validacion = false;
+      this.mostrarAlerta("Llene el campo Nombre.", color);
+    } else if (fmrUsuario.Usuario.length <= 4) {
+      validacion = false;
+      this.mostrarAlerta("Ingrese un nombre válido.", color);
+    } else if (this.correoElectronico(fmrUsuario.Email)) {
+      validacion = false;
+      this.mostrarAlerta("Ingrese correo Electrónico válido.", color);
+    } else if (fmrUsuario.Contrasena == "") {
+      validacion = false;
+      this.mostrarAlerta("Llene el campo Contraseña.", color);
+    } else if (fmrUsuario.Contrasena.length < 8) {
+      validacion = false;
+      this.mostrarAlerta("La contraseña debe tener un mínimo de 8 caráteres.", color);
+    } else if (fmrUsuario.rol.IdRol == undefined) {
+      validacion = false;
+      this.mostrarAlerta("LLene el campo Rol.", color);
+    } else if (fmrUsuario.broker.IdBroker == undefined) {
+      validacion = false;
+      this.mostrarAlerta("Eliga el broker al que pertenecerá el usuario.", color);
+    } else if (fmrUsuario.rol.IdRol != 2 && fmrUsuario.IdPadre == undefined) {
+      validacion = false;
+      this.mostrarAlerta("Seleccione el Supervisor ó Gerente.", color);
+    } else if (fmrUsuario.Ciudad == undefined) {
+      validacion = false;
+      this.mostrarAlerta("Debe elegir una Ciudad.", color);
+    } else if (fmrUsuario.CodigoTipoAgente == undefined) {
+      validacion = false;
+      this.mostrarAlerta("El campo Tipo Agente no puede estar vacío.", color);
+    } else if (fmrUsuario.CodigoAgente == undefined) {
+      validacion = false;
+      this.mostrarAlerta("Eliga el corredor al que pertenece el usuario.", color);
+    } else if (fmrUsuario.CodigoPuntoVenta == undefined) {
+      validacion = false;
+      this.mostrarAlerta("El campo Punto de Venta - Sucursal no puede estar vacío.", color);
+    } else if (fmrUsuario.Comision == null ) {
+      validacion = false;
+      this.mostrarAlerta("El campo comisión no puede estar vacío.", color);
+    } else {
+      validacion = true;
+    }
+    return validacion;
+  }
+
+
+
 
 }

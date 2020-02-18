@@ -16,9 +16,7 @@ namespace SegurosEquinoccial.Pymes.Entidad.Globales
             EAdmCatalogoCredenciales reCredenciales = new EAdmCatalogoCredenciales();
             if (ambiente == "DESARROLLO")
             {
-
-                //reCredenciales.HostDB = "192.168.100.109";
-                reCredenciales.HostDB = "10.160.1.125";
+                reCredenciales.HostDB = "10.160.0.107";
                 reCredenciales.NameDB = "CotizadorPymes";
                 reCredenciales.UserDB = "sa";
                 reCredenciales.PasswordDB = "123";                

@@ -4,12 +4,16 @@ import { SesionService } from '../../servicios/sesion/sesion.service';
 import { ApiService } from '../../servicios/api/api.service';
 import { process, State } from '@progress/kendo-data-query';
 import { GridDataResult, DataStateChangeEvent } from '@progress/kendo-angular-grid';
+import { ValidacionCotizadorPipe } from '../../pipes/gestion-validacion-cotizador/validacion-cotizador.pipe';
+import Swal from 'sweetalert2';
+
 declare var $: any;
 
 @Component({
   selector: 'app-usuario',
   templateUrl: './usuario.component.html',
-  styleUrls: ['./usuario.component.css']
+  styleUrls: ['./usuario.component.css'],
+  providers: [ValidacionCotizadorPipe]
 })
 export class UsuarioComponent implements OnInit {
 
@@ -30,6 +34,7 @@ export class UsuarioComponent implements OnInit {
   public CodigoAgente: any;
   public Sucursal: any;
   public CodigoTipoAgente: any;
+  public CodigoCorredores: any;
   public Ciudad: any;
 
   public lstRol: Array<{ text: string, value: number }> = [
@@ -47,6 +52,12 @@ export class UsuarioComponent implements OnInit {
   public lstTipoAgente: Array<{ text: string, value: number }> = [
     { text: "PRODUCTOR", value: 2 },
     { text: "UNIDAD DE PRODUCCIÓN", value: 3 }
+  ];
+
+
+  public lstCorredores: Array<{ text: string, value: string }> = [
+    { text: "NO", value: "0" },
+    { text: "SI", value: "1" }
   ];
 
   public lstAgente = [];
@@ -76,6 +87,7 @@ export class UsuarioComponent implements OnInit {
     "Uid": null,
     "Usuario": "",
     "UsuarioPadre": null,
+    "Corredores": "0",
     "broker": {
       "IdBroker": 0
     },
@@ -91,7 +103,7 @@ export class UsuarioComponent implements OnInit {
   public contrasenaGuardar = false;
   public contrasenaModificar = false;
 
-  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService) {
+  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, private validador: ValidacionCotizadorPipe) {
 
   }
 
@@ -167,7 +179,6 @@ export class UsuarioComponent implements OnInit {
     );
   }
 
-
   public listarSucursales() {
     this.spinner.show();
 
@@ -189,20 +200,16 @@ export class UsuarioComponent implements OnInit {
 
   public listarAgentes() {
     this.spinner.show();
-
     this.lstAgente = [];
-
+    this.CodigoAgente = null;
     this.conexion.get('Broker/SBroker.svc/consultar/codigo/agente/' + this.CodigoTipoAgente.value, this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
-
         var xml = $.parseXML(res);
         var data = [];
-
         $(xml).find("Table").each(function (i, e) {
           data.push({ codigoAgente: $(this).find('cod_agente').text(), nombreAgente: $(this).find('fullname').text() });
         });
-
         this.lstAgente = data;
         this.dataAgente = this.lstAgente.slice();
       },
@@ -213,8 +220,6 @@ export class UsuarioComponent implements OnInit {
       }
     );
   }
-
-
 
   public filtrar(value) {
     this.data = this.lstUsuarios.filter((s) => s.Usuario.toLowerCase().indexOf(value.toLowerCase()) !== -1);
@@ -235,7 +240,6 @@ export class UsuarioComponent implements OnInit {
   public filtrarCiudad(value) {
     this.dataCiudad = this.lstCiudad.filter((s) => s.Nombre.toLowerCase().indexOf(value.toLowerCase()) !== -1);
   }
-
 
   public filtarRoles() {
     this.lstPadres = [];
@@ -258,32 +262,29 @@ export class UsuarioComponent implements OnInit {
     }
   }
 
-  public mostrarDatos(datos) {
+  public mostrarDatos(datos: any) {
     this.fmrUsuario = datos;
     this.fmrUsuario.Comision = parseInt(datos.Comision);
     this.IdRol = { text: "", value: this.fmrUsuario.rol.IdRol };
-    this.IdBroker = datos.broker
-    this.IdPadre = { Usuario: "", IdUsuario: datos.IdPadre }
-    this.Ciudad = { Nombre: datos.Ciudad }
+    this.IdBroker = datos.broker;
+    this.IdPadre = { Usuario: "", IdUsuario: datos.IdPadre };
+    this.Ciudad = { Nombre: datos.Ciudad };
     this.CodigoTipoAgente = { text: "", value: parseInt(this.fmrUsuario.CodigoTipoAgente) };
+    this.CodigoCorredores = { text: "", value: datos.Corredores };
     this.listarAgentes();
     this.CodigoAgente = { nombreAgente: "", codigoAgente: this.fmrUsuario.CodigoAgente };
     this.Sucursal = { Union: this.fmrUsuario.CodigoPuntoVenta + "-" + this.fmrUsuario.CodigoSucursal, CodigoPuntoVenta: this.fmrUsuario.CodigoPuntoVenta, CodigoSucursal: this.fmrUsuario.CodigoSucursal };
-
     this.filtarRoles();
-
     this.contrasenaGuardar = false;
     this.contrasenaModificar = true;
     this.botonGuardar = false;
     this.botonModificar = true;
     this.fmrUsuario.Identificador = 10;
-
     this.abrirModal();
   }
 
   public agregarUsuarioVista() {
     this.limpiarCampos();
-
     this.contrasenaGuardar = true;
     this.contrasenaModificar = false;
     this.botonGuardar = true;
@@ -294,6 +295,8 @@ export class UsuarioComponent implements OnInit {
 
   public gestionUsuario() {
 
+    console.log(this.fmrUsuario);
+
 
     this.fmrUsuario.rol.IdRol = this.IdRol.value;
     this.fmrUsuario.broker.IdBroker = this.IdBroker.IdBroker;
@@ -303,21 +306,26 @@ export class UsuarioComponent implements OnInit {
     this.fmrUsuario.CodigoTipoAgente = this.CodigoTipoAgente.value;
     this.fmrUsuario.CodigoPuntoVenta = this.Sucursal.CodigoPuntoVenta;
     this.fmrUsuario.CodigoSucursal = this.Sucursal.CodigoSucursal;
+    this.fmrUsuario.Corredores = this.CodigoCorredores;
 
-    this.spinner.show();
-    this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', this.fmrUsuario, "").subscribe(
-      (res: any) => {
-        this.spinner.hide();
-        $("#modalUsuario").css("display", "none");
-        this.listarBroker();
-        console.log(res);
-      },
-      err => {
-        this.spinner.hide();
-        console.log(err);
-        this.conexion.error(err);
-      }
-    );
+    console.log(this.fmrUsuario);
+
+    if (this.validador.gestionValidarFormularioUsuarios(this.fmrUsuario, this.usuario.broker.Color)) {
+      this.spinner.show();
+      this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', this.fmrUsuario, "").subscribe(
+        (res: any) => {
+          this.spinner.hide();
+          $("#modalUsuario").css("display", "none");
+          this.listarBroker();
+          console.log(res);
+        },
+        err => {
+          this.spinner.hide();
+          console.log(err);
+          this.conexion.error(err);
+        }
+      );
+    }
   }
 
   public limpiarCampos() {
@@ -340,6 +348,7 @@ export class UsuarioComponent implements OnInit {
       "Uid": null,
       "Usuario": "",
       "UsuarioPadre": null,
+      "Corredores": "0",
       "broker": {
         "IdBroker": 0
       },
@@ -363,6 +372,77 @@ export class UsuarioComponent implements OnInit {
 
   public cerrarModal() {
     $("#modalUsuario").css("display", "none");
+  }
+
+  public abrirModalContrasena() {
+    $("#modalContrasena").css("display", "block");
+  }
+
+  public cerrarModalContrasena() {
+    $("#modalContrasena").css("display", "none");
+  }
+
+  public cambiarContrasena(modal: any) {
+    this.fmrUsuario = modal;
+    this.abrirModalContrasena();
+
+  }
+
+  public gestionContrasena() {
+    var datos = {
+      "Ciudad": "",
+      "CodigoAgente": "",
+      "CodigoPuntoVenta": "",
+      "CodigoSucursal": "",
+      "CodigoTipoAgente": "",
+      "Comision": 0,
+      "Contrasena": "Qw12345678",
+      "Email": "",
+      "Estado": 1,
+      "EstadoSesion": 0,
+      "Foto": "",
+      "IdPadre": 0,
+      "IdUsuario": this.fmrUsuario.IdUsuario,
+      "Identificador": 6,
+      "Total": 0,
+      "Uid": null,
+      "Usuario": "",
+      "UsuarioPadre": null,
+      "Corredores": "0",
+      "broker": {
+        "IdBroker": 0
+      },
+      "rol": {
+        "IdRol": 0,
+      }
+    };
+    Swal.fire({
+      title: 'Confirmación',
+      html: "Esta seguro de resetear la contraseña.",
+      type: 'info',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonText: 'Aceptar',
+    }).then((result) => {
+      if (result.value) {
+        this.spinner.show();
+        this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', datos, "").subscribe(
+          (res: any) => {
+            this.spinner.hide();
+            $("#modalContrasena").css("display", "none");
+            this.validador.mostrarAlertaCorrecta("Contraseña Reseteada Exitosamente", this.usuario.broker.Color);
+          },
+          err => {
+            this.spinner.hide();
+            console.log(err);
+            this.validador.mostrarAlerta("No se pudo actualizar la contraseña", this.usuario.broker.Color);
+            this.conexion.error(err);
+          }
+        );
+      } else {
+        $("#modalContrasena").css("display", "none");
+      }
+    });
   }
 
 }

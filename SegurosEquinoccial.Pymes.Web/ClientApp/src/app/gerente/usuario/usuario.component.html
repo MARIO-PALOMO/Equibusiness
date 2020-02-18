@@ -21,7 +21,7 @@
 
                   <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
                     [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)"
-                    [height]="800" style="border: none; font-size: 13px !important">
+                    style="border: none; font-size: 13px !important" scrollable="none">
 
                     <ng-template kendoGridToolbarTemplate>
                       <div style="float: right">
@@ -49,7 +49,7 @@
                     <kendo-grid-column field="Ciudad" title="Ciudad" width="130"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                     </kendo-grid-column>
-                    <kendo-grid-column field="Estado" title="" width="65" [filterable]="false"
+                    <kendo-grid-column field="Estado" title="Editar" width="65" [filterable]="false"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       <ng-template kendoGridCellTemplate let-dataItem>
                         <button type="button" class="btn btn-icons btn-rounded btn-warning"
@@ -81,20 +81,6 @@
                       filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
                     </kendo-grid-messages>
                   </kendo-grid>
-                  <!-- <div class="form-group">
-                    <label>Usuarios:</label>
-                    <kendo-combobox [data]="data" [(ngModel)]="usuario2" [filterable]="true" textField="Usuario"
-                      valueField="IdUsuario" placeholder="Seleccionar Usuario para Modificar"
-                      (filterChange)="filtrar($event)" (ngModelChange)="mostrarDatos()"
-                      style="font-size: 13px !important; height: 38px !important; width: 100%">
-                      <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <div style="padding: 8px; border-bottom: 1px solid #757575; width: 100%">
-                          <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
-                          <span>{{ dataItem.Usuario }}</span>
-                        </div>
-                      </ng-template>
-                    </kendo-combobox>
-                  </div>-->
                 </div>
               </div>
             </div>
@@ -118,7 +104,8 @@
             <div class="form-group">
               <label>Nombre</label>
               <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Usuario"
-                style="font-size: 13px !important; height: 38px !important;" />
+                style="font-size: 13px !important; height: 38px !important;" 
+                (keyup)="fmrUsuario.Usuario = validador.formatoCampo(fmrUsuario.Usuario, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)"/>
             </div>
           </div>
           <div class="col-md-6">
@@ -236,6 +223,17 @@
               </kendo-numerictextbox>
             </div>
           </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Mostrar Combo - Corredores</label>
+              <kendo-dropdownlist [data]="lstCorredores" [(ngModel)]="Corredores" textField="text" valueField="value"
+                style="font-size: 13px !important; height: 38px !important; width: 100%">
+                <ng-template kendoDropDownListItemTemplate let-dataItem>
+                  <span style="padding: 8px; font-size: 13px">{{ dataItem.text }}</span>
+                </ng-template>
+              </kendo-dropdownlist>
+            </div>
+          </div>          
           <div class="col-md-12" style="float: right !important">
             <button class="btn btn-secondary" style="height: 38px !important;" (click)="cerrarModal()">
               <i class="mdi mdi-close"></i> Cerrar
@@ -253,4 +251,31 @@
       </div>
     </div>
   </div>
+</div>
+
+
+<div class="modal" id="modalContrasena">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><b>Gestión de Contraseña</b></h5>
+        <button type="button" class="close" style="color: #8a0000 !important;" (click)="cerrarModalContrasena()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <span style="font-size: 13px;"><b>Nota: </b> Al restablecer la contraseña el usuario deberá ingresa con: <br> <b><u>Qw12345678</u></b> </span>
+          </div>
+        </div><br>
+        <div class="form-group row">
+          <div class="col-sm-2"></div>
+          
+          <div class="col-sm-8">
+            <button type="submit" class="btn btn-primary btn-block" (click)="gestionContrasena()">Resetear Contraña</button>
+          </div>
+          <div class="col-sm-2"></div>
+        </div>
+      </div>
+    </div>
 </div>
