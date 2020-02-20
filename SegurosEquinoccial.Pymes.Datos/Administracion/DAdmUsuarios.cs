@@ -100,13 +100,12 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                 cmd.Parameters.Add("@broker", SqlDbType.Int);
                 cmd.Parameters.Add("@idPadre", SqlDbType.Int);
                 cmd.Parameters.Add("@ciudad", SqlDbType.NVarChar);
-
                 cmd.Parameters.Add("@tipoAgente", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@agente", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@puntoVenta", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@sucursal", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@comision", SqlDbType.NVarChar);
-
+                cmd.Parameters.Add("@corredores", SqlDbType.NVarChar);
 
                 cmd.Parameters.Add("@valor", SqlDbType.NVarChar, -1).Direction = ParameterDirection.Output;
 
@@ -122,12 +121,12 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                 cmd.Parameters["@broker"].Value = pusuario.broker.IdBroker;
                 cmd.Parameters["@idPadre"].Value = pusuario.IdPadre;
                 cmd.Parameters["@ciudad"].Value = pusuario.Ciudad.Trim().ToUpper();
-
                 cmd.Parameters["@tipoAgente"].Value = pusuario.CodigoTipoAgente;
                 cmd.Parameters["@agente"].Value = pusuario.CodigoAgente;
                 cmd.Parameters["@puntoVenta"].Value = pusuario.CodigoPuntoVenta;
                 cmd.Parameters["@sucursal"].Value = pusuario.CodigoSucursal;
                 cmd.Parameters["@comision"].Value = pusuario.Comision;
+                cmd.Parameters["@corredores"].Value = pusuario.Corredores;
                 
 
                 cmd.ExecuteNonQuery();
@@ -158,7 +157,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosCompleto", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosCompleto ORDER BY IdUsuario DESC", getCnn());
 
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
@@ -181,6 +180,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                     rsUsuarios.CodigoSucursal = rdr["CodigoSucursal"].ToString();
                     rsUsuarios.CodigoPuntoVenta = rdr["CodigoPuntoVenta"].ToString();
                     rsUsuarios.Comision = rdr["Comision"].ToString();
+                    rsUsuarios.Corredores = rdr["Corredores"].ToString();
 
                     rsRol.IdRol = Convert.ToInt32(rdr["IdRol"].ToString());
                     rsRol.Nombre = rdr["Nombre"].ToString();

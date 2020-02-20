@@ -85,11 +85,14 @@ export class InicioGerenciaComponent implements OnInit {
           x: [],
           y: []
         };
-
+        console.log(this.lstUsuariosDependientesSupervisoresResumen);
         for (let usuarios of this.lstUsuariosDependientesSupervisoresResumen) {
           dataset.x.push(usuarios.Ciudad);
           dataset.y.push(usuarios.Total);
         }
+        console.log("DATASET");
+        console.log(dataset);
+
 
         this.generarGraficoResumenSupervision(dataset.x, dataset.y, 'bar', 'N° de Operadores por Sucursal', 'Gráfico Operadores por Sucursal/Supervisor');
         this.listarUsuariosDependientesOperadores(cadena);
@@ -323,7 +326,6 @@ export class InicioGerenciaComponent implements OnInit {
         }
       }
     });
-
   }
 
   public obtenerSupervisorSeleccionado(){

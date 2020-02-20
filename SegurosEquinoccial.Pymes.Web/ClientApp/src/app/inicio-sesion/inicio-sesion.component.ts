@@ -77,6 +77,7 @@ export class InicioSesionComponent implements OnInit {
       "CodigoSucursal": "",
       "CodigoTipoAgente": "",
       "Comision": 0,
+      "Corredores" : "0",
       rol: {
         IdRol: 0
       },

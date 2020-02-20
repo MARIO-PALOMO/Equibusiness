@@ -76,6 +76,10 @@
     <Compile Include="Broker\EBroRamo.cs" />
     <Compile Include="Broker\EBroReglasAdicionales.cs" />
     <Compile Include="Broker\EBroReglasGenerales.cs" />
+    <Compile Include="Broker\EBroReporteCotizaciones.cs" />
+    <Compile Include="Broker\EBroReporteDetalleValoresBroker.cs" />
+    <Compile Include="Broker\EBroReporteEmisiones.cs" />
+    <Compile Include="Broker\EBroReporteUsuarios.cs" />
     <Compile Include="Broker\EBroResumen.cs" />
     <Compile Include="Broker\EBroSectorEconomico.cs" />
     <Compile Include="Broker\EBroSubRamo.cs" />

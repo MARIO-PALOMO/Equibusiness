@@ -1,0 +1,28 @@
+.titulo-tarjeta{
+    text-decoration: none !important; 
+    font-weight: bold; 
+    font-size: 14px; 
+    padding-left: 20px;
+}
+
+.tabla-detalle{
+    margin-top: 10px;
+    border: 2px solid #000000 !important ;
+    border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    padding: 10px;
+}
+
+@keyframes efecto-boton-cotizacion {
+    0% {
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8);
+    }
+    100% {
+      box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+    }
+  }
+  
+  .btn-effect-white {
+    animation: efecto-boton-cotizacion 1s infinite;
+  }

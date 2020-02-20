@@ -69,6 +69,7 @@
     <Compile Include="Broker\DBroProvincia.cs" />
     <Compile Include="Broker\DBroReglas.cs" />
     <Compile Include="Broker\DBroReglasGenerales.cs" />
+    <Compile Include="Broker\DBroReportes.cs" />
     <Compile Include="Broker\DBroResumen.cs" />
     <Compile Include="Broker\DBroSectorEconomico.cs" />
     <Compile Include="Broker\DBroTasa.cs" />

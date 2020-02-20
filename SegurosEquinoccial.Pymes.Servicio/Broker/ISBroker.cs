@@ -434,6 +434,82 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         UriTemplate = "resumen/consultar/clausulas")]
         List<EBroClausulas> BroConsultaClausulasRamos(EAuxiliares aux);
 
+
+
+
+
+
+
+
+        // INICIO CREACIÓN DE REPORTERÍA 
+
+        //LISTAR USUARIOS POR BROKER PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/listar/usuarios/{IdBroker}")]
+        List<EBroReporteUsuarios> ReporteListarUsuarios(string IdBroker);
+
+        // LISTAR COTIZACIONES POR BROKER Y CIUDAD PARA EL REPORTE 
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/listar/cotizaciones?IdBroker={IdBroker}&estado={estado}")]
+        List<EBroReporteCotizaciones> ReporteListarCotizacionesBroker(string IdBroker, string estado);
+
+        // LISTAR EMISIONES POR BROKER Y CIUDAD PARA EL REPORTE 
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/listar/emisiones?IdBroker={IdBroker}&estado={estado}")]
+        List<EBroReporteEmisiones> ReporteListarEmisionesBroker(string IdBroker, string estado);
+
+        
+        //LISTAR CIUDADES DE TODOS LOS USUARIOS PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/ciudad/broker/{IdBroker}")]
+        string ReporteCiudadBroker(string IdBroker);
+
+        //LISTAR CIUDADES CON COTIZACIOES POR BORKER PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/ciudad/broker/cotizaciones/{IdBroker}")]
+        string ReporteListarCiudadesCotizacionesBroker(string IdBroker);
+
+        //LISTAR CIUDADES CON EMISIONES POR BORKER PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/ciudad/broker/emisiones/{IdBroker}")]
+        string ReporteListarCiudadesEmisionesBroker(string IdBroker);
+
+        //LISTAR COTIZACIONES POR CIUDAD Y BROKER PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/cotizaciones/ciudad?IdBroker={IdBroker}&estado={estado}")]
+        string ReporteCiudadBrokerCotizaciones(string IdBroker, string estado);
+
+        //LISTAR EMISIONES POR CIUDAD Y BROKER PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/emisiones/ciudad?IdBroker={IdBroker}&estado={estado}")]
+        string ReporteCiudadBrokerEmisiones(string IdBroker, string estado);
+
+
+        //LISTAR DETALLE DE VALORES EN COTIZACIONES POR CIUDAD Y BROKER PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/datalle/valores/cotizaciones")]
+        string DetalleValoresCotizacionesBrokerCiudad(EBroReporteDetalleValoresBroker datos); 
+
+        //LISTAR DETALLE DE VALORES EN EMISIONES POR CIUDAD Y BROKER PARA EL REPORTE
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "reporte/datalle/valores/emisiones")]
+        string DetalleValoresEmisionesBrokerCiudad(EBroReporteDetalleValoresBroker datos);
+
+
+        // FIN CREACIÓN DE REPORTERÍA 
+
+
+
         //VALIDAR DEUDA DE UN CLIENTE
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,

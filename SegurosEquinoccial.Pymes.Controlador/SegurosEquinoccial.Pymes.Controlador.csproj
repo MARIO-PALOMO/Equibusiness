@@ -60,6 +60,7 @@
     <Compile Include="Broker\CBroRamo.cs" />
     <Compile Include="Broker\CBroReglas.cs" />
     <Compile Include="Broker\CBroReglasGenerales.cs" />
+    <Compile Include="Broker\CBroReportes.cs" />
     <Compile Include="Broker\CBroResumen.cs" />
     <Compile Include="Broker\CBroSectorEconomico.cs" />
     <Compile Include="Broker\CBroTasa.cs" />
