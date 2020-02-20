@@ -75,10 +75,7 @@ namespace SegurosEquinoccial.Pymes.Servicio.Token
                         long ticks;
                         if (int.TryParse(values[0], out userId) && long.TryParse(values[1], out ticks))
                         {
-                            if (Math.Abs((new DateTime(ticks) - DateTime.Now).Hours) < 8)
-                            {
-                                result = true;
-                            }
+                            result = true;
                         }
                     }
                 }

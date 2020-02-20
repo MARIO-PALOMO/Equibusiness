@@ -130,7 +130,7 @@ export class InicioClienteComponent implements OnInit {
   public Agente: any;
 
   public lstSucursal = [];
-
+  public detalleCotizacion = { "Antiguedad": "", "Broker": { "CodigoAgente": null, "CodigoTipoAgente": null, "Color": null, "Comision": null, "Estado": 0, "Foto": null, "IdBroker": 0, "MultiRiesgo": 0, "Pago": 0, "Primas": 0, "Provincias": 0, "RazonSocial": null, "Riesgo": 0, "Transporte": null }, "Codigo": "", "Contenido": { "Cotizacion": null, "DatosCondiciones": null, "DatosCotizador": null, "DatosGarantias": null, "EstadoCondiciones": "0", "EstadoGarantias": "0", "IdContenido": 0, "Identificador": 0, "Lista": null, "VistaDiseno": null, "VistaEstado": null, "VistaValores": "" }, "Contratante": { "Cedula": "", "Cotizacion": null, "Direccion": null, "Email": null, "Estado": 0, "IdContratante": 0, "Identificador": 0, "Nombre": "", "PrimerApellido": "", "SegundoApellido": "", "Telefono": null }, "Corredor": "", "CotizacionResultado": { "Cotizacion": null, "EstadoAccidentesPersonales": 0, "EstadoEquipoMaquinaria": 0, "EstadoFidelidad": 0, "EstadoGlobal": 0, "EstadoMultiriesgo": 0, "EstadoPagoGlobal": 0, "EstadoResponsabilidadCivil": 0, "EstadoTransImportaciones": 0, "EstadoTransInterno": 0, "EstadoVehiculos": 0, "FechaEmision": null, "IdCotizacionResultado": 0, "IdPvAccidentesPersonales": "", "IdPvEquipoMaquinaria": "", "IdPvFidelidad": "", "IdPvMultiriesgo": "", "IdPvResponsabilidadCivil": "", "IdPvTransImportaciones": "", "IdPvTransInterno": "", "IdPvVehiculos": "", "Identificador": 0 }, "DerechosEmision": 0, "Direccion": { "Cotizacion": null, "DatosDireccion": null, "IdDireccion": 0, "Identificador": 0 }, "Empresa": { "Codigo": 0, "CodigoAsegurado": null, "Direccion": null, "Email": null, "GiroNegocio": null, "IdCatalogoEmpresa": 0, "IdEmpresa": 56, "Identificador": 0, "Nombre": null, "PrimerApellido": null, "RazonSocial": "", "Riesgo": 0, "Ruc": "", "SectorEconomico": null, "SegundoApellido": null, "Siniestralidad": null, "Telefono": "" }, "Estado": 0, "Fecha": "", "FormaPago": { "Adjunto": null, "AdjuntoTipo": null, "CodigoAutenticacion": "", "Cotizacion": null, "Diferidos": "", "Estado": 0, "Fecha": "", "IdFormaPago": 0, "IdPago": 0, "Identificador": 0, "Intereses": "", "Lote": "", "Plataforma": "", "Referencia": "", "Tipo": "", "Trama": "", "Voucher": "" }, "IdCotizacion": 0, "IdPago": 0, "IdUsuario": 0, "Identificador": 0, "ImpuestoCampesino": 0, "ImpuestoSBS": 0, "Iva": 0, "Pagador": { "Cedula": "", "Cotizacion": null, "Direccion": null, "Email": null, "Estado": 0, "IdPagador": 0, "Identificador": 0, "Nombre": "", "PrimerApellido": "", "SegundoApellido": "", "Telefono": null }, "PrimaNetaIva0": 0, "PrimaNetaIva12": 0, "PrimaNetaTotal": 0, "PrimaTotal": 0, "Usuario": null, "Vehiculo": { "Cotizacion": null, "DatosVehiculo": null, "IdVehiculos": 0, "Identificador": 0 } };
   public lstTipoAgente: Array<{ text: string, value: number }> = [
     { text: "PRODUCTOR", value: 2 },
     { text: "UNIDAD DE PRODUCCIÓN", value: 3 }
@@ -151,7 +151,7 @@ export class InicioClienteComponent implements OnInit {
     this.buscarCotizacionesUsuario();
     this.eliminarCache();
     var sesion = this.sesion;
-    console.log(this.usuario)
+
     window.addEventListener("unload", function (e) {
       sesion.cerrarSesion();
     });
@@ -1050,10 +1050,12 @@ export class InicioClienteComponent implements OnInit {
             ValTipoAgente: Corredor.TipoAgente,
           };
 
+
+
           var datosAsegurado = {
             "CodUsuario": "",
-            "CodTipoAgente": this.datosAsegurado.cli_cod_tipo_agente == null ? 0 : this.datosAsegurado.cli_cod_tipo_agente,
-            "CodAgente": this.datosAsegurado.cli_cod_agente == null ? 0 : this.datosAsegurado.cli_cod_agente,
+            "CodTipoAgente": Corredor.TipoAgente,
+            "CodAgente": Corredor.Agente,
             "Origen": "LAAAAA000003",
             "CodProvincia": this.datosAsegurado.cli_cod_aseg == -1 ? 17 : this.datosAsegurado.cli_dir_cod_prov,
             "CodCiudad": this.datosAsegurado.cli_cod_aseg == -1 ? 15 : this.datosAsegurado.cli_dir_cod_ciudad,
@@ -1146,6 +1148,7 @@ export class InicioClienteComponent implements OnInit {
 
                               this.spinner.show();
                               this.generico.actualizarDatosAsegurado(datosAsegurado).then(datos => {
+                                console.log(datos);
                                 this.spinner.hide();
 
                                 if (datos.Error == 0 && datos.Mensaje == null) {
@@ -1238,7 +1241,7 @@ export class InicioClienteComponent implements OnInit {
       this.conexion.get("Broker/SBroker.svc/empresa/cotizacion/validar/" + datos.Empresa.Ruc, this.usuario.Uid).subscribe(
         (res: any) => {
           this.spinner.hide();
-     
+
           if (datos.Broker == null && datos.Empresa == null) {
             this.verificacionConVencimiento(datos, parametros);
           } else if (datos.Broker.IdBroker == this.usuario.broker.IdBroker && datos.Empresa.Ruc == res.Empresa.Ruc) {
@@ -1459,6 +1462,12 @@ export class InicioClienteComponent implements OnInit {
     } else {
       this.activacionCampos = 0;
     }
+  }
+
+  public detallesCotizacion(cotizacion) {
+    this.detalleCotizacion = cotizacion;
+    $('#ModalDetallesCotizacion').modal('toggle');
+    console.log(this.detalleCotizacion);
   }
   //***************************** FIN NUEVA LOGICA *****************************
 

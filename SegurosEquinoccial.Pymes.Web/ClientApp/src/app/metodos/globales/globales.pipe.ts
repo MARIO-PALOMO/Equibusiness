@@ -50,10 +50,8 @@ export class GlobalesPipe implements PipeTransform {
       type: tipo,
       timer: 3000
     }).then((result) => {
-      if (
-        result.dismiss === Swal.DismissReason.timer
-      ) {
-      
+      if (result.dismiss === Swal.DismissReason.timer) {
+
       }
     })
   }

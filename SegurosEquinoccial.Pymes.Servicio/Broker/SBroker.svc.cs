@@ -511,5 +511,15 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         {
             return CPolPago.BroObtenerNumeroCuotas(codigo);
         }
+
+        public List<EBroCatalogoProvincias> BroConsultaCatalogoProvincias()
+        {
+            return CBroCatalogos.BroConsultaCatalogoProvincias();
+        }
+
+        public string BroCerrarCompromiso(EAuxiliares aux)
+        {
+            return CBroCompromiso.BroCerrarCompromiso(aux);
+        }
     }
 }

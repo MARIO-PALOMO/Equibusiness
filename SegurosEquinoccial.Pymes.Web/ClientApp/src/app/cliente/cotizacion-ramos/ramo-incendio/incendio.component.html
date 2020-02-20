@@ -22,9 +22,9 @@
       </th>
     </tr>
     <tr>
-      <th *ngFor="let direccion of lstDirecciones">
+      <th *ngFor="let direccion of lstDirecciones; let i=index">
         <span tooltip="{{direccion.nombre}}" placement="top" show-delay="200" display-mobile="true">
-          Ubi. {{direccion.id}}
+          Ubi. {{ i + 1 }}
         </span>
       </th>
     </tr>

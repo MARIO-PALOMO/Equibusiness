@@ -560,6 +560,21 @@ export class GenericoService {
     });
   }
 
+  public listarProvinciasCiudades() {
+    return new Promise<any>((resolve, reject) => {
+      this.conexion.get('Broker/SBroker.svc/consultar/catalogo/provincias', this.usuario.Uid).subscribe(
+        (res: any) => {
+          resolve(res);
+        },
+        err => {
+          this.globales.mostrarNotificacion("Exite un error con el servidor de datos.<br>Contactese con el administrador del sistema.", "error", "bottom");
+          this.conexion.error(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
   public consultaDeudasPendientes(asegurado) {
     return new Promise<any>((resolve, reject) => {
       this.conexion.get('Broker/SBroker.svc/consultar/cotizacion/deudas/' + asegurado, this.usuario.Uid).subscribe(

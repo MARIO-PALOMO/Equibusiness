@@ -349,7 +349,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card" style="background-color: rgba(255,255,255,0.2) !important">
+              <!--<div class="card" style="background-color: rgba(255,255,255,0.2) !important">
                 <div class="panel-direcciones-header collapsed" id="cabeceraDosDireccion"
                   [ngStyle]="{'background-color': 'rgba(' + usuario.broker.Color + ',0.8)'}" data-toggle="collapse"
                   data-target="#acordionDosDireccion" aria-expanded="false" aria-controls="acordionDosDireccion">
@@ -365,7 +365,15 @@
                     </div>
                     <div class="form-group">
                       <label style="font-weight: bold; color: #fff">Provincia</label><br>
-                      <kendo-dropdownlist [data]="lstProvincias" [(ngModel)]="fmrMapa.provincia" style="width: 100%">
+                      <kendo-dropdownlist [data]="lstProvincias" [(ngModel)]="fmrMapa.provincia" style="width: 100%"
+                        (ngModelChange)="listarCiudades()">
+                      </kendo-dropdownlist>
+                    </div>
+                    <div class="form-group">
+                      <label style="font-weight: bold; color: #fff">Ciudad</label><br>
+                      <kendo-dropdownlist [data]="lstProvinciasCiudadesFiltro" textField="TextoCompleto"
+                        valueField="IdCatalogoProvincias" [(ngModel)]="fmrMapa.ciudad" [filterable]="true"
+                        (filterChange)="filtrarCiudades($event)" style="width: 100%">
                       </kendo-dropdownlist>
                     </div>
                     <div class="form-group">
@@ -373,7 +381,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>-->
             </div>
           </div>
           <br>
@@ -391,8 +399,8 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody *ngFor="let direccion of lstDirecciones; let i = index">
-                <tr style="text-align: center">
+              <tbody >
+                <tr *ngFor="let direccion of lstDirecciones; let i = index" style="text-align: center">
                   <td>{{i + 1}}</td>
                   <td>{{direccion.nombre}}</td>
                   <td *ngIf="usuario.broker.Provincias == 1">{{direccion.provincia}}</td>
@@ -1659,10 +1667,10 @@
                               <br><small><b>Contado</b></small>
                             </div>
                           </div>
-                          <div class="col-3" (click)="seleccionarFormaPago(4)" style="cursor: pointer;">
+                          <div class="col-3" style="cursor: not-allowed;">
                             <!--(click)="seleccionarFormaPago(4)"-->
-                            <div id="4" class="icono pagos-boton">
-                              <img src="../../../assets/images/DebitoBancario.png" width="50">
+                            <div id="4" class="icono pagos-boton-deshabilitado">
+                              <img src="../../../assets/images/DebitoBancarioDes.png" width="50">
                               <br><small><b>Débito Bancario</b></small>
                             </div>
                           </div>
@@ -1887,7 +1895,8 @@
                   Datos Cotización
                 </div>
 
-                <div id="collapseOne" [ngClass]="numeroPolizasEmitidas == 0 ? 'collapse show' : 'collapse'" aria-labelledby="headingOne" data-parent="#accordion">
+                <div id="collapseOne" [ngClass]="numeroPolizasEmitidas == 0 ? 'collapse show' : 'collapse'"
+                  aria-labelledby="headingOne" data-parent="#accordion">
                   <div class="borde-redondeado-cotizacion">
 
                     <table *ngIf="tipoPago == 3" id="tablaPago">
@@ -2064,7 +2073,8 @@
                   [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white', 'cursor': 'pointer'}">
                   Emisión
                 </div>
-                <div id="collapseTwo" [ngClass]="numeroPolizasEmitidas != 0 ? 'collapse show' : 'collapse'" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div id="collapseTwo" [ngClass]="numeroPolizasEmitidas != 0 ? 'collapse show' : 'collapse'"
+                  aria-labelledby="headingTwo" data-parent="#accordion">
                   <div class="borde-redondeado-cotizacion"
                     [ngStyle]="{'pointer-events': bloqueoEmision == false ? 'auto' : 'none'}">
                     <table>
@@ -2072,7 +2082,8 @@
                         <td>
                           <b><span class="estilo-cotizacion">Fecha Emisión</span></b>
                         </td>
-                        <td [ngStyle]="{'text-align': 'right', 'pointer-events': cotizacionDetalles.CotizacionResultado.FechaEmision != '' ? 'none' : 'auto'}">
+                        <td
+                          [ngStyle]="{'text-align': 'right', 'pointer-events': cotizacionDetalles.CotizacionResultado.FechaEmision != '' ? 'none' : 'auto'}">
                           <kendo-datepicker [min]="fechaEmisionRetroactiva" [max]="fechaEmisionFutura"
                             [format]="'yyyy-MM-dd'" onkeydown="return false;"
                             [(ngModel)]="fechaEmisionVigenciaSeleccionada" (ngModelChange)="gestionFechasEmision()">
@@ -2219,6 +2230,66 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalDirecciones" tabindex="-1" role="dialog" aria-labelledby="ModalDireccionesTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Actualización de Direcciones</h5>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <table id="TablaDireccionesAc">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Latitud</th>
+                  <th>Longitud</th>
+                  <th>Dirección</th>
+                  <th>Provincia</th>
+                  <th>Ciudad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let dir of lstDireccionesAc">
+                  <td>
+                    <span class="idTabla">{{ dir.id }}</span>
+                  </td>
+                  <td>
+                    <span class="idLatitud">{{ dir.latitud }}</span>
+                  </td>
+                  <td>
+                    <span class="idLongitud">{{ dir.longitud }}</span>
+                  </td>
+                  <td>
+                    <span class="idNombre">{{ dir.nombre }}</span>
+                  </td>
+                  <td>
+                    <span class="idProvincia">{{ dir.provincia }}</span>
+                  </td>
+                  <td>
+                    <select class="form-control texto">
+                      <option disabled selected value> -- Seleccionar Ciudad -- </option>
+                      <option *ngFor="let ciu of lstProvinciasCiudadesAc(dir.provincia)"
+                        value="{{ JSONtoString(ciu) }}">
+                        {{ ciu.TextoCompleto }}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark" (click)="actualizarDirecciones()">Actualizar</button>
+      </div>
     </div>
   </div>
 </div>

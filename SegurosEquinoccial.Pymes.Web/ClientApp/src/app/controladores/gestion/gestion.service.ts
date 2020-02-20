@@ -149,6 +149,29 @@ export class GestionService {
     });
   }
 
+  public cerrarCotizacionCompromiso(datos) {
+    return new Promise<any>((resolve, reject) => {
+
+      this.conexion.post("Broker/SBroker.svc/cotizacion/cerrar/compromisos/sise", datos, this.usuario.Uid).subscribe(
+        (res: any) => {
+          var xml = $.parseXML(res);
+
+          var codigo = "";
+          $(xml).find("CerrarOportunidadGenericoResponse ").each(function () {
+            codigo = $(this).find('CerrarOportunidadGenericoResult').text();
+          });
+
+          resolve(codigo);
+        },
+        err => {
+          this.globales.mostrarNotificacion("Exite un error con el servidor de datos.<br>Error al gestionar cotización resultado.", "error", "bottom");
+          this.conexion.error(err);
+          reject(err);
+        }
+      );
+    });
+  }
+
   public eliminarDatosCotizacion(identificador, codigos) {
     var datos = {
       Identificador: identificador,

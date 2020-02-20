@@ -511,6 +511,11 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
 
 
         [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "cotizacion/cerrar/compromisos/sise")]
+        string BroCerrarCompromiso(EAuxiliares aux);
+
+        [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "consultar/nombre/agente?codigo={codigo}&agente={agente}")]
         string BroObtenerAgente(string codigo, string agente);
@@ -535,5 +540,11 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "cotizacion/forma/debito/numero/{codigo}")]
         string BroObtenerNumeroCuotas(string codigo);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "consultar/catalogo/provincias")]
+        List<EBroCatalogoProvincias> BroConsultaCatalogoProvincias();
     }
+
 }

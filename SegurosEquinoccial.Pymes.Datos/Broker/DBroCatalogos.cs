@@ -444,5 +444,44 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 Cerrar();
             }
         }
+
+        public static List<EBroCatalogoProvincias> BroConsultaCatalogoProvincias()
+        {
+            List<EBroCatalogoProvincias> lista = new List<EBroCatalogoProvincias>();
+
+            EBroCatalogoProvincias rsProvincias;
+            try
+            {
+                Conectar();
+
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Catalogo_Provincias", getCnn());
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    rsProvincias = new EBroCatalogoProvincias();
+
+                    rsProvincias.IdCatalogoProvincias = rdr["IdCatalogo_Provincias"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdCatalogo_Provincias"]);
+                    rsProvincias.CodigoPais = rdr["CodigoPais"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["CodigoPais"]);
+                    rsProvincias.CodigoDepartamento = rdr["CodigoDepartamento"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["CodigoDepartamento"]);
+                    rsProvincias.TextoDepartamento = rdr["TextoDepartamento"].ToString();
+                    rsProvincias.CodigoMunicipio = rdr["CodigoMunicipio"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["CodigoMunicipio"]);
+                    rsProvincias.TextoMunicipio = rdr["TextoMunicipio"].ToString();
+                    rsProvincias.TextoCompleto = rdr["TextoDepartamento"].ToString() + " - " + rdr["TextoMunicipio"].ToString();
+
+                    lista.Add(rsProvincias);
+
+                }
+                rdr.Close();
+                return lista;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            finally
+            {
+                Cerrar();
+            }
+        }
     }
 }

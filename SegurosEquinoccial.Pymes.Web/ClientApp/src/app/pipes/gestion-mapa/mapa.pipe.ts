@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import Swal from 'sweetalert2';
 declare var google: any;
 
 @Pipe({
@@ -11,6 +12,15 @@ export class MapaPipe implements PipeTransform {
   transform(value: any, args?: any): any {
     return null;
   }
+
+  public mostarAlerta(titulo, texto, tipo) {
+    Swal.fire({
+      title: titulo,
+      html: texto,
+      type: tipo
+    });
+  }
+
 
   public inicializarMapa(mapa: any, coordenadasInicio: Object) {
     return new google.maps.Map(mapa, {
@@ -37,7 +47,7 @@ export class MapaPipe implements PipeTransform {
 
   }
 
-  public gestionMapa(map: any, lstDirecciones: any, marcadores: any, estadoProvincia: any) {
+  public gestionMapa(map: any, lstDirecciones: any, marcadores: any, estadoProvincia: any, lstProvinciasCiuidades) {
     var geocoder = new google.maps.Geocoder;
 
     return map.addListener('click', (e) => {
@@ -45,22 +55,29 @@ export class MapaPipe implements PipeTransform {
       if (lstDirecciones.length < 5) {
         this.uniqueId(lstDirecciones);
 
-        this.agregarMarcador(e.latLng, this.currentId, map, marcadores, lstDirecciones);
+
         var latlng = { lat: e.latLng.lat(), lng: e.latLng.lng() };
         geocoder.geocode({ 'location': latlng }, (results, status) => {
           if (status === 'OK') {
             if (results[0]) {
-              lstDirecciones.push({ id: this.currentId, latitud: e.latLng.lat(), longitud: e.latLng.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? this.obtenerProvincia(results[0].address_components) : "Global") });
+              var emision = this.obtenerLocalizacionEmision(results[0].address_components, lstProvinciasCiuidades);
+              if (emision == undefined) {
+                this.mostarAlerta("", "La ciudad seleccionada no está disponible.", "info");
+              } else {
+                this.agregarMarcador(e.latLng, this.currentId, map, marcadores, lstDirecciones);
+                lstDirecciones.push({ id: this.currentId, latitud: e.latLng.lat(), longitud: e.latLng.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? this.obtenerProvincia(results[0].address_components) : "Global"), codigoPais: emision.CodigoPais, codigoDepartameto: emision.CodigoDepartamento, codigoMunicipio: emision.CodigoMunicipio });
+              }
             } else {
-              var nombre_ = 'Coordenadas Agregadas Exitosamente, exceptuando el nombre de la dirección';
-              lstDirecciones.push({ id: this.currentId, latitud: e.latLng.lat(), longitud: e.latLng.lng(), nombre: nombre_, provincia: (estadoProvincia == 1 ? this.obtenerProvincia(results[0].address_components) : "Global") });
+              var alerta = 'Las coordenadas del lugar seleccionado no puedieron ser procesadas, intente la selección nuevamente.';
+              this.mostarAlerta("", alerta, "info");
             }
           } else {
+            this.mostarAlerta("", "Error con el formato de la geoposición, intente nuevamente.", "info");
             console.log('Error con el formato de la geoposición: ' + status);
           }
         });
       } else {
-        alert('No se permite seleccionar más de 5 direcciones');
+        this.mostarAlerta("", "No se permite seleccionar más de 5 direcciones.", "info");
       }
     });
 
@@ -122,7 +139,45 @@ export class MapaPipe implements PipeTransform {
     return provincia;
   }
 
-  public buscarDireccion(buscador: any, map: any, marcadores: any, lstDirecciones: any, estadoProvincia: any) {
+  public obtenerCiudadProvincia(lstDirecciones) {
+    var ciudad = "";
+    var provincia = this.obtenerProvincia(lstDirecciones);
+
+    for (var direccion of lstDirecciones) {
+      for (var tipos of direccion.types) {
+        if (tipos == "locality") {
+          var str = direccion.long_name;
+          ciudad = str;
+        }
+      }
+    }
+
+    if (ciudad == "") {
+      for (var direccion_ of lstDirecciones) {
+        for (var tipos_ of direccion_.types) {
+          if (tipos_ == "administrative_area_level_2") {
+            var str_ = direccion_.long_name;
+            ciudad = str_;
+          }
+        }
+      }
+    }
+    return { ciudad: ciudad, provincia: provincia };
+  }
+
+  public obtenerLocalizacionEmision(direcciones, datos) {
+    var geoposicion = this.obtenerCiudadProvincia(direcciones);
+    var parametros: any;
+    for (let codigos of datos) {
+      if (codigos.TextoDepartamento.toLowerCase() == geoposicion.provincia.toLowerCase()
+        && codigos.TextoMunicipio.toLowerCase() == geoposicion.ciudad.toLowerCase()) {
+        parametros = codigos;
+      }
+    }
+    return parametros;
+  }
+
+  public buscarDireccion(buscador: any, map: any, marcadores: any, lstDirecciones: any, estadoProvincia: any, lstProvinciasCiuidades) {
 
     var searchBox = new google.maps.places.SearchBox(buscador);
     var geocoder = new google.maps.Geocoder;
@@ -166,6 +221,43 @@ export class MapaPipe implements PipeTransform {
       return provincia;
     }
 
+    var obtenerCiudadProvincia = function (lstDirecciones) {
+      var ciudad = "";
+      var provincia = obtenerProvincia(lstDirecciones);
+
+      for (var direccion of lstDirecciones) {
+        for (var tipos of direccion.types) {
+          if (tipos == "locality") {
+            var str = direccion.long_name;
+            ciudad = str;
+          }
+        }
+      }
+
+      if (ciudad == "") {
+        for (var direccion_ of lstDirecciones) {
+          for (var tipos_ of direccion_.types) {
+            if (tipos_ == "administrative_area_level_2") {
+              var str_ = direccion_.long_name;
+              ciudad = str_;
+            }
+          }
+        }
+      }
+      return { ciudad: ciudad, provincia: provincia };
+    }
+
+    var obtenerLocalizacionEmision = function (direcciones, datos) {
+      var geoposicion = obtenerCiudadProvincia(direcciones);
+      var parametros: any;
+      for (let codigos of datos) {
+        if (codigos.TextoDepartamento.toLowerCase() == geoposicion.provincia.toLowerCase() && codigos.TextoMunicipio.toLowerCase() == geoposicion.ciudad.toLowerCase()) {
+          parametros = codigos;
+        }
+      }
+      return parametros;
+    }
+
     var eliminarMarcadorVector = function (lstDirecciones) {
       var items = [];
       lstDirecciones.map((e) => { items.push(e.id); });
@@ -182,6 +274,16 @@ export class MapaPipe implements PipeTransform {
         delete marcadores[currentId];
       }
     }
+
+    var mostarAlerta = function (titulo, texto, tipo) {
+      Swal.fire({
+        title: titulo,
+        html: texto,
+        type: tipo
+      });
+    }
+
+
     return searchBox.addListener('places_changed', function () {
       var places = searchBox.getPlaces();
 
@@ -223,17 +325,26 @@ export class MapaPipe implements PipeTransform {
           geocoder.geocode({ 'location': coordenadas }, (results, status) => {
             if (status === 'OK') {
               if (results[0]) {
-                lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global") });
+                var emision = obtenerLocalizacionEmision(results[0].address_components, lstProvinciasCiuidades);
+                console.log(emision);
+                if (emision == undefined) {
+                  mostarAlerta("", "La ciudad seleccionada no está disponible.", "info");
+                  alert()
+                } else {
+                  lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global"), codigoPais: emision.CodigoPais, codigoDepartameto: emision.CodigoDepartamento, codigoMunicipio: emision.CodigoMunicipio });
+                }
+
               } else {
-                var nombre_ = 'Coordenadas Agregadas Exitosamente, exceptuando el nombre de la dirección';
-                lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: nombre_, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global") });
+                var alerta = 'Las coordenadas del lugar seleccionado no puedieron ser procesadas, intente la selección nuevamente.';
+                mostarAlerta("", alerta, "info");
               }
             } else {
+              mostarAlerta("", "Error con el formato de la geoposición, intente nuevamente.", "info");
               console.log('Error con el formato de la geoposición: ' + status);
             }
           });
         } else {
-          alert('No se permite seleccionar más de 5 direcciones');
+          mostarAlerta("", "No se permite seleccionar más de 5 direcciones.", "info");
         }
 
       });
@@ -243,7 +354,7 @@ export class MapaPipe implements PipeTransform {
 
   }
 
-  public buscadorSinMapa(buscador: any, lstDirecciones: any, estadoProvincia: any) {
+  public buscadorSinMapa(buscador: any, lstDirecciones: any, estadoProvincia: any, lstProvinciasCiuidades) {
     var searchBox = new google.maps.places.SearchBox(buscador);
     var geocoder = new google.maps.Geocoder;
     var coordenadas: any;
@@ -285,6 +396,50 @@ export class MapaPipe implements PipeTransform {
       return provincia;
     }
 
+    var obtenerCiudad = function (lstDirecciones) {
+      var ciudad = "";
+      for (var direccion of lstDirecciones) {
+        for (var tipos of direccion.types) {
+          if (tipos == "locality") {
+            var str = direccion.long_name;
+            ciudad = str;
+          }
+        }
+      }
+
+      if (ciudad == "") {
+        for (var direccion of lstDirecciones) {
+          for (var tipos of direccion.types) {
+            if (tipos == "administrative_area_level_2") {
+              var str = direccion.long_name;
+              ciudad = str;
+            }
+          }
+        }
+      }
+      return ciudad;
+    }
+
+    var obtenerLocalizacionEmision = function (direccion, datos) {
+      var provincia = obtenerProvincia(direccion);
+      var ciudad = obtenerCiudad(direccion);
+      var parametros: any;
+      for (let codigos of datos) {
+        if (codigos.TextoDepartamento == provincia && codigos.TextoMunicipio == ciudad) {
+          parametros = codigos;
+        }
+      }
+      return parametros;
+    }
+
+    var mostarAlerta = function (titulo, texto, tipo) {
+      Swal.fire({
+        title: titulo,
+        html: texto,
+        type: tipo
+      });
+    }
+
     searchBox.addListener('places_changed', function () {
       var places = searchBox.getPlaces();
 
@@ -311,17 +466,19 @@ export class MapaPipe implements PipeTransform {
           geocoder.geocode({ 'location': coordenadas }, (results, status) => {
             if (status === 'OK') {
               if (results[0]) {
-                lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global") });
+                var emision = obtenerLocalizacionEmision(results[0].address_components, lstProvinciasCiuidades);
+                lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global"), codigoPais: emision.CodigoPais, codigoDepartameto: emision.CodigoDepartamento, codigoMunicipio: emision.CodigoMunicipio });
               } else {
-                var nombre_ = 'Coordenadas Agregadas Exitosamente, exceptuando el nombre de la dirección';
-                lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: nombre_, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global") });
+                var alerta = 'Las coordenadas del lugar seleccionada no puedieron ser procesadas intente la selección nuevamente.';
+                mostarAlerta("", alerta, "info");
               }
             } else {
+              mostarAlerta("", "Error con el formato de la geoposición, intente nuevamente.", "info");
               console.log('Error con el formato de la geoposición: ' + status);
             }
           });
         } else {
-          alert('No se permite seleccionar más de 5 direcciones');
+          mostarAlerta("", "No se permite seleccionar más de 5 direcciones.", "info");
         }
       });
     });

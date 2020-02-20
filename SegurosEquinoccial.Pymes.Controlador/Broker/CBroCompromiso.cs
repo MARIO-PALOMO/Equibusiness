@@ -14,5 +14,10 @@ namespace SegurosEquinoccial.Pymes.Controlador.Broker
         {
             return DBroCompromiso.BroRegistrarCompromiso(aux);
         }
+
+        public static string BroCerrarCompromiso(EAuxiliares aux)
+        {
+            return DBroCompromiso.BroCerrarCompromiso(aux);
+        }
     }
 }

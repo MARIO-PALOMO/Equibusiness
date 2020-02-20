@@ -48,7 +48,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Polizas.Pago
             string Body = ("<ConsultarFormularioVinculacionValidoExt xmlns=\"http://tempuri.org/\">"
                           + "<param>"
                             + "<sNroDocumento>" + datos.DocumentoCliente + "</sNroDocumento>"
-                            + "<sOrigen>FORMULARIO VINCULACION</sOrigen>"
+                            + "<sOrigen>PYMES</sOrigen>"
                             + "<sEmail>" + datos.EmailAgente + "</sEmail>"
                             + "<iCodAgente>" + datos.CodigoAgente + "</iCodAgente>"
                             + "<iCodTipoAgente>" + datos.CodigoTipoAgente + "</iCodTipoAgente>"
