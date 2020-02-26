@@ -82,6 +82,7 @@ import { GeneradorCompromisosService } from './metodos/generador-compromiso/gene
 import { ReporteComponent } from './gerente/reporte/reporte.component';
 import { MultiViewCalendarModule } from '@progress/kendo-angular-dateinputs';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
+import { ValidacionComponent } from './gerente/validacion/validacion.component';
 
 @NgModule({
   declarations: [
@@ -130,7 +131,8 @@ import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
     ZCotizacionReporteEmailUsuarioComponent,
     CotizacionReporteEmailComponent,
     UsuarioComponent,
-    ReporteComponent
+    ReporteComponent,
+    ValidacionComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -171,6 +173,7 @@ import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
       { path: 'gerencia/resumen', component: ResumenGerenteComponent },
       { path: 'gerencia/usuario', component: UsuarioComponent },
       { path: 'gerencia/reporte', component: ReporteComponent},
+      { path: 'gerencia/validacion', component: ValidacionComponent},
       { path: 'cotizacion', component: CotizacionReporteEmailComponent }
     ])
   ],

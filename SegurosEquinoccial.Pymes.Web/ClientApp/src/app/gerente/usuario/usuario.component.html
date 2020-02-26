@@ -131,7 +131,7 @@
               <kendo-dropdownlist [data]="lstRol" [(ngModel)]="IdRol" (ngModelChange)="filtarRoles()" textField="text"
                 valueField="value" style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.text }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>
@@ -146,7 +146,7 @@
                 valueField="IdBroker" (ngModelChange)="filtarRoles()" (filterChange)="filtrarBroker($event)"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.RazonSocial }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.RazonSocial }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>
@@ -159,7 +159,7 @@
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
                   <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.Usuario }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Usuario }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>
@@ -171,7 +171,7 @@
                 valueField="Nombre" (filterChange)="filtrarCiudad($event)"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.Nombre }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>
@@ -183,7 +183,7 @@
                 valueField="value" (ngModelChange)="listarAgentes()"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.text }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>
@@ -198,7 +198,7 @@
                 textField="nombreAgente" valueField="codigoAgente" (filterChange)="filtrarAgente($event)"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.nombreAgente }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.nombreAgente }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>
@@ -209,7 +209,7 @@
               <kendo-dropdownlist [data]="lstSucursal" [(ngModel)]="Sucursal" textField="Nombre" valueField="Union"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.Nombre }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>
@@ -229,7 +229,7 @@
               <kendo-dropdownlist [data]="lstCorredores" [(ngModel)]="Corredores" textField="text" valueField="value"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding: 8px; font-size: 13px">{{ dataItem.text }}</span>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
                 </ng-template>
               </kendo-dropdownlist>
             </div>

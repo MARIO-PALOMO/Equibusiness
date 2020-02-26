@@ -34,12 +34,22 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                 {
 
                     rsUsuario.IdUsuario = Convert.ToInt32(rdr["IdUsuario"]);
-                    rsBroker.IdBroker = Convert.ToInt32(rdr["IdBroker"]);
                     rsUsuario.Usuario = rdr["Usuario"].ToString();
                     rsUsuario.Email = rdr["Email"].ToString();
-                    rsRol.Nombre = rdr["Rol"].ToString();
+                    rsUsuario.Uid = DAdmEncriptacion.CrearKeyAutorizacion(rdr["IdUsuario"].ToString());
+                    rsUsuario.IdPadre = Convert.ToInt32(rdr["IdPadre"]);
+                    rsUsuario.Ciudad = rdr["Ciudad"].ToString();
+                    rsUsuario.EstadoSesion = Convert.ToInt32(rdr["EstadoSesion"]);
+                    rsUsuario.CodigoTipoAgente = rdr["CodigoTipoAgente"].ToString();
+                    rsUsuario.CodigoAgente = rdr["CodigoAgente"].ToString();
+                    rsUsuario.CodigoSucursal = rdr["CodigoSucursal"].ToString();
+                    rsUsuario.CodigoPuntoVenta = rdr["CodigoPuntoVenta"].ToString();
+                    rsUsuario.Comision = rdr["Comision"].ToString();
+                    rsUsuario.Corredores = rdr["Corredores"].ToString();
                     rsUsuario.Estado = Convert.ToInt32(rdr["Estado"]);
                     rsUsuario.Foto = rdr["FotoUsuario"].ToString();
+
+                    rsBroker.IdBroker = Convert.ToInt32(rdr["IdBroker"]);
                     rsBroker.Foto = rdr["FotoBroker"].ToString();
                     rsBroker.Color = rdr["Color"].ToString();
                     rsBroker.Provincias = Convert.ToInt32(rdr["Provincias"]);
@@ -51,16 +61,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                     rsBroker.Comision = rdr["ComisionBroker"].ToString();
                     rsBroker.Transporte = rdr["Transporte"].ToString();
 
-                    rsUsuario.Uid = DAdmEncriptacion.CrearKeyAutorizacion(rdr["IdUsuario"].ToString());
-                    rsUsuario.IdPadre = Convert.ToInt32(rdr["IdPadre"]);
-                    rsUsuario.Ciudad = rdr["Ciudad"].ToString();
-                    rsUsuario.EstadoSesion = Convert.ToInt32(rdr["EstadoSesion"]);
-                    rsUsuario.CodigoTipoAgente = rdr["CodigoTipoAgente"].ToString();
-                    rsUsuario.CodigoAgente = rdr["CodigoAgente"].ToString();
-                    rsUsuario.CodigoSucursal = rdr["CodigoSucursal"].ToString();
-                    rsUsuario.CodigoPuntoVenta = rdr["CodigoPuntoVenta"].ToString();
-                    rsUsuario.Comision = rdr["Comision"].ToString();
-                    rsUsuario.Corredores = rdr["Corredores"].ToString();
+                    rsRol.Nombre = rdr["Rol"].ToString();
+                    rsRol.IdRol = Convert.ToInt32(rdr["IdRol"]);
 
                     rsUsuario.rol = rsRol;
                     rsUsuario.broker = rsBroker;

@@ -162,7 +162,7 @@
                       (ngModelChange)="graficarReporteUsuariosBrokerCiudad(brokerSeleccionadoDos)" style="width: 100%"
                       [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.RazonSocial }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
                       </ng-template>
                     </kendo-combobox>
                   </div>
@@ -210,7 +210,7 @@
                       [valueField]="'IdBroker'" [valuePrimitive]="true" (ngModelChange)="consultarCotizacionesCiudadesBroker(brokerSeleccionadoTres)"
                       style="width: 100%" [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.RazonSocial }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
                       </ng-template>
                     </kendo-combobox>
                   </div>
@@ -219,7 +219,7 @@
                       [textField]="'Ciudad'" [valueField]="'Ciudad'" [placeholder]="'Seleccionar la ciudad'"
                       (ngModelChange)="graficarReporteCotizacionesBrokerCiudad(brokerSeleccionadoTres)">
                       <ng-template kendoMultiSelectItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.Ciudad }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.Ciudad }}</span>
                       </ng-template>
                     </kendo-multiselect>
                   </div>
@@ -267,7 +267,7 @@
                       [valueField]="'IdBroker'" [valuePrimitive]="true" (ngModelChange)="consultarEmisionesCiudadesBroker(brokerSeleccionadoCuatro)"
                       style="width: 100%" [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.RazonSocial }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
                       </ng-template>
                     </kendo-combobox>
                   </div>
@@ -276,7 +276,7 @@
                       [textField]="'Ciudad'" [valueField]="'Ciudad'" [placeholder]="'Seleccionar la ciudad'"
                       (ngModelChange)="graficarReporteEmisionesBrokerCiudad(brokerSeleccionadoCuatro)">
                       <ng-template kendoMultiSelectItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.Ciudad }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.Ciudad }}</span>
                       </ng-template>
                     </kendo-multiselect>
                   </div>

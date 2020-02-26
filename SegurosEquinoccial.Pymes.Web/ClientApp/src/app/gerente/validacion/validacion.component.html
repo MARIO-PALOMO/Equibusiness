@@ -1,0 +1,81 @@
+<app-top-bar-gerente></app-top-bar-gerente>
+<div class="content-wrapper"
+  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+  <div class="contenedor">
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
+      type="ball-atom"></ngx-spinner>
+    <div class="row" style="margin-top: 70px;">
+      <div class="col-md-12">
+        <div class="accordion" id="accordionExample">
+          <!-- INICIO REPORTE DETALLE DE VALORES DE COTIZACIONES Y EMISIONES -->
+          <div class="card">
+            <div class="card-header" id="headingFour">
+              <h2 class="mb-0">
+                <a class="titulo-tarjeta" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
+                  aria-controls="collapseFour">
+                  Administrar Excepciones
+                </a>
+              </h2>
+            </div>
+            <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordionExample">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6" style="padding-top: 15px; padding-bottom: 15px;">
+                    <h5>Ingrese la Identificación del Cliente </h5>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <input kendoTextBox type="text" [(ngModel)]="Identificacion" placeholder="Ingrese el número de C.I o R.U.C" 
+                        style="font-size: 13px !important; height: 38px !important; width: 100%;"/>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Seleccione el Broker</h5>
+                  </div>
+                  <div class="col-md-6">
+                    <h5>Seleccione las validaciones a evadir</h5>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionado" [textField]="'RazonSocial'"
+                      [valueField]="'IdBroker'" [valuePrimitive]="true"
+                      style="width: 100%; font-size: 13px !important; " [placeholder]="'Selecccione un Broker'">
+                      <ng-template kendoComboBoxItemTemplate let-dataItem>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
+                      </ng-template>
+                    </kendo-combobox>
+                  </div>
+                  <div class="col-md-6">
+                    <kendo-multiselect [data]="lstExcepciones" [(ngModel)]="Excepciones" [textField]="'text'"
+                      [valueField]="'value'" [placeholder]="'Seleccionar las excepciones'" style="font-size: 13px !important;">
+                      <ng-template kendoMultiSelectItemTemplate let-dataItem>
+                        <span class="class-combo" style="padding-left: 10px !important; font-size: 13px !important;">- {{ dataItem.text }}</span>
+                      </ng-template>
+                    </kendo-multiselect>
+                  </div>
+                </div>
+
+                <br><br><br><br>
+                <div class="row" style="margin-top: 20px !important; margin-bottom: 20px !important;">
+                  <div class="col-md-4">
+                    <button class="btn-broker btn-effect-white btn btn-block" (click)="crearExcepciones()">Registrar</button>
+                  </div>
+                </div>
+                <br><br>
+              </div>
+            </div>
+          </div>
+          <!-- FIN REPORTE DETALLE DE VALORES DE COTIZACIONES Y EMISIONES -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

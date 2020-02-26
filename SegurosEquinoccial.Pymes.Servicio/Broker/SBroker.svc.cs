@@ -564,7 +564,5 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return CPolPago.BroObtenerNumeroCuotas(codigo);
         }
 
-
-
     }
 }

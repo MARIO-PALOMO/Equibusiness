@@ -21,14 +21,14 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Reglas_Generales WHERE Reglas_Generales.IdBroker = @idBroker AND Reglas_Generales.Nombre = @nombre", getCnn());
+                SqlCommand cmd = new SqlCommand("select * from ConsultaBrokerReglasGenerales WHERE IdBroker = @idBroker AND Nombre = @nombre", getCnn());
                 cmd.Parameters.AddWithValue("@idBroker", idBroker);
                 cmd.Parameters.AddWithValue("@nombre", nombre);
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
 
-                    rsReglas.IdReglasGenerales = Convert.ToInt32(rdr["IdReglasGenerales"]);
+                    rsReglas.IdReglasGenerales = rdr["IdReglasGenerales"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdReglasGenerales"]);
                     rsReglas.Igual = rdr["Igual"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["Igual"]);
                     rsReglas.Mayor = rdr["Mayor"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["Mayor"]);
                     rsReglas.Menor = rdr["Menor"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["Menor"]);

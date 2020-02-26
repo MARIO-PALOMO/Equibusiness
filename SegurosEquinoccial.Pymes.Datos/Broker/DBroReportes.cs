@@ -20,7 +20,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             try
             {
                 Conectar();
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaReporteUsuarios WHERE Broker = @broker ORDER BY Ciudad DESC", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaReporteUsuarios WHERE Broker = @broker ORDER BY Agente", getCnn());
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
@@ -62,8 +62,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 Conectar();
                 SqlCommand cmd = new SqlCommand("SET LANGUAGE Spanish; "
                 + " SELECT * FROM ConsultaReporteCotizacionesBroker "
-                + " WHERE Estado != @estado AND IdBroker = @broker "
-                + " ORDER BY Fecha, Ciudad ASC, CodigoAgente ASC ", getCnn());
+                + " AND IdBroker = @broker "
+                + " ORDER BY Cotizacion.Fecha ASC ", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(estado));
@@ -116,8 +116,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 Conectar();
                 SqlCommand cmd = new SqlCommand("SET LANGUAGE Spanish; "
                 + " SELECT * FROM ConsultaReporteEmisionesBroker "
-                + " WHERE Estado = @estado AND IdBroker = @broker "
-                + " ORDER BY FechaCotizacion, Ciudad ASC, CodigoAgente ASC ", getCnn());
+                + " WHERE IdBroker = @broker "
+                + " ORDER BY FechaCotizacion", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(estado));

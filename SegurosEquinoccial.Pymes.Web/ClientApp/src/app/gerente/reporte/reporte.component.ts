@@ -36,7 +36,7 @@ export class ReporteComponent implements OnInit {
   public lstReporteEmisionesCiudadBroker: any;
 
   public ciudadSeleccionada: any;
-
+  
   public brokerSeleccionadoUno: any;
   public brokerSeleccionadoDos: any;
   public brokerSeleccionadoTres: any;
