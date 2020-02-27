@@ -114,8 +114,7 @@ export class UsuarioComponent implements OnInit {
   public contrasenaGuardar = false;
   public contrasenaModificar = false;
 
-  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, 
-              private validador: ValidacionCotizadorPipe, public globales: GlobalesPipe) {
+  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, private validador: ValidacionCotizadorPipe) {
 
   }
 

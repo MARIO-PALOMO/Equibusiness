@@ -745,6 +745,7 @@ export class CotizacionComponent implements OnInit {
       this.contenido = this.kcontenido.obtenerKeyContenido();
       this.conexion.get("Broker/SBroker.svc/cotizacion/resgistros?idContenido=" + this.contenido.IdContenido + "&idCotizacion=" + this.contenido.IdCotizacion + "&idDireccion=" + this.contenido.IdDireccion + "&idVehiculos=" + this.contenido.IdVehiculos + "&idEmpresa=" + this.codigoCotizacion.idEmpresa + "", this.usuario.Uid).subscribe(
         (res: any) => {
+          
           this.spinner.hide();
 
           this.lstDirecciones = JSON.parse(res.Direccion.DatosDireccion);
@@ -886,12 +887,14 @@ export class CotizacionComponent implements OnInit {
             $("#headingTwo").attr("aria-expanded", "true");
           }
 
+          console.log(res);
+
           if (res.CotizacionResultado.FechaEmision != "") {
             this.fechaEmisionVigenciaSeleccionada = new Date(res.CotizacionResultado.FechaEmision);
           }
-
+          
           this.obtenerDatosPagoDebitoBancario(res.FormaPago);
-          this.reverificacionDirecciones(res.Direccion.DatosDireccion, res.Estado);
+
           console.log(res);
         },
         err => {
