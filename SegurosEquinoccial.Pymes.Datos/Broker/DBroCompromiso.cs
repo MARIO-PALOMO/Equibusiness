@@ -26,10 +26,35 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                         + "</AuthenticationHeader>");
 
             string Body = ("<AdministrarOportunidadWeb xmlns=\"http://tempuri.org/SecureService/SecureService\">"
-                                + "<Pa>"+ aux.XMLCompromiso +"</Pa>"
+                                + "<Pa>" + aux.XMLCompromiso + "</Pa>"
                         + "</AdministrarOportunidadWeb>");
 
             string Resultado = DAdmConexionSOAP.BroEjecutarSolicitudWebSOAPCompleto(ServicioURL, AccionSOAP, Head, Body);
+
+            return Resultado;
+
+        }
+
+        public static string BroCerrarCompromiso(EAuxiliares aux)
+        {
+
+            EAdmCatalogoCredenciales credenciales = DAdmCredenciales.AdmConsultarCatalogoCredenciales("CERRARCOMPROMISO", EGloGlobales.ambiente);
+            string ServicioURL = credenciales.Url;
+            string AccionSOAP = credenciales.Accion;
+
+            string Body = ("<CerrarOportunidadGenerico xmlns=\"http://tempuri.org/\">"
+                            + "<objparam>"
+                                + "<codUusario>" + credenciales.Usuario + "</codUusario>"
+                                + "<FechaCierre>" + aux.CFecha + "</FechaCierre>"
+                                + "<EstadoCierre>Cerrada - Ganada</EstadoCierre> "
+                                + "<MotivoCierre>" + aux.CMotivo + "</MotivoCierre>"
+                                + "<NotasdeCierre>" + aux.CNotas + "</NotasdeCierre>"
+                                + "<Identificador>1</Identificador>"
+                                + "<valor>" + aux.CValor + "</valor>"
+                            + "</objparam>"
+                        + "</CerrarOportunidadGenerico>");
+
+            string Resultado = DAdmConexionSOAP.BroEjecutarSolicitudWebSOAP(ServicioURL, AccionSOAP, Body);
 
             return Resultado;
 

@@ -13,11 +13,10 @@ export class GeneradorCompromisosService {
     }
 
     public generarXML(datos, valores) {
-        //`+s+`
         var xml =
-            `<sCodUsuario>` + datos.UsuarioCodigo + `</sCodUsuario>
+            `<sCodUsuario>USRPYMES</sCodUsuario>
         <sCodUsuario_Externo></sCodUsuario_Externo>
-        <sFuente>PLATAFORMA EQUINUSINESS</sFuente>
+        <sFuente>PYMES</sFuente>
         <sNroDocCliente>` + datos.ClienteIdentificacion + `</sNroDocCliente>
         <sCodTipoNegocio>` + datos.NegocioCodigo + `</sCodTipoNegocio>
         <iCodAgente>` + datos.AgenteCodigo + `</iCodAgente>
@@ -34,6 +33,7 @@ export class GeneradorCompromisosService {
         <iCodConductoPago>1</iCodConductoPago>
         <iCodPlanPago>92</iCodPlanPago>
         <sTxtTarjetaPago></sTxtTarjetaPago>
+        <sNotasOportunidad>` + datos.Notas + `</sNotasOportunidad>
         <iCodOperacion>` + datos.OperacionCodigo + `</iCodOperacion>`;
 
         return xml

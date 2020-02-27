@@ -121,5 +121,12 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
         [DataMember]
         [Required]
         public EBroCotizacionResultado CotizacionResultado { get; set; }
+
+        [DataMember]
+        [Required]
+        public string FechaCompleta { get; set; }
+
+        [DataMember]
+        public string Datos { get; set; }
     }
 }

@@ -44,5 +44,10 @@ namespace SegurosEquinoccial.Pymes.Controlador.Broker
         {
             return DBroCatalogos.BroConsultaCatalogoSucursal();
         }
+
+        public static List<EBroCatalogoProvincias> BroConsultaCatalogoProvincias()
+        {
+            return DBroCatalogos.BroConsultaCatalogoProvincias();
+        }
     }
 }

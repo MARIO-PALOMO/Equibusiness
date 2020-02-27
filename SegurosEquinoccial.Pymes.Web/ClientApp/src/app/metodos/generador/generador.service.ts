@@ -170,9 +170,9 @@ export class GeneradorService {
             <imp_prima_neto>`+ Math.round(this.obtenerPrimaItem(coberturas_) * 100) / 100 + `</imp_prima_neto>
             <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturas_) * 100) / 100 + `</imp_suma_aseg>
             <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-            <cod_pais>1</cod_pais>
-            <cod_dpto>17</cod_dpto>
-            <cod_municipio>15</cod_municipio>
+            <cod_pais>`+ datos.pais + `</cod_pais>
+            <cod_dpto>`+ datos.departamento + `</cod_dpto>
+            <cod_municipio>`+ datos.municipio + `</cod_municipio>
             <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
             <sn_acum_prima_total>-1</sn_acum_prima_total>
             <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -316,35 +316,35 @@ export class GeneradorService {
                     <fec_vig_desde>`+ datos.fechaDesde + `</fec_vig_desde>
                     <fec_vig_hasta>`+ datos.fechaHasta + `</fec_vig_hasta>
                     <imp_prima>`+ (
-                        cobertura.Valores.NVehiculos != 0 ?
-                          validacion == 1 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
-                          validacion == 2 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
-                          validacion == 3 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
+                  cobertura.Valores.NVehiculos != 0 ?
+                    validacion == 1 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
+                      validacion == 2 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
+                        validacion == 3 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
                           validacion == 4 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
-                          validacion == 5 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 : 0
-                        :
-                          validacion == 1 ? Math.round((cobertura.Valores.ValorU1.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
-                          validacion == 2 ? Math.round((cobertura.Valores.ValorU2.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
-                          validacion == 3 ? Math.round((cobertura.Valores.ValorU3.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
+                            validacion == 5 ? Math.round(((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * (cobertura.Valores.Tasa / 100)) * 100) / 100 : 0
+                    :
+                    validacion == 1 ? Math.round((cobertura.Valores.ValorU1.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
+                      validacion == 2 ? Math.round((cobertura.Valores.ValorU2.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
+                        validacion == 3 ? Math.round((cobertura.Valores.ValorU3.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
                           validacion == 4 ? Math.round((cobertura.Valores.ValorU4.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 :
-                          validacion == 5 ? Math.round((cobertura.Valores.ValorU5.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 : 0
-                    )+
-                    `</imp_prima>
+                            validacion == 5 ? Math.round((cobertura.Valores.ValorU5.Valor * (cobertura.Valores.Tasa / 100)) * 100) / 100 : 0
+                ) +
+                `</imp_prima>
                     <imp_suma_aseg>`+
-                        (
-                          cobertura.Valores.NVehiculos != 0 ?
-                            validacion == 1 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
-                            validacion == 2 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
-                            validacion == 3 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
-                            validacion == 4 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
+                (
+                  cobertura.Valores.NVehiculos != 0 ?
+                    validacion == 1 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
+                      validacion == 2 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
+                        validacion == 3 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
+                          validacion == 4 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
                             validacion == 5 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 : 0
-                          :
-                            validacion == 1 ? Math.round(cobertura.Valores.ValorU1.Valor * 100) / 100 :
-                            validacion == 2 ? Math.round(cobertura.Valores.ValorU2.Valor * 100) / 100 :
-                            validacion == 3 ? Math.round(cobertura.Valores.ValorU3.Valor * 100) / 100 :
-                            validacion == 4 ? Math.round(cobertura.Valores.ValorU4.Valor * 100) / 100 :
+                    :
+                    validacion == 1 ? Math.round(cobertura.Valores.ValorU1.Valor * 100) / 100 :
+                      validacion == 2 ? Math.round(cobertura.Valores.ValorU2.Valor * 100) / 100 :
+                        validacion == 3 ? Math.round(cobertura.Valores.ValorU3.Valor * 100) / 100 :
+                          validacion == 4 ? Math.round(cobertura.Valores.ValorU4.Valor * 100) / 100 :
                             validacion == 5 ? Math.round(cobertura.Valores.ValorU5.Valor * 100) / 100 : 0
-                        )
+                )
                 + `</imp_suma_aseg>
                     <imp_resp_max>0</imp_resp_max>
                     <imp_lim_agregado_anual>`
@@ -355,16 +355,16 @@ export class GeneradorService {
                       (
                         cobertura.Valores.NVehiculos != 0 ?
                           validacion == 1 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
-                          validacion == 2 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
-                          validacion == 3 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
-                          validacion == 4 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
-                          validacion == 5 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 : 0
-                        :
+                            validacion == 2 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
+                              validacion == 3 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
+                                validacion == 4 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 :
+                                  validacion == 5 ? Math.round((cobertura.Valores.ValorU1.Valor * cobertura.Valores.NVehiculos) * 100) / 100 : 0
+                          :
                           validacion == 1 ? Math.round(cobertura.Valores.ValorU1.Valor * 100) / 100 :
-                          validacion == 2 ? Math.round(cobertura.Valores.ValorU2.Valor * 100) / 100 :
-                          validacion == 3 ? Math.round(cobertura.Valores.ValorU3.Valor * 100) / 100 :
-                          validacion == 4 ? Math.round(cobertura.Valores.ValorU4.Valor * 100) / 100 :
-                          validacion == 5 ? Math.round(cobertura.Valores.ValorU5.Valor * 100) / 100 : 0
+                            validacion == 2 ? Math.round(cobertura.Valores.ValorU2.Valor * 100) / 100 :
+                              validacion == 3 ? Math.round(cobertura.Valores.ValorU3.Valor * 100) / 100 :
+                                validacion == 4 ? Math.round(cobertura.Valores.ValorU4.Valor * 100) / 100 :
+                                  validacion == 5 ? Math.round(cobertura.Valores.ValorU5.Valor * 100) / 100 : 0
                       )
                 )
                 +
@@ -394,9 +394,9 @@ export class GeneradorService {
             <imp_prima_neto>`+ Math.round(this.obtenerPrimaItem(coberturas_) * 100) / 100 + `</imp_prima_neto>
             <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturas_) * 100) / 100 + `</imp_suma_aseg>
             <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-            <cod_pais>1</cod_pais>
-            <cod_dpto>17</cod_dpto>
-            <cod_municipio>15</cod_municipio>
+            <cod_pais>`+ datos.pais + `</cod_pais>
+            <cod_dpto>`+ datos.departamento + `</cod_dpto>
+            <cod_municipio>`+ datos.municipio + `</cod_municipio>
             <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
             <sn_acum_prima_total>-1</sn_acum_prima_total>
             <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -727,9 +727,9 @@ export class GeneradorService {
           <imp_prima_neto>`+ (tipo == 'Importaciones' ? Math.round(0.04 * 100) / 100 : (Math.round(this.obtenerPrimaItem(coberturas_) * 100) / 100)) + `</imp_prima_neto>
           <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturas_) * 100) / 100 + `</imp_suma_aseg>
           <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-          <cod_pais>1</cod_pais>
-          <cod_dpto>17</cod_dpto>
-          <cod_municipio>15</cod_municipio>
+          <cod_pais>`+ datos.pais + `</cod_pais>
+          <cod_dpto>`+ datos.departamento + `</cod_dpto>
+          <cod_municipio>`+ datos.municipio + `</cod_municipio>
           <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
           <sn_acum_prima_total>-1</sn_acum_prima_total>
           <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -993,9 +993,9 @@ export class GeneradorService {
           <imp_prima_neto>`+ (tipo == 'Importaciones' ? Math.round(0.04 * 100) / 100 : (Math.round(this.obtenerPrimaItem(coberturas_) * 100) / 100)) + `</imp_prima_neto>
           <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturas_) * 100) / 100 + `</imp_suma_aseg>
           <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-          <cod_pais>1</cod_pais>
-          <cod_dpto>17</cod_dpto>
-          <cod_municipio>15</cod_municipio>
+          <cod_pais>`+ datos.pais + `</cod_pais>
+          <cod_dpto>`+ datos.departamento + `</cod_dpto>
+          <cod_municipio>`+ datos.municipio + `</cod_municipio>
           <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
           <sn_acum_prima_total>-1</sn_acum_prima_total>
           <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -1089,9 +1089,9 @@ export class GeneradorService {
           <imp_prima_neto>`+ (tipo == 'Importaciones' ? Math.round(0.04 * 100) / 100 : (Math.round(this.obtenerPrimaItem(coberturas_) * 100) / 100)) + `</imp_prima_neto>
           <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturas_) * 100) / 100 + `</imp_suma_aseg>
           <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-          <cod_pais>1</cod_pais>
-          <cod_dpto>17</cod_dpto>
-          <cod_municipio>15</cod_municipio>
+          <cod_pais>`+ datos.pais + `</cod_pais>
+          <cod_dpto>`+ datos.departamento + `</cod_dpto>
+          <cod_municipio>`+ datos.municipio + `</cod_municipio>
           <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
           <sn_acum_prima_total>-1</sn_acum_prima_total>
           <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -1196,9 +1196,9 @@ export class GeneradorService {
           <imp_prima_neto>`+ Math.round(this.obtenerPrimaItem(coberturas_) * 100) / 100 + `</imp_prima_neto>
           <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturas_) * 100) / 100 + `</imp_suma_aseg>
           <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-          <cod_pais>1</cod_pais>
-          <cod_dpto>17</cod_dpto>
-          <cod_municipio>15</cod_municipio>
+          <cod_pais>`+ datos.pais + `</cod_pais>
+          <cod_dpto>`+ datos.departamento + `</cod_dpto>
+          <cod_municipio>`+ datos.municipio + `</cod_municipio>
           <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
           <sn_acum_prima_total>-1</sn_acum_prima_total>
           <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -1344,9 +1344,9 @@ export class GeneradorService {
             <imp_prima_neto>`+ Math.round(this.obtenerPrimaItem(coberturasDirectivo) * 100) / 100 + `</imp_prima_neto>
             <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturasDirectivo) * 100) / 100 + `</imp_suma_aseg>
             <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-            <cod_pais>1</cod_pais>
-            <cod_dpto>17</cod_dpto>
-            <cod_municipio>15</cod_municipio>
+            <cod_pais>`+ datos.pais + `</cod_pais>
+            <cod_dpto>`+ datos.departamento + `</cod_dpto>
+            <cod_municipio>`+ datos.municipio + `</cod_municipio>
             <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
             <sn_acum_prima_total>-1</sn_acum_prima_total>
             <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -1452,9 +1452,9 @@ export class GeneradorService {
             <imp_prima_neto>`+ Math.round(this.obtenerPrimaItem(coberturasAdministrativo) * 100) / 100 + `</imp_prima_neto>
             <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturasAdministrativo) * 100) / 100 + `</imp_suma_aseg>
             <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-            <cod_pais>1</cod_pais>
-            <cod_dpto>17</cod_dpto>
-            <cod_municipio>15</cod_municipio>
+            <cod_pais>`+ datos.pais + `</cod_pais>
+            <cod_dpto>`+ datos.departamento + `</cod_dpto>
+            <cod_municipio>`+ datos.municipio + `</cod_municipio>
             <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
             <sn_acum_prima_total>-1</sn_acum_prima_total>
             <sn_acum_suma_total>-1</sn_acum_suma_total>
@@ -1560,9 +1560,9 @@ export class GeneradorService {
             <imp_prima_neto>`+ Math.round(this.obtenerPrimaItem(coberturasOperativo) * 100) / 100 + `</imp_prima_neto>
             <imp_suma_aseg>`+ Math.round(this.obtenerSumaAseguradaCobertura(coberturasOperativo) * 100) / 100 + `</imp_suma_aseg>
             <cod_giro_negocio>`+ datos.negocio + `</cod_giro_negocio>
-            <cod_pais>1</cod_pais>
-            <cod_dpto>17</cod_dpto>
-            <cod_municipio>15</cod_municipio>
+            <cod_pais>`+ datos.pais + `</cod_pais>
+            <cod_dpto>`+ datos.departamento + `</cod_dpto>
+            <cod_municipio>`+ datos.municipio + `</cod_municipio>
             <txt_direccion>`+ this.global.limpiarDireccion(datos.direccion) + `</txt_direccion>
             <sn_acum_prima_total>-1</sn_acum_prima_total>
             <sn_acum_suma_total>-1</sn_acum_suma_total>

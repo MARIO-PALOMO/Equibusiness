@@ -1,3 +1,11 @@
+.columna-oculta{
+  display: none !important;
+}
+
+.columna-visible{
+  
+}
+
 .empresa-paneles {
   background-color: #e1e1e1;
   color: black;

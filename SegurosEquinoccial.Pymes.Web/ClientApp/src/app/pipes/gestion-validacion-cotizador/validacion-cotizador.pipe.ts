@@ -59,9 +59,9 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     if (corredor == "0") {
       validacion = true;
     } else {
-      if (comision == null) {
+      if (comision == undefined) {
         validacion = false;
-        this.mostrarAlerta("Ingresar Porcentaje de Comisión", color);
+        this.mostrarAlerta("Seleccionar Porcentaje de Comisión", color);
       } else if (tipoAgente == undefined) {
         validacion = false;
         this.mostrarAlerta("Seleccionar Tipo de Agente", color);

@@ -178,6 +178,17 @@
                       </kendo-dropdownlist>
                     </div>
                   </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Comisión</label>
+                      <kendo-dropdownlist [data]="lstComision" [(ngModel)]="Comision" textField="text"
+                        valueField="value" class="texto">
+                        <ng-template kendoDropDownListItemTemplate let-dataItem>
+                          <span>{{ dataItem.text }}</span>
+                        </ng-template>
+                      </kendo-dropdownlist>
+                    </div>
+                  </div>
                   <!--<div class="col-md-6">
                     <div class="form-group">
                       <label>Comisión (%)</label>
@@ -210,7 +221,7 @@
           <div *ngIf="panelEmpresa.inicio">
             <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
               [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)"
-              [height]="650" style="border: none;">
+              style="border: none;">
 
               <kendo-grid-column media="(max-width: 800px)" title="Cotizaciones" [filterable]="true"
                 [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
@@ -284,8 +295,8 @@
                   </span>
                 </ng-template>
               </kendo-grid-column>
-              <kendo-grid-column media="(min-width: 800px)" field="FormaPago.Tipo" title="Pago" width="100"
-                type="date" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+              <kendo-grid-column media="(min-width: 800px)" field="FormaPago.Tipo" title="Pago" width="100" type="date"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                 <ng-template kendoGridCellTemplate let-dataItem>
                   <span style="font-size: 13px !important; text-align: center !important">
                     {{dataItem.FormaPago.Tipo}}
@@ -302,6 +313,16 @@
                   </button>
                 </ng-template>
               </kendo-grid-column>
+
+              <!--<kendo-grid-column media="(min-width: 800px)" field="Estado" title="Det" width="60" [filterable]="false"
+                [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <button type="button" class="btn btn-icons btn-rounded btn-warning"
+                    (click)="detallesCotizacion(dataItem)">
+                    <i class="mdi mdi-file"></i>
+                  </button>
+                </ng-template>
+              </kendo-grid-column>-->
 
               <ng-template kendoGridDetailTemplate let-dataItem>
                 <table style="font-size: 12px !important">
@@ -394,3 +415,30 @@
     </div>
   </div>
 </div>
+<!--<div class="modal fade" id="ModalDetallesCotizacion" tabindex="-1" role="dialog"
+  aria-labelledby="ModalDetallesCotizacionTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Detalles de la cotizacion | {{ detalleCotizacion.Codigo }} </h5>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <b>Contratante</b>
+            </div>
+            <div class="form-group">
+              <b>R.U.C / C.I: &nbsp;</b><span>{{ detalleCotizacion.Empresa.Ruc }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>-->

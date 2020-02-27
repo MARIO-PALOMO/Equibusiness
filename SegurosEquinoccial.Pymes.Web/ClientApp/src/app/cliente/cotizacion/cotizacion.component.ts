@@ -168,10 +168,11 @@ export class CotizacionComponent implements OnInit {
   private fmrMapa: any = {
     id: 0,
     nombre: "",
-    provincia: ""
+    provincia: "",
+    ciudad: null
   }
   private lstProvincias = [];
-
+  private lstCiudades = [];
   //DATOS COTIZACION
   public cotizacionMultiriesgo = {
     primaNetaIva12: 0,
@@ -443,7 +444,7 @@ export class CotizacionComponent implements OnInit {
 
   //Corredores
   public Sucursal: any;
-  public Comision: any = 20;
+  public Comision: any;
   public TipoAgente: any;
   public Agente: any;
 
@@ -452,6 +453,12 @@ export class CotizacionComponent implements OnInit {
   public lstTipoAgente: Array<{ text: string, value: number }> = [
     { text: "PRODUCTOR", value: 2 },
     { text: "UNIDAD DE PRODUCCIÓN", value: 3 }
+  ];
+
+  public lstComision: Array<{ text: string, value: number }> = [
+    { text: "0%", value: 0 },
+    { text: "20%", value: 20 },
+    { text: "25%", value: 25 }
   ];
 
   public lstAgente = [];
@@ -489,6 +496,16 @@ export class CotizacionComponent implements OnInit {
 
   public informacionEmision: any
   public informacionDebitoBancario: any;
+  public lstProvinciasCiudades = [];
+  public lstProvinciasCiudadesFiltro = [];
+
+  public fmrDireccionesAc = {
+    provincia: null,
+    ciudad: null
+  }
+
+  public lstDireccionesAc = [];
+  public lstCiudadesAc = [];
 
   constructor(private router: Router, private valDiseno: VistaPipe, private valMapa: MapaPipe, private valVehiculos: VehiculosPipe, private globales: GlobalesPipe, private varGlobales: VariablesGlobales, private sesion: SesionService,
     private conexion: ApiService, private general: CotizacionRamoGeneral, private resolver: ComponentFactoryResolver, private spinner: NgxSpinnerService,
@@ -522,7 +539,31 @@ export class CotizacionComponent implements OnInit {
     if (this.usuario.broker.Provincias == 0) {
       this.lstProvincias = ["Global"];
     } else {
-      this.lstProvincias = ["Azuay", "Bolivar", "Cañar", "Carchi", "Chimborazo", "El Oro", "Esmeraldas", "Guayas", "Imbabura", "Loja", "Los Ríos", "Manabí", "Morona Santiago", "Napo", "Orellana", "Pastaza", "Pichincha", "Sucumbios", "Tungurahua", "Zamora Chinchipe", "Cotopaxi", "Santa Elena", "Santo Domingo de los Tsáchilas"];
+      this.lstProvincias = ['Azuay',
+        'Bolívar',
+        'Cañar',
+        'Carchi',
+        'Chimborazo',
+        'Cotopaxi',
+        'El Oro',
+        'Esmeraldas',
+        'Galápagos',
+        'Guayas',
+        'Imbabura',
+        'Islas Galápagos',
+        'Loja',
+        'Los Ríos',
+        'Manabí',
+        'Morona Santiago',
+        'Napo',
+        'Orellana',
+        'Pastaza',
+        'Pichincha',
+        'Santa Elena',
+        'Santo Domingo de los Tsáchilas',
+        'Sucumbíos',
+        'Tungurahua',
+        'Zamora Chinchipe'];
     }
 
     var fecha1 = moment();
@@ -704,7 +745,6 @@ export class CotizacionComponent implements OnInit {
       this.contenido = this.kcontenido.obtenerKeyContenido();
       this.conexion.get("Broker/SBroker.svc/cotizacion/resgistros?idContenido=" + this.contenido.IdContenido + "&idCotizacion=" + this.contenido.IdCotizacion + "&idDireccion=" + this.contenido.IdDireccion + "&idVehiculos=" + this.contenido.IdVehiculos + "&idEmpresa=" + this.codigoCotizacion.idEmpresa + "", this.usuario.Uid).subscribe(
         (res: any) => {
-          
           this.spinner.hide();
 
           this.lstDirecciones = JSON.parse(res.Direccion.DatosDireccion);
@@ -838,22 +878,21 @@ export class CotizacionComponent implements OnInit {
           }
 
           this.numeroPolizasEmitidas = this.verificarAlmenosUnaPolizaEmitida();
-          if(this.numeroPolizasEmitidas == 0){
+          if (this.numeroPolizasEmitidas == 0) {
             $("#headingOne").attr("aria-expanded", "true");
             $("#headingTwo").attr("aria-expanded", "false");
-          }else{
+          } else {
             $("#headingOne").attr("aria-expanded", "false");
             $("#headingTwo").attr("aria-expanded", "true");
           }
 
-          console.log(res);
-
           if (res.CotizacionResultado.FechaEmision != "") {
             this.fechaEmisionVigenciaSeleccionada = new Date(res.CotizacionResultado.FechaEmision);
           }
-          
-          this.obtenerDatosPagoDebitoBancario(res.FormaPago);
 
+          this.obtenerDatosPagoDebitoBancario(res.FormaPago);
+          this.reverificacionDirecciones(res.Direccion.DatosDireccion, res.Estado);
+          console.log(res);
         },
         err => {
           this.spinner.hide();
@@ -945,6 +984,109 @@ export class CotizacionComponent implements OnInit {
       this.verificarFinalizacionCotizacion();
     }
 
+  }
+
+  public reverificacionDirecciones(jsonDirecciones, estado) {
+    var pais = 0;
+    var departamento = 0;
+    var municipio = 0;
+    var lstDirecciones = JSON.parse(jsonDirecciones);
+    this.lstDireccionesAc = lstDirecciones;
+
+    for (let dir of lstDirecciones) {
+      if (dir.codigoPais == undefined) {
+        pais++;
+      } if (dir.codigoDepartameto == undefined) {
+        departamento++;
+      } if (dir.codigoMunicipio == undefined) {
+        municipio++;
+      }
+    }
+
+    if (estado == 2 || estado == 3 || estado == 4) {
+
+      if (pais != 0 || departamento != 0 || municipio != 0) {
+        console.log("ERROR");
+        $('#ModalDirecciones').modal({ backdrop: 'static', keyboard: false });
+      } else {
+        console.log("EXITO");
+      }
+    } else {
+      console.log("EXITO");
+    }
+  }
+
+  public lstProvinciasCiudadesAc(provincia) {
+    var lstCiudadesAc = [];
+
+    if (this.usuario.broker.Provincias == 0) {
+      lstCiudadesAc = this.lstProvinciasCiudades;
+    } else {
+      for (let ciudad of this.lstProvinciasCiudades) {
+        if (ciudad.TextoDepartamento == provincia) {
+          lstCiudadesAc.push(ciudad);
+        }
+      }
+    }
+
+    return lstCiudadesAc;
+  }
+
+  public actualizarDirecciones() {
+
+    var json = "";
+    var validacion = 0;
+    $("#TablaDireccionesAc tbody tr").each(function (i, e) {
+      $(this).find("td").each(function (index, element) {
+        if ($(this).has("select").length) {
+          var trama = $(this).find("option:selected").val() == '' ? validacion++ : JSON.parse($(this).find("option:selected").val());
+          var pais = '"codigoPais":' + trama.CodigoPais + ',';
+          var departamento = '"codigoDepartameto":' + trama.CodigoDepartamento + ',';
+          var municipio = '"codigoMunicipio":' + trama.CodigoMunicipio + '';
+
+          json += pais + departamento + municipio + '},';
+        } else {
+          json += $(this).find(".idTabla").text() == '' ? '' : '{"id":' + $(this).find(".idTabla").text() + ',';
+          json += $(this).find(".idLatitud").text() == '' ? '' : '"latitud":' + $(this).find(".idLatitud").text() + ',';
+          json += $(this).find(".idLongitud").text() == '' ? '' : '"longitud":' + $(this).find(".idLongitud").text() + ',';
+          json += $(this).find(".idNombre").text() == '' ? '' : '"nombre":"' + $(this).find(".idNombre").text() + '",';
+          json += $(this).find(".idProvincia").text() == '' ? '' : '"provincia":"' + $(this).find(".idProvincia").text() + '",';
+        }
+      });
+    });
+
+    if (validacion != 0) {
+      this.globales.mostarAlerta("", "Seleccionar una ciudad de la lista despegable", "info");
+    } else {
+
+      var StringDirecciones = '[' + json.substr(0, (json.length - 1)) + ']';
+      var JSONDirecciones = JSON.parse(StringDirecciones);
+      var direcciones = {
+        "Identificador": 2,
+        "IdDireccion": parseInt(this.contenido.IdDireccion),
+        "DatosDireccion": JSON.stringify(JSONDirecciones),
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
+      }
+
+      this.spinner.show();
+      this.gestionCotizacion.gestionDireciones(direcciones).then(id => {
+        this.spinner.hide();
+        $('#ModalDirecciones').modal('toggle');
+        this.globales.mostarAlerta("", "Los datos de las direcciones se han actualizado exitosamente", "success");
+        location.reload();
+      }).catch(err => {
+        console.log(err);
+        this.spinner.hide();
+      });
+    }
+  }
+
+  public JSONtoString(valor) {
+    return JSON.stringify(valor);
+  }
+
+  public StringtoJSON(valor) {
+    return JSON.parse(valor);
   }
 
   //GESTION INCENDIOS
@@ -1456,6 +1598,7 @@ export class CotizacionComponent implements OnInit {
     this.contratante.SegundoApellido = this.empresa.SegundoApellido;
     this.contratante.Direccion = this.empresa.Direccion;
     this.contratante.Email = this.empresa.Email;
+    this.contratante.Cotizacion.IdCotizacion = this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion;
 
     this.spinner.show();
     this.gestionCotizacion.gestionContratante(this.contratante).then(id => {
@@ -1471,7 +1614,7 @@ export class CotizacionComponent implements OnInit {
     if (this.identificadorGuardado == 1) {
       this.pagadores.Identificador = 2;
     }
-
+    this.pagadores.Cotizacion.IdCotizacion = this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion;
     this.spinner.show();
     this.gestionCotizacion.gestionPagador(this.pagadores).then(id => {
       this.spinner.hide();
@@ -1508,7 +1651,7 @@ export class CotizacionComponent implements OnInit {
         "Identificador": 2,
         "IdDireccion": parseInt(this.contenido.IdDireccion),
         "DatosDireccion": JSON.stringify(this.lstDirecciones),
-        "Cotizacion": { "IdCotizacion": 0 }
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
       }
     }
 
@@ -1548,7 +1691,7 @@ export class CotizacionComponent implements OnInit {
         "Identificador": 2,
         "IdVehiculos": parseInt(this.contenido.IdVehiculos),
         "DatosVehiculo": JSON.stringify(this.listaDetallesVehiculos),
-        "Cotizacion": { "IdCotizacion": 0 }
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
       }
     }
 
@@ -1600,7 +1743,7 @@ export class CotizacionComponent implements OnInit {
         "VistaEstado": JSON.stringify(this.valDiseno.panelesVistaRamos),
         "VistaDiseno": JSON.stringify(this.valDiseno.panelesRamos),
         "VistaValores": JSON.stringify(this.valDiseno.panelesValoresRamos),
-        "Cotizacion": { "IdCotizacion": 0 }
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
       }
     }
 
@@ -1637,12 +1780,22 @@ export class CotizacionComponent implements OnInit {
 
     var Corredor: any;
     if (this.usuario.Corredores == "1") {
-
       var suc = this.Sucursal.Union.split("-");
-      Corredor = { Sucursal: suc[0], PuntoVenta: suc[1], Comision: this.Agente.codigoAgente == "99" ? 0 : parseInt(this.Comision), TipoAgente: this.TipoAgente.value, Agente: this.Agente.codigoAgente };
-
+      Corredor = {
+        Sucursal: suc[0],
+        PuntoVenta: suc[1],
+        Comision: this.Comision.value,
+        TipoAgente: this.TipoAgente.value,
+        Agente: this.Agente.codigoAgente
+      };
     } else {
-      Corredor = Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: this.usuario.CodigoAgente == "99" ? 0 : parseInt(this.usuario.Comision), TipoAgente: parseInt(this.usuario.CodigoTipoAgente), Agente: this.usuario.CodigoAgente };
+      Corredor = {
+        Sucursal: this.usuario.CodigoSucursal,
+        PuntoVenta: this.usuario.CodigoPuntoVenta,
+        Comision: parseInt(this.usuario.Comision),
+        TipoAgente: parseInt(this.usuario.CodigoTipoAgente),
+        Agente: this.usuario.CodigoAgente
+      };
     }
 
     var contenido = {
@@ -1742,121 +1895,126 @@ export class CotizacionComponent implements OnInit {
 
   public guardarCotizacionCompromiso(IdContratante, IdPagador, IdDireccion, IdVehiculos, IdContenido, IdCotizacion, Seleccion) {
 
-    var datos = {
-      UsuarioCodigo: this.usuario.Usuario,
-      ClienteIdentificacion: this.empresa.Ruc,
-      NegocioCodigo: "Y",
-      AgenteCodigo: this.sucursal_.Agente,
-      AgenteTipoCodigo: this.sucursal_.TipoAgente,
-      CotizacionNumero: this.numeroCotizacion,
-      SucursalCodigo: this.sucursal_.Sucursal,
-      VigenciaDesde: moment(this.vigenciaCotizacion).format("YYYY-MM-DD"),
-      VigenciaHasta: moment(this.vigenciaCotizacion).add(1, "years").format("YYYY-MM-DD"),
-      PagadorIdentificacion: this.pagadores.Cedula,
-      OperacionCodigo: 1
-    }
-
-    var valores = {
-      SumaAsegurada: 0,
-      Tasa: 0,
-      PrimaNeta: 0,
-      PrimaTotal: 0,
-    }
-
-    var xml = {
-      XMLCompromiso: this.generadorCompromiso.generarXML(datos, valores)
-    };
-
     this.spinner.show();
-    this.gestionCotizacion.guardarCotizacionCompromiso(xml).then(res => {
+    this.generico.listarAgentes(this.sucursal_.TipoAgente).then(lista => {
       this.spinner.hide();
+      var agentenombre = "";
 
-      this.identificadorGuardado = 1;
-      this.kcontenido.registrarKeyContenido({ IdDireccion: IdDireccion, IdVehiculos: IdVehiculos, IdContenido: IdContenido, IdCotizacion: this.codigoCotizacion.idCotizacion });
-      var router: any = this.router;
-
-      if (Seleccion.Identificador == 1) {
-        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-      } else if (Seleccion.Identificador == 2) {
-        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-        this.obtenerCodigosAsegurados(Seleccion.Ramo);
-      } else if (Seleccion.Identificador == 3) {
-        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-        if (this.tipoPago == 1) {
-          this.conductoEmision = 185;
-          this.tppagoEmision = 94;
-          this.obtenerPagoTarjeta();
-        } else if (this.tipoPago == 2) {
-          this.conductoEmision = 185;
-          this.tppagoEmision = 94;
-          this.obtenerPagoTarjeta();
-        } else if (this.tipoPago == 3) {
-          this.conductoEmision = 1;
-          this.tppagoEmision = 1;
-          this.generarPagoContado(3);
-        } else if (this.tipoPago == 4) {
-
-          this.generarPagoDebitoBancario(this.tipoPago);
-          this.conductoEmision = this.DebitoBancario.Banco;
-          this.tppagoEmision = this.DebitoBancario.Cuotas;
+      for (let agente of lista) {
+        if (agente.codigoAgente == this.sucursal_.Agente) {
+          agentenombre = agente.nombreAgente;
         }
-      } else {
-        Swal.fire({
-          title: 'Cotización',
-          html: "La cotización se ha generado exitosamente.",
-          type: 'success',
-          showCancelButton: false,
-          confirmButtonText: 'Continuar',
-          onClose: function (res) {
-            router.navigate(['/cliente/cotizacion/garantias']);
-          }
-        });
       }
+
+      var datos = {
+        UsuarioCodigo: "USRPYMES",
+        ClienteIdentificacion: this.empresa.Ruc,
+        NegocioCodigo: "Y",
+        AgenteCodigo: this.sucursal_.Agente,
+        AgenteTipoCodigo: this.sucursal_.TipoAgente,
+        CotizacionNumero: this.numeroCotizacion,
+        SucursalCodigo: this.sucursal_.Sucursal,
+        VigenciaDesde: moment(this.vigenciaCotizacion).format("YYYY-MM-DD"),
+        VigenciaHasta: moment(this.vigenciaCotizacion).add(30, "days").format("YYYY-MM-DD"),
+        PagadorIdentificacion: this.pagadores.Cedula,
+        OperacionCodigo: 1,
+        Notas: "\nSe registra compromiso con el agente "
+          + this.globales.limpiarDireccion(agentenombre)
+          + ", en la línea de negocio PYMES.\nLos ramos cotizados son los siguientes: "
+          + JSON.stringify(this.valDiseno.panelesValoresRamos),
+      }
+
+      var valores = {
+        SumaAsegurada: 0,
+        Tasa: 0,
+        PrimaNeta: 0,
+        PrimaTotal: this.cotizacionTotal.primaTotal,
+      }
+
+      var xml = {
+        XMLCompromiso: this.generadorCompromiso.generarXML(datos, valores)
+      };
+
+      this.spinner.show();
+      this.gestionCotizacion.guardarCotizacionCompromiso(xml).then(res => {
+        this.spinner.hide();
+        console.log(res);
+
+        this.identificadorGuardado = 1;
+        this.kcontenido.registrarKeyContenido({ IdDireccion: IdDireccion, IdVehiculos: IdVehiculos, IdContenido: IdContenido, IdCotizacion: this.codigoCotizacion.idCotizacion });
+        var router: any = this.router;
+
+        if (Seleccion.Identificador == 1) {
+          this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
+        } else if (Seleccion.Identificador == 2) {
+          this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
+          this.obtenerCodigosAsegurados(Seleccion.Ramo);
+        } else if (Seleccion.Identificador == 3) {
+          this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
+          if (this.tipoPago == 1) {
+            this.conductoEmision = 185;
+            this.tppagoEmision = 94;
+            this.obtenerPagoTarjeta();
+          } else if (this.tipoPago == 2) {
+            this.conductoEmision = 185;
+            this.tppagoEmision = 94;
+            this.obtenerPagoTarjeta();
+          } else if (this.tipoPago == 3) {
+            this.conductoEmision = 1;
+            this.tppagoEmision = 1;
+            this.generarPagoContado(3);
+          } else if (this.tipoPago == 4) {
+            this.generarPagoDebitoBancario(this.tipoPago);
+            this.conductoEmision = this.DebitoBancario.Banco;
+            this.tppagoEmision = this.DebitoBancario.Cuotas;
+          }
+        } else {
+          Swal.fire({
+            title: 'Cotización',
+            html: "La cotización se ha generado exitosamente.",
+            type: 'success',
+            showCancelButton: false,
+            confirmButtonText: 'Continuar',
+            onClose: function (res) {
+              router.navigate(['/cliente/cotizacion/garantias']);
+            }
+          });
+        }
+
+      }).catch(err => {
+        this.spinner.hide();
+        console.log(err);
+        var datos = {
+          IdContratante: IdContratante,
+          IdPagador: IdPagador,
+          IdDireccion: IdDireccion,
+          IdVehiculos: IdVehiculos,
+          IdContenido: IdContenido,
+          IdCotizacion: IdCotizacion
+        }
+        this.gestionCotizacion.eliminarDatosCotizacion(6, datos).then(res => {
+          console.log(res);
+        }).catch(err => {
+          console.log(err);
+        });
+      });
 
     }).catch(err => {
       this.spinner.hide();
       console.log(err);
-      this.identificadorGuardado = 1;
-      this.kcontenido.registrarKeyContenido({ IdDireccion: IdDireccion, IdVehiculos: IdVehiculos, IdContenido: IdContenido, IdCotizacion: this.codigoCotizacion.idCotizacion });
-      var router: any = this.router;
-
-      if (Seleccion.Identificador == 1) {
-        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-      } else if (Seleccion.Identificador == 2) {
-        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-        this.obtenerCodigosAsegurados(Seleccion.Ramo);
-      } else if (Seleccion.Identificador == 3) {
-        this.globales.mostrarNotificacion("Datos Actualizados Exitosamente", "success", "bottom");
-        if (this.tipoPago == 1) {
-          this.conductoEmision = 185;
-          this.tppagoEmision = 94;
-          this.obtenerPagoTarjeta();
-        } else if (this.tipoPago == 2) {
-          this.conductoEmision = 185;
-          this.tppagoEmision = 94;
-          this.obtenerPagoTarjeta();
-        } else if (this.tipoPago == 3) {
-          this.conductoEmision = 1;
-          this.tppagoEmision = 1;
-          this.generarPagoContado(3);
-        } else if (this.tipoPago == 4) {
-          /*this.conductoEmision = 0;
-          this.tppagoEmision = 0;
-          this.generarPagoContado(4);*/
-        }
-      } else {
-        Swal.fire({
-          title: 'Cotización',
-          html: "La cotización se ha generado exitosamente.",
-          type: 'success',
-          showCancelButton: false,
-          confirmButtonText: 'Continuar',
-          onClose: function (res) {
-            router.navigate(['/cliente/cotizacion/garantias']);
-          }
-        });
+      var datos = {
+        IdContratante: IdContratante,
+        IdPagador: IdPagador,
+        IdDireccion: IdDireccion,
+        IdVehiculos: IdVehiculos,
+        IdContenido: IdContenido,
+        IdCotizacion: IdCotizacion
       }
-
+      this.gestionCotizacion.eliminarDatosCotizacion(6, datos).then(res => {
+        console.log(res);
+      }).catch(err => {
+        console.log(err);
+      });
     });
   }
 
@@ -1873,28 +2031,32 @@ export class CotizacionComponent implements OnInit {
     var fechaSeleccionada = moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD");
     var fechaAcual = moment().format("YYYY-MM-DD");
 
-    if (this.numeroPolizasEmitidas == 0) {
-      if (fechaSeleccionada < fechaAcual) {
+    if (this.sucursal_.Agente != "99" && this.sucursal_.Comision == 0) {
+      this.globales.mostarAlertaTiempo("", "La comisión del corredor con código " + this.sucursal_.Agente + " no debe ser 0%", "info");
+    } else {
+      if (this.numeroPolizasEmitidas == 0) {
+        if (fechaSeleccionada < fechaAcual) {
 
-        Swal.fire({
-          type: "info",
-          text: "El asegurado declara que no ha tenido siniestros ocurridos, conocidos ni reportados a la fecha de la emisión del presente programa de seguros.",
-          showCancelButton: true,
-          confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
-          cancelButtonColor: '#d33',
-          cancelButtonText: "Cancelar",
-          confirmButtonText: 'Aceptar'
-        }).then((result) => {
-          if (result.value) {
-            this.actualizarEmpresa(datos);
-          }
-        });
+          Swal.fire({
+            type: "info",
+            text: "El asegurado declara que no ha tenido siniestros ocurridos, conocidos ni reportados a la fecha de la emisión del presente programa de seguros.",
+            showCancelButton: true,
+            confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
+            cancelButtonColor: '#d33',
+            cancelButtonText: "Cancelar",
+            confirmButtonText: 'Aceptar'
+          }).then((result) => {
+            if (result.value) {
+              this.actualizarEmpresa(datos);
+            }
+          });
 
+        } else {
+          this.actualizarEmpresa(datos);
+        }
       } else {
         this.actualizarEmpresa(datos);
       }
-    } else {
-      this.actualizarEmpresa(datos);
     }
 
   }
@@ -2068,11 +2230,11 @@ export class CotizacionComponent implements OnInit {
       }
 
       var primaMultiriesgo = {
-        ubicacion1: this.generarItems(listaMultiriesgo, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre),
-        ubicacion2: this.generarItems(listaMultiriesgo, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre),
-        ubicacion3: this.generarItems(listaMultiriesgo, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre),
-        ubicacion4: this.generarItems(listaMultiriesgo, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre),
-        ubicacion5: this.generarItems(listaMultiriesgo, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre)
+        ubicacion1: this.generarItems(listaMultiriesgo, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+        ubicacion2: this.generarItems(listaMultiriesgo, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+        ubicacion3: this.generarItems(listaMultiriesgo, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+        ubicacion4: this.generarItems(listaMultiriesgo, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+        ubicacion5: this.generarItems(listaMultiriesgo, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
       }
 
       var lstRamos = {
@@ -2166,11 +2328,11 @@ export class CotizacionComponent implements OnInit {
       this.spinner.hide();
 
       var itemsEquipoMaquinaria = {
-        ubicacion1: this.generarItems(this.listaEquipoMaquinaria, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre),
-        ubicacion2: this.generarItems(this.listaEquipoMaquinaria, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre),
-        ubicacion3: this.generarItems(this.listaEquipoMaquinaria, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre),
-        ubicacion4: this.generarItems(this.listaEquipoMaquinaria, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre),
-        ubicacion5: this.generarItems(this.listaEquipoMaquinaria, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre)
+        ubicacion1: this.generarItems(this.listaEquipoMaquinaria, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+        ubicacion2: this.generarItems(this.listaEquipoMaquinaria, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+        ubicacion3: this.generarItems(this.listaEquipoMaquinaria, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+        ubicacion4: this.generarItems(this.listaEquipoMaquinaria, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+        ubicacion5: this.generarItems(this.listaEquipoMaquinaria, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
       }
 
       var equipoMaquinaria = this.generadorXMLRamos(Certificado, 13, this.listaEquipoMaquinaria, res, 0, 0, res, itemsEquipoMaquinaria);
@@ -2197,11 +2359,11 @@ export class CotizacionComponent implements OnInit {
       this.spinner.hide();
 
       var itemsresponsabilidadCivil = {
-        ubicacion1: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre),
-        ubicacion2: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre),
-        ubicacion3: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre),
-        ubicacion4: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre),
-        ubicacion5: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre)
+        ubicacion1: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+        ubicacion2: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+        ubicacion3: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+        ubicacion4: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+        ubicacion5: this.generarItemsRespCivil(this.listaResponsabilidadCivil, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
       }
 
 
@@ -2228,11 +2390,11 @@ export class CotizacionComponent implements OnInit {
       this.spinner.hide();
 
       var itemsFidelidad = {
-        ubicacion1: this.generarItems(this.listaFidelidad, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre),
-        ubicacion2: this.generarItems(this.listaFidelidad, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre),
-        ubicacion3: this.generarItems(this.listaFidelidad, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre),
-        ubicacion4: this.generarItems(this.listaFidelidad, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre),
-        ubicacion5: this.generarItems(this.listaFidelidad, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre)
+        ubicacion1: this.generarItems(this.listaFidelidad, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+        ubicacion2: this.generarItems(this.listaFidelidad, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+        ubicacion3: this.generarItems(this.listaFidelidad, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+        ubicacion4: this.generarItems(this.listaFidelidad, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+        ubicacion5: this.generarItems(this.listaFidelidad, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
       }
 
       var fidelidad = this.generadorXMLRamos(Certificado, 3, this.listaFidelidad, res, 0, 0, "Fidelidad", itemsFidelidad);
@@ -2262,11 +2424,11 @@ export class CotizacionComponent implements OnInit {
       this.spinner.hide();
 
       var itemsAccidentesPersonales = {
-        ubicacion1: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre),
-        ubicacion2: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre),
-        ubicacion3: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre),
-        ubicacion4: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre),
-        ubicacion5: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre)
+        ubicacion1: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+        ubicacion2: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+        ubicacion3: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+        ubicacion4: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+        ubicacion5: this.generarItemAccidentesPersonales(this.listaAccidentesPersonales, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
       }
 
       var accidentesPersonales = this.generadorXMLRamos(Certificado, 25, this.listaAccidentesPersonales, res, 0, 0, "AccidentesPersonales", itemsAccidentesPersonales);
@@ -2310,19 +2472,19 @@ export class CotizacionComponent implements OnInit {
 
       if (this.usuario.broker.Transporte == "0") {
         itemsTransportesInterno = {
-          ubicacion1: this.generarItemsTransportePlano(this.listaTransportes, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion2: this.generarItemsTransportePlano(this.listaTransportes, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion3: this.generarItemsTransportePlano(this.listaTransportes, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion4: this.generarItemsTransportePlano(this.listaTransportes, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion5: this.generarItemsTransportePlano(this.listaTransportes, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Interno", this.listaSubRamoTransporte)
+          ubicacion1: this.generarItemsTransportePlano(this.listaTransportes, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+          ubicacion2: this.generarItemsTransportePlano(this.listaTransportes, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+          ubicacion3: this.generarItemsTransportePlano(this.listaTransportes, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+          ubicacion4: this.generarItemsTransportePlano(this.listaTransportes, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+          ubicacion5: this.generarItemsTransportePlano(this.listaTransportes, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
         }
       } else {
         itemsTransportesInterno = {
-          ubicacion1: this.generarItemsTransporte(this.listaTransportes, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion2: this.generarItemsTransporte(this.listaTransportes, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion3: this.generarItemsTransporte(this.listaTransportes, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion4: this.generarItemsTransporte(this.listaTransportes, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Interno", this.listaSubRamoTransporte),
-          ubicacion5: this.generarItemsTransporte(this.listaTransportes, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Interno", this.listaSubRamoTransporte)
+          ubicacion1: this.generarItemsTransporte(this.listaTransportes, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+          ubicacion2: this.generarItemsTransporte(this.listaTransportes, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+          ubicacion3: this.generarItemsTransporte(this.listaTransportes, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+          ubicacion4: this.generarItemsTransporte(this.listaTransportes, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+          ubicacion5: this.generarItemsTransporte(this.listaTransportes, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Interno", this.listaSubRamoTransporte, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
         }
       }
 
@@ -2353,19 +2515,19 @@ export class CotizacionComponent implements OnInit {
 
       if (this.usuario.broker.Transporte == "0") {
         itemsTransportesImportaciones = {
-          ubicacion1: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion2: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion3: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion4: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion5: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Importaciones", this.listaSubRamoTransporte)
+          ubicacion1: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+          ubicacion2: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+          ubicacion3: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+          ubicacion4: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+          ubicacion5: this.generarItemTrasportesImportacionesPlano(this.listaTransporteImportaciones, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
         }
       } else {
         itemsTransportesImportaciones = {
-          ubicacion1: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion2: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion3: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion4: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Importaciones", this.listaSubRamoTransporte),
-          ubicacion5: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Importaciones", this.listaSubRamoTransporte)
+          ubicacion1: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 1, this.lstDirecciones[0] == undefined ? '' : this.lstDirecciones[0].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoPais, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoDepartameto, this.lstDirecciones[0] == undefined ? 0 : this.lstDirecciones[0].codigoMunicipio),
+          ubicacion2: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 2, this.lstDirecciones[1] == undefined ? '' : this.lstDirecciones[1].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoPais, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoDepartameto, this.lstDirecciones[1] == undefined ? 0 : this.lstDirecciones[1].codigoMunicipio),
+          ubicacion3: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 3, this.lstDirecciones[2] == undefined ? '' : this.lstDirecciones[2].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoPais, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoDepartameto, this.lstDirecciones[2] == undefined ? 0 : this.lstDirecciones[2].codigoMunicipio),
+          ubicacion4: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 4, this.lstDirecciones[3] == undefined ? '' : this.lstDirecciones[3].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoPais, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoDepartameto, this.lstDirecciones[3] == undefined ? 0 : this.lstDirecciones[3].codigoMunicipio),
+          ubicacion5: this.generarItemTrasportesImportaciones(this.listaTransporteImportaciones, 5, this.lstDirecciones[4] == undefined ? '' : this.lstDirecciones[4].nombre, "Importaciones", this.listaSubRamoTransporte, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoPais, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoDepartameto, this.lstDirecciones[4] == undefined ? 0 : this.lstDirecciones[4].codigoMunicipio)
         }
       }
 
@@ -2808,6 +2970,7 @@ export class CotizacionComponent implements OnInit {
       this.spinner.show();
       this.generico.actualizarEstadoPolizas(this.fmrCotizacionResultado.IdCotizacionResultado, this.contenido.IdCotizacion).then(res => {
         this.spinner.hide();
+        this.cerrarCotizacionCompromiso();
         console.log(res);
       }).catch(err => {
         this.spinner.hide();
@@ -2873,7 +3036,24 @@ export class CotizacionComponent implements OnInit {
 
   }
 
-  public generarItems(listaRamo, ubicacion, direccion) {
+  public cerrarCotizacionCompromiso() {
+    var datos = {
+      CFecha: moment().format("YYYY-MM-DD"),
+      CMotivo: "Otro",
+      CNotas: "Cliente emite póliza",
+      CValor: this.numeroCotizacion
+    };
+
+    this.spinner.show();
+    this.gestionCotizacion.cerrarCotizacionCompromiso(datos).then(res => {
+      this.spinner.hide();
+      console.log(res);
+    }).catch(err => {
+      this.spinner.hide();
+    });
+  }
+
+  public generarItems(listaRamo, ubicacion, direccion, pais, departamento, municipio) {
     this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
 
     var datos = {
@@ -2882,6 +3062,9 @@ export class CotizacionComponent implements OnInit {
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
+      pais: pais,
+      departamento: departamento,
+      municipio: municipio,
       listaDerechosEmision: this.listaDerechosEmision,
       listaCalculablesCotizacion: this.listaCalculablesCotizacion,
       Identificador: 1,
@@ -2891,7 +3074,7 @@ export class CotizacionComponent implements OnInit {
     return this.generador.generarItem(datos, listaRamo, ubicacion);
   }
 
-  public generarItemsRespCivil(listaRamo, ubicacion, direccion) {
+  public generarItemsRespCivil(listaRamo, ubicacion, direccion, pais, departamento, municipio) {
     this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
       fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
@@ -2899,6 +3082,9 @@ export class CotizacionComponent implements OnInit {
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
+      pais: pais,
+      departamento: departamento,
+      municipio: municipio,
       listaDerechosEmision: this.listaDerechosEmision,
       listaCalculablesCotizacion: this.listaCalculablesCotizacion,
       Identificador: 1,
@@ -2907,7 +3093,7 @@ export class CotizacionComponent implements OnInit {
     return this.generador.generarItemResponsabilidadCivil(datos, listaRamo, ubicacion);
   }
 
-  public generarItemTrasportesImportacionesPlano(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+  public generarItemTrasportesImportacionesPlano(listaRamo, ubicacion, direccion, tipo, listaComplemento, pais, departamento, municipio) {
     this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
       fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
@@ -2915,6 +3101,9 @@ export class CotizacionComponent implements OnInit {
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
+      pais: pais,
+      departamento: departamento,
+      municipio: municipio,
       listaDerechosEmision: this.listaDerechosEmision,
       listaCalculablesCotizacion: this.listaCalculablesCotizacion,
       Identificador: 1,
@@ -2924,7 +3113,7 @@ export class CotizacionComponent implements OnInit {
     return this.generador.generarItemTrasportesImportacionesPlano(datos, listaRamo, ubicacion, tipo, listaComplemento);
   }
 
-  public generarItemsTransporte(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+  public generarItemsTransporte(listaRamo, ubicacion, direccion, tipo, listaComplemento, pais, departamento, municipio) {
     this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
       fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
@@ -2932,6 +3121,9 @@ export class CotizacionComponent implements OnInit {
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
+      pais: pais,
+      departamento: departamento,
+      municipio: municipio,
       listaDerechosEmision: this.listaDerechosEmision,
       listaCalculablesCotizacion: this.listaCalculablesCotizacion,
       Identificador: 1,
@@ -2941,7 +3133,7 @@ export class CotizacionComponent implements OnInit {
     return this.generador.generarItemTrasportes(datos, listaRamo, ubicacion, tipo, listaComplemento);
   }
 
-  public generarItemsTransportePlano(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+  public generarItemsTransportePlano(listaRamo, ubicacion, direccion, tipo, listaComplemento, pais, departamento, municipio) {
     this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
       fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
@@ -2949,6 +3141,9 @@ export class CotizacionComponent implements OnInit {
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
+      pais: pais,
+      departamento: departamento,
+      municipio: municipio,
       listaDerechosEmision: this.listaDerechosEmision,
       listaCalculablesCotizacion: this.listaCalculablesCotizacion,
       Identificador: 1,
@@ -2958,7 +3153,7 @@ export class CotizacionComponent implements OnInit {
     return this.generador.generarItemTransportesPlano(datos, listaRamo, ubicacion, tipo, listaComplemento);
   }
 
-  public generarItemTrasportesImportaciones(listaRamo, ubicacion, direccion, tipo, listaComplemento) {
+  public generarItemTrasportesImportaciones(listaRamo, ubicacion, direccion, tipo, listaComplemento, pais, departamento, municipio) {
     this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
       fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
@@ -2966,6 +3161,9 @@ export class CotizacionComponent implements OnInit {
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
+      pais: pais,
+      departamento: departamento,
+      municipio: municipio,
       listaDerechosEmision: this.listaDerechosEmision,
       listaCalculablesCotizacion: this.listaCalculablesCotizacion,
       Identificador: 1,
@@ -2975,7 +3173,7 @@ export class CotizacionComponent implements OnInit {
     return this.generador.generarItemTrasportesImportaciones(datos, listaRamo, ubicacion, tipo, listaComplemento);
   }
 
-  public generarItemAccidentesPersonales(listaRamo, ubicacion, direccion) {
+  public generarItemAccidentesPersonales(listaRamo, ubicacion, direccion, pais, departamento, municipio) {
     this.fechaEmisionVencimiento = moment(this.fechaEmisionVigenciaSeleccionada).add(1, "year").format("DD-MM-YYYY");
     var datos = {
       fechaDesde: moment(this.fechaEmisionVigenciaSeleccionada).format("DD-MM-YYYY"),
@@ -2983,6 +3181,9 @@ export class CotizacionComponent implements OnInit {
       primaneta: this.general.calcularPrimaUbicacion(ubicacion, listaRamo),
       sumaAsegurada: this.general.calcularSumaAsegurada(listaRamo, ubicacion),
       direccion: direccion,
+      pais: pais,
+      departamento: departamento,
+      municipio: municipio,
       listaDerechosEmision: this.listaDerechosEmision,
       listaCalculablesCotizacion: this.listaCalculablesCotizacion,
       Identificador: 1,
@@ -3306,7 +3507,6 @@ export class CotizacionComponent implements OnInit {
 
           this.numeroCotizacion = res[0].Codigo;
           this.vigenciaCotizacion = res[0].Fecha;
-
           this.sucursal_ = JSON.parse(res[0].Corredor);
           this.listarCorredores(this.sucursal_);
 
@@ -3324,8 +3524,8 @@ export class CotizacionComponent implements OnInit {
   public listarCorredores(corredor) {
 
     this.Sucursal = { Union: corredor.Sucursal + "-" + corredor.PuntoVenta };
-    this.Comision = corredor.Comision;
-    this.TipoAgente = { value: corredor.TipoAgente };
+    this.Comision = { value: parseInt(corredor.Comision) };
+    this.TipoAgente = { value: parseInt(corredor.TipoAgente) };
 
     this.spinner.show();
     this.generico.listarAgentes(corredor.TipoAgente).then(lista => {
@@ -3508,10 +3708,41 @@ export class CotizacionComponent implements OnInit {
     this.generico.listarSucursales().then(lista => {
       this.spinner.hide();
       this.lstSucursal = lista;
+      this.listarProvinciasCiudades();
+    }).catch(err => {
+      this.spinner.hide();
+    });
+  }
+
+  public listarProvinciasCiudades() {
+    this.lstProvinciasCiudades = [];
+    this.spinner.show();
+    this.generico.listarProvinciasCiudades().then(lista => {
+      this.spinner.hide();
+      this.lstProvinciasCiudades = lista;
       this.inicializarRamosCoberturas();
     }).catch(err => {
       this.spinner.hide();
     });
+  }
+
+  public listarCiudades() {
+    this.lstCiudades = [];
+    this.fmrMapa.ciudad = null;
+    if (this.usuario.broker.Provincias == 0) {
+      this.lstCiudades = this.lstProvinciasCiudades;
+    } else {
+      for (let ciudad of this.lstProvinciasCiudades) {
+        if (ciudad.TextoDepartamento == this.fmrMapa.provincia) {
+          this.lstCiudades.push(ciudad);
+        }
+      }
+    }
+    this.lstProvinciasCiudadesFiltro = this.lstCiudades.slice();
+  }
+
+  public filtrarCiudades(value) {
+    this.lstProvinciasCiudadesFiltro = this.lstCiudades.filter((s) => s.TextoCompleto.toLowerCase().indexOf(value.toLowerCase()) !== -1);
   }
 
   public listarAgentes() {
@@ -4521,7 +4752,7 @@ export class CotizacionComponent implements OnInit {
     }, 100);
 
     setTimeout(() => {
-      this.valMapa.gestionMapa(this.map, this.lstDirecciones, this.marcadores, this.usuario.broker.Provincias);
+      this.valMapa.gestionMapa(this.map, this.lstDirecciones, this.marcadores, this.usuario.broker.Provincias, this.lstProvinciasCiudades);
       if (this.lstDirecciones.length != 0) {
         for (var i = 0; i < this.lstDirecciones.length; i++) {
           this.valMapa.agregarMarcador({ lat: this.lstDirecciones[i].latitud, lng: this.lstDirecciones[i].longitud }, this.lstDirecciones[i].id, this.map, this.marcadores, this.lstDirecciones);
@@ -4532,21 +4763,23 @@ export class CotizacionComponent implements OnInit {
 
   //BUSCADOR MAPA
   public buscarDireccion(mapa: any, marcadores: any, lstDirecciones: any) {
-    this.valMapa.buscarDireccion(this.buscador.nativeElement, mapa, marcadores, lstDirecciones, this.usuario.broker.Provincias);
+    this.valMapa.buscarDireccion(this.buscador.nativeElement, mapa, marcadores, lstDirecciones, this.usuario.broker.Provincias, this.lstProvinciasCiudades);
   }
 
   public asignarListaUbicaciones() {
     var lstDirecciones = this.lstDirecciones;
     if (lstDirecciones.length < 5) {
       if (this.fmrMapa.nombre.trim() == "") {
-        this.valCotizador.mostrarAlerta("Ingrese una dirección", this.usuario.broker.Color);
+        this.valCotizador.mostrarAlertaInformativa("Ingrese Dirección", this.usuario.broker.Color);
       } else if (this.fmrMapa.provincia.trim() == "") {
-        this.valCotizador.mostrarAlerta("Seleccione una provincia", this.usuario.broker.Color);
+        this.valCotizador.mostrarAlertaInformativa("Seleccione Provincia", this.usuario.broker.Color);
+      } else if (this.fmrMapa.ciudad == null) {
+        this.valCotizador.mostrarAlertaInformativa("Seleccione Ciudad", this.usuario.broker.Color);
       } else {
-        this.lstDirecciones.push({ id: this.obtenerIdDirecciones(), latitud: 0, longitud: 0, nombre: this.fmrMapa.nombre, provincia: this.fmrMapa.provincia });
+        this.lstDirecciones.push({ id: this.obtenerIdDirecciones(), latitud: 0, longitud: 0, nombre: this.fmrMapa.nombre, provincia: this.fmrMapa.provincia, codigoPais: this.fmrMapa.ciudad.CodigoPais, codigoDepartameto: this.fmrMapa.ciudad.CodigoDepartamento, codigoMunicipio: this.fmrMapa.ciudad.CodigoMunicipio });
       }
     } else {
-      this.valCotizador.mostrarAlerta("No se permite agregar más de 5 direcciones", this.usuario.broker.Color);
+      this.valCotizador.mostrarAlertaInformativa("No se permite agregar más de 5 direcciones", this.usuario.broker.Color);
     }
   }
 

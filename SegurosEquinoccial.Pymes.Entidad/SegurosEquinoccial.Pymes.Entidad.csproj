@@ -56,6 +56,7 @@
     <Compile Include="Broker\EBroCatalogoCedulas.cs" />
     <Compile Include="Broker\EBroCatalogoCiudades.cs" />
     <Compile Include="Broker\EBroCatalogoEmpresa.cs" />
+    <Compile Include="Broker\EBroCatalogoProvincias.cs" />
     <Compile Include="Broker\EBroCatalogoSucursal.cs" />
     <Compile Include="Broker\EBroCatalogoVehiculos.cs" />
     <Compile Include="Broker\EBroClausulas.cs" />

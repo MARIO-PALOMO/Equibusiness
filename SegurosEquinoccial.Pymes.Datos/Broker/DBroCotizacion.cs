@@ -164,7 +164,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaCotizacionEmpresaComplementos WHERE IdBroker = @broker AND IdUsuario = @usuario ORDER BY Fecha DESC", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaCotizacionEmpresaComplementos WHERE IdBroker = @broker AND IdUsuario = @usuario ORDER BY FechaCompleta DESC", getCnn());
                 cmd.Parameters.AddWithValue("@broker", broker);
                 cmd.Parameters.AddWithValue("@usuario", usuario);
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -189,6 +189,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                     rsCotizacion.Fecha = rdr["Fecha"].ToString();
                     rsCotizacion.Antiguedad = rdr["Antiguedad"].ToString();
                     rsCotizacion.Corredor = rdr["Corredor"].ToString();
+                    rsCotizacion.FechaCompleta = rdr["FechaCompleta"].ToString();
 
                     rsEmpresa.IdEmpresa = rdr["IdEmpresa"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdEmpresa"]);
                     rsEmpresa.Ruc = rdr["Ruc"].ToString();

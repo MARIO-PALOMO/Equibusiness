@@ -497,6 +497,31 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return CBroCotizacion.BroGestionCotizacionActualizacion(Convert.ToInt32(IdCotizacion));
         }
 
+        public string BroObtenerBancoConductos()
+        {
+            return CPolPago.BroObtenerBancoConductos();
+        }
+
+        public string BroObtenerPlanPagoCuotas(string conducto)
+        {
+            return CPolPago.BroObtenerPlanPagoCuotas(conducto);
+        }
+
+        public string BroObtenerNumeroCuotas(string codigo)
+        {
+            return CPolPago.BroObtenerNumeroCuotas(codigo);
+        }
+
+        public List<EBroCatalogoProvincias> BroConsultaCatalogoProvincias()
+        {
+            return CBroCatalogos.BroConsultaCatalogoProvincias();
+        }
+
+        public string BroCerrarCompromiso(EAuxiliares aux)
+        {
+            return CBroCompromiso.BroCerrarCompromiso(aux);
+        }
+
         public List<EBroReporteUsuarios> ReporteListarUsuarios(string IdBroker)
         {
             return CBroReportes.ReporteListarUsuarios(IdBroker);
@@ -547,22 +572,5 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         {
             return CBroReportes.DetalleValoresEmisionesBrokerCiudad(datos);
         }
-
-
-        public  string BroObtenerBancoConductos()
-        {
-            return CPolPago.BroObtenerBancoConductos();
-        }
-
-        public  string BroObtenerPlanPagoCuotas(string conducto)
-        {
-            return CPolPago.BroObtenerPlanPagoCuotas(conducto);
-        }
-
-        public  string BroObtenerNumeroCuotas(string codigo)
-        {
-            return CPolPago.BroObtenerNumeroCuotas(codigo);
-        }
-
     }
 }
