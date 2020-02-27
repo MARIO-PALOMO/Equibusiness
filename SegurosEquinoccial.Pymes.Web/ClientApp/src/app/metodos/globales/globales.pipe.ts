@@ -250,4 +250,11 @@ export class GlobalesPipe implements PipeTransform {
     return { bin: bin, vencimiento: vencimiento }
   }
 
+  public obtenerLetrasCadena(cadena) {
+    var cadena = cadena;
+    var letras = cadena.replace(/\d/g, '');
+    var final  = letras.replace('-', '');
+    return final.trim();
+  }
+
 }

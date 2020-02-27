@@ -26,6 +26,15 @@ export class ValidacionComponent implements OnInit {
   public lstBrokers = [];
   public brokerSeleccionado: any;
 
+  public lstReglasGenerales : any = {
+    "Igual" : "",
+    "Mayor" : "",
+    "Menor" : "",
+    "Estado" : 1,
+    "Nombre" : "",
+    "IdBroker" : 0
+  }
+
   public lstExcepciones: Array<{ text: string, value: number }> = [
     { text: "COMPROMISOS", value: 1 },
     { text: "POLIZAS", value: 2 },
@@ -48,6 +57,20 @@ export class ValidacionComponent implements OnInit {
   public crearExcepciones(){
     console.log(this.Excepciones);
     console.log(this.Identificacion);
+    console.log(this.brokerSeleccionado);
+
+    for (let index = 0; index < this.Excepciones.length; index++) {
+      this.lstReglasGenerales = {
+        "Igual" : "",
+        "Mayor" : "",
+        "Menor" : "",
+        "Estado" : 1,
+        "Nombre" : this.Identificacion+"-"+this.Excepciones[index].text,
+        "IdBroker" : this.brokerSeleccionado
+      }      
+    }
+    console.log(this.lstReglasGenerales)
+
   }
 
   // GESTIÓN DE BOTON COLOR 

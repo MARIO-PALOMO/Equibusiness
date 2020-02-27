@@ -21,7 +21,7 @@
 
                   <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
                     [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)"
-                    style="border: none; font-size: 13px !important" scrollable="none">
+                    style="border: none; font-size: 13px !important" scrollable="none" [resizable]="true">
 
                     <ng-template kendoGridToolbarTemplate>
                       <div style="float: right">
@@ -31,10 +31,16 @@
                       </div>
                     </ng-template>
 
-                    <kendo-grid-column field="broker.RazonSocial" title="Broker" width="170"
+                    <kendo-grid-column field="broker.RazonSocial" title="Versión de Uso" width="130"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                     </kendo-grid-column>
-                    <kendo-grid-column field="Usuario" title="Nombre"
+                    <kendo-grid-column field="NombreCorredor" title="Corredor" width="130"
+                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                      <ng-template kendoGridCellTemplate let-dataItem>
+                        {{this.globales.obtenerLetrasCadena(dataItem.NombreCorredor)}}
+                      </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column field="Usuario" title="Nombre" [width]="200"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       <ng-template kendoGridCellTemplate let-dataItem>
                         <div>
@@ -43,13 +49,11 @@
                         </div>
                       </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column field="Email" title="Email"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                    <kendo-grid-column field="Email" title="Email" [width]="180"
+                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff' }">
                     </kendo-grid-column>
-                    <kendo-grid-column field="Ciudad" title="Ciudad" width="130"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
-                    </kendo-grid-column>
-                    <kendo-grid-column field="Estado" title="Editar" width="65" [filterable]="false"
+
+                    <kendo-grid-column field="Estado" title="Editar" width="70" [filterable]="false"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       <ng-template kendoGridCellTemplate let-dataItem>
                         <button type="button" class="btn btn-icons btn-rounded btn-warning"
@@ -58,7 +62,7 @@
                         </button>
                       </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column field="Estado" title="" width="65" [filterable]="false"
+                    <kendo-grid-column field="Estado" title="" width="70" [filterable]="false"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       <ng-template kendoGridCellTemplate let-dataItem>
                         <button itype="button" class="btn btn-icons btn-rounded btn-secondary"
@@ -91,8 +95,9 @@
   </div>
 </div>
 
+
 <div id="modalUsuario" class="modal">
-  <div class="modal-content">
+  <div class="modal-content" style="width: 750px !important;">
     <div style="width: 100%; border-bottom: 1px solid #000">
       <h5>Gestión Datos Usuario</h5>
     </div>
@@ -102,22 +107,30 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label>Nombre</label>
+              <label><b>Nombre</b></label>
               <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Usuario"
-                style="font-size: 13px !important; height: 38px !important;" 
-                (keyup)="fmrUsuario.Usuario = validador.formatoCampo(fmrUsuario.Usuario, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)"/>
+                style="font-size: 13px !important; height: 38px !important;"
+                (keyup)="fmrUsuario.Usuario = validador.formatoCampo(fmrUsuario.Usuario, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)" />
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <label>Correo Electrónico</label>
+              <label><b>Cédula</b></label>
+              <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Cedula"
+                style="font-size: 13px !important; height: 38px !important;"
+                (keyup)="fmrUsuario.Cedula = validador.formatoCampo(fmrUsuario.Cedula, '1234567890', 10, 2)" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label><b>Correo Electrónico</b></label>
               <input kendoTextBox type="email" [(ngModel)]="fmrUsuario.Email"
                 style="font-size: 13px !important; height: 38px !important;" />
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <label>Contraseña</label>
+              <label><b>Contraseña</b></label>
               <input *ngIf="contrasenaGuardar" kendoTextBox type="password" [(ngModel)]="fmrUsuario.Contrasena"
                 style="font-size: 13px !important; height: 38px !important;" />
 
@@ -125,23 +138,12 @@
                 style="font-size: 13px !important; height: 38px !important;" disabled />
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label>Rol</label>
-              <kendo-dropdownlist [data]="lstRol" [(ngModel)]="IdRol" (ngModelChange)="filtarRoles()" textField="text"
-                valueField="value" style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
         </div>
-
+        <br>
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
-              <label>Broker</label>
+              <label><b>Versión de Uso</b></label>
               <kendo-dropdownlist [data]="dataBroker" [(ngModel)]="IdBroker" [filterable]="true" textField="RazonSocial"
                 valueField="IdBroker" (ngModelChange)="filtarRoles()" (filterChange)="filtrarBroker($event)"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
@@ -151,9 +153,32 @@
               </kendo-dropdownlist>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
-              <label>Supervisor/Gerente</label>
+              <label><b>Rol</b></label>
+              <kendo-dropdownlist [data]="lstRol" [(ngModel)]="IdRol" (ngModelChange)="filtarRoles()" textField="text"
+                valueField="value" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                <ng-template kendoDropDownListItemTemplate let-dataItem>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
+                </ng-template>
+              </kendo-dropdownlist>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label><b>Ciudad</b></label>
+              <kendo-dropdownlist [data]="dataCiudad" [(ngModel)]="Ciudad" [filterable]="true" textField="Nombre"
+                valueField="Nombre" (filterChange)="filtrarCiudad($event)"
+                style="font-size: 13px !important; height: 38px !important; width: 100%">
+                <ng-template kendoDropDownListItemTemplate let-dataItem>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
+                </ng-template>
+              </kendo-dropdownlist>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group" *ngIf="lstRol.IdRol != 2">
+              <label><b>Supervisor del Usuario</b></label>
               <kendo-dropdownlist [data]="dataPadre" [(ngModel)]="IdPadre" [filterable]="true" textField="Usuario"
                 valueField="IdUsuario" (filterChange)="filtrarPadre($event)"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
@@ -164,21 +189,9 @@
               </kendo-dropdownlist>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
-              <label>Ciudad</label>
-              <kendo-dropdownlist [data]="dataCiudad" [(ngModel)]="Ciudad" [filterable]="true" textField="Nombre"
-                valueField="Nombre" (filterChange)="filtrarCiudad($event)"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label>Tipo Agente</label>
+              <label><b>Tipo Agente</b></label>
               <kendo-dropdownlist [data]="lstTipoAgente" [(ngModel)]="CodigoTipoAgente" textField="text"
                 valueField="value" (ngModelChange)="listarAgentes()"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
@@ -188,12 +201,9 @@
               </kendo-dropdownlist>
             </div>
           </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
-              <label>Agente</label>
+              <label><b>Agente</b></label>
               <kendo-dropdownlist [data]="dataAgente" [(ngModel)]="CodigoAgente" [filterable]="true"
                 textField="nombreAgente" valueField="codigoAgente" (filterChange)="filtrarAgente($event)"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
@@ -203,9 +213,9 @@
               </kendo-dropdownlist>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
-              <label>Punto de Venta - Sucursal</label>
+              <label><b>Punto de Venta - Sucursal</b></label>
               <kendo-dropdownlist [data]="lstSucursal" [(ngModel)]="Sucursal" textField="Nombre" valueField="Union"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
@@ -214,18 +224,20 @@
               </kendo-dropdownlist>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
-              <label>Comisión (%)</label>
-              <kendo-numerictextbox [(ngModel)]="fmrUsuario.Comision" [min]="0" [max]="100" [spinners]="false"
-                [step]="1" [autoCorrect]="true"
+              <label><b>Comisión (%)</b></label>
+              <kendo-dropdownlist [data]="lstComisiones" [(ngModel)]="Comision" textField="text" valueField="value"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
-              </kendo-numerictextbox>
+                <ng-template kendoDropDownListItemTemplate let-dataItem>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
+                </ng-template>
+              </kendo-dropdownlist>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
-              <label>Mostrar Combo - Corredores</label>
+              <label><b>Mostrar Combo - Corredores</b></label>
               <kendo-dropdownlist [data]="lstCorredores" [(ngModel)]="Corredores" textField="text" valueField="value"
                 style="font-size: 13px !important; height: 38px !important; width: 100%">
                 <ng-template kendoDropDownListItemTemplate let-dataItem>
@@ -234,15 +246,20 @@
               </kendo-dropdownlist>
             </div>
           </div>
-          <div class="col-md-12" style="float: right !important">
-            <button class="btn btn-secondary" style="height: 38px !important;" (click)="cerrarModal()">
+        </div>
+        <div class="row" style="padding-top: 20px !important; padding-bottom: 10px !important; ">
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+            <button class="btn btn-block btn-secondary" style="height: 38px !important;" (click)="cerrarModal()">
               <i class="mdi mdi-close"></i> Cerrar
             </button>
-            <button *ngIf="botonGuardar" class="btn btn-dark" style="height: 38px !important;"
+          </div>
+          <div class="col-md-4">
+            <button *ngIf="botonGuardar" class="btn btn-dark btn-block" style="height: 38px !important;"
               (click)="gestionUsuario()">
               <i class="mdi mdi-content-save"></i> Guardar
             </button>
-            <button *ngIf="botonModificar" class="btn btn-warning" style="height: 38px !important;"
+            <button *ngIf="botonModificar" class="btn btn-block btn-warning" style="height: 38px !important;"
               (click)="gestionUsuario()">
               <i class="mdi mdi-pencil"></i> Modificar
             </button>
@@ -254,28 +271,36 @@
 </div>
 
 
+
+
+
+
+
 <div class="modal" id="modalContrasena">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><b>Gestión de Contraseña</b></h5>
-        <button type="button" class="close" style="color: #8a0000 !important;" (click)="cerrarModalContrasena()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
+  <div class="modal-content" style="width: 550px !important;">
+    <div class="modal-header">
+      <h5 class="modal-title"><b>Gestión de Contraseña</b></h5>
+      <button type="button" class="close" style="color: #8a0000 !important;" (click)="cerrarModalContrasena()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
         <div class="form-group row">
           <div class="col-sm-12">
-            <span style="font-size: 13px;"><b>Nota: </b> Al restablecer la contraseña el usuario deberá ingresa con: <br> <b><u>Qw12345678</u></b> </span>
+            <span style="font-size: 13px;"><b>Nota: </b> Al restablecer la contraseña el usuario deberá ingresa
+              con: <br>
+              <b><u>Qw12345678</u></b> </span>
           </div>
         </div><br>
         <div class="form-group row">
           <div class="col-sm-2"></div>
-          
+
           <div class="col-sm-8">
-            <button type="submit" class="btn btn-primary btn-block" (click)="gestionContrasena()">Resetear Contraña</button>
+            <button type="submit" class="btn btn-primary btn-block" (click)="gestionContrasena()">Resetear
+              Contraseña</button>
           </div>
           <div class="col-sm-2"></div>
         </div>
-      </div>
     </div>
+  </div>
 </div>

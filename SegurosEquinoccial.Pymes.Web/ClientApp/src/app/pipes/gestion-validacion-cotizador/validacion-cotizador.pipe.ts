@@ -322,6 +322,9 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     } else if (fmrUsuario.Usuario.length <= 4) {
       validacion = false;
       this.mostrarAlerta("Ingrese un nombre válido.", color);
+    } else if (fmrUsuario.Cedula.length < 10) {
+      validacion = false;
+      this.mostrarAlerta("Ingrese una cédula válida.", color);
     } else if (this.correoElectronico(fmrUsuario.Email)) {
       validacion = false;
       this.mostrarAlerta("Ingrese correo Electrónico válido.", color);
@@ -352,10 +355,10 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     } else if (fmrUsuario.CodigoPuntoVenta == undefined) {
       validacion = false;
       this.mostrarAlerta("El campo Punto de Venta - Sucursal no puede estar vacío.", color);
-    } else if (fmrUsuario.Comision == null ) {
+    } else if (fmrUsuario.Comision == null) {
       validacion = false;
       this.mostrarAlerta("El campo comisión no puede estar vacío.", color);
-    } else if (fmrUsuario.Corredores == "") {
+    } else if (fmrUsuario.Corredores == null) {
       validacion = false;
       this.mostrarAlerta("El campo Mostrar Combo - Corredores no puede estar vacío.", color);
     } else {

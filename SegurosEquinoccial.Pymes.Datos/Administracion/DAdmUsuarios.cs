@@ -108,6 +108,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                 cmd.Parameters.Add("@sucursal", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@comision", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@corredores", SqlDbType.NVarChar);
+                cmd.Parameters.Add("@cedula", SqlDbType.NVarChar);
+
 
                 cmd.Parameters.Add("@valor", SqlDbType.NVarChar, -1).Direction = ParameterDirection.Output;
 
@@ -129,7 +131,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                 cmd.Parameters["@sucursal"].Value = pusuario.CodigoSucursal;
                 cmd.Parameters["@comision"].Value = pusuario.Comision;
                 cmd.Parameters["@corredores"].Value = pusuario.Corredores;
-                
+                cmd.Parameters["@cedula"].Value = pusuario.Cedula;
+
 
                 cmd.ExecuteNonQuery();
 
@@ -174,7 +177,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                     rsUsuarios.Contrasena = rdr["Contrasena"].ToString();
                     rsUsuarios.Estado = Convert.ToInt32(rdr["Estado"].ToString());
                     rsUsuarios.Foto = rdr["FotoUsuario"].ToString();
-                    rsUsuarios.IdPadre = Convert.ToInt32(rdr["IdPadre"].ToString());
+                    rsUsuarios.IdPadre = Convert.ToInt32(rdr["IdPadre"]);
                     rsUsuarios.Ciudad = rdr["Ciudad"].ToString();
                     rsUsuarios.EstadoSesion = Convert.ToInt32(rdr["EstadoSesion"].ToString());
                     rsUsuarios.CodigoTipoAgente = rdr["CodigoTipoAgente"].ToString();
@@ -183,6 +186,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                     rsUsuarios.CodigoPuntoVenta = rdr["CodigoPuntoVenta"].ToString();
                     rsUsuarios.Comision = rdr["Comision"].ToString();
                     rsUsuarios.Corredores = rdr["Corredores"].ToString();
+                    rsUsuarios.NombreCorredor = rdr["NombreCorredor"].ToString();
+                    rsUsuarios.Cedula = rdr["Cedula"].ToString();
 
                     rsRol.IdRol = Convert.ToInt32(rdr["IdRol"].ToString());
                     rsRol.Nombre = rdr["Nombre"].ToString();

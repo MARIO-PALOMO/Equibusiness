@@ -51,6 +51,7 @@ export class InicioGerenciaComponent implements OnInit {
 
     this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes/' + this.usuario.IdUsuario, this.usuario.Uid).subscribe(
       (res: any) => {
+        console.log("listarUsuariosDependientes",res);
         this.spinner.hide();
         this.lstUsuarioDependientesSupervisores = res;
 
@@ -76,9 +77,10 @@ export class InicioGerenciaComponent implements OnInit {
     var parametros = {
       Cadena: cadena.substr(0, (cadena.length - 4)),
     };
-
+    console.log("listarUsuariosDependientesSupervisor",parametros);
     this.conexion.post('Broker/SBroker.svc/usuarios/consultar/dependientes/supervisor', parametros, this.usuario.Uid).subscribe(
       (res: any) => {
+        console.log(res);
         this.spinner.hide();
         this.lstUsuariosDependientesSupervisoresResumen = res;
         var dataset = {

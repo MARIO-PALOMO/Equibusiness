@@ -91,5 +91,12 @@ namespace SegurosEquinoccial.Pymes.Entidad.Administracion
         [DataMember]
         [Required]
         public string Corredores { get; set; }
+
+        [DataMember]
+        public string NombreCorredor { get; set; }
+
+        [DataMember]
+        public string Cedula { get; set; }
+
     }
 }
