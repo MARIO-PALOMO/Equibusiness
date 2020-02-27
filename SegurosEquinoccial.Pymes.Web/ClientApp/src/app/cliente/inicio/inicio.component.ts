@@ -125,7 +125,7 @@ export class InicioClienteComponent implements OnInit {
 
 
   public Sucursal: any;
-  public Comision: any = 20;
+  public Comision: any;
   public TipoAgente: any;
   public Agente: any;
 
@@ -134,6 +134,11 @@ export class InicioClienteComponent implements OnInit {
   public lstTipoAgente: Array<{ text: string, value: number }> = [
     { text: "PRODUCTOR", value: 2 },
     { text: "UNIDAD DE PRODUCCIÓN", value: 3 }
+  ];
+  public lstComision: Array<{ text: string, value: number }> = [
+    { text: "0%", value: 0 },
+    { text: "20%", value: 20 },
+    { text: "25%", value: 25 }
   ];
 
   public lstAgente = [];
@@ -341,7 +346,7 @@ export class InicioClienteComponent implements OnInit {
     return datos;
   }
 
-  public generarCodigoCotizacion(numero: any, empresa: any) {
+  public generarCodigoCotizacion(numero: any, empresa: any, Corredor) {
     var inicio = "COTP"
     var fecha = this.globales.generarNumeroAleatorios() + "-";
     var numeroCotizacion = "0";
@@ -358,10 +363,10 @@ export class InicioClienteComponent implements OnInit {
       default:
         numeroCotizacion = numero;
     }
-    this.generarCotizacion(inicio + fecha + this.usuario.broker.IdBroker + "-" + numeroCotizacion, empresa);
+    this.generarCotizacion(inicio + fecha + this.usuario.broker.IdBroker + "-" + numeroCotizacion, empresa, Corredor);
   }
 
-  public generarCotizacion(cotizacion: any, empresa: any) {
+  public generarCotizacion(cotizacion: any, empresa: any, Corredor) {
     var datos = {
       "Identificador": 1,
       "IdCotizacion": "0",
@@ -388,7 +393,7 @@ export class InicioClienteComponent implements OnInit {
         if (res.IdCotizacion == 0) {
           this.valCotizador.mostrarAlertaInformativa("La cotización no pudo ser generada, debido a una duplicación de códigos.", this.usuario.broker.Color);
         } else {
-          this.actualizarCorredorCotizacion(res.IdCotizacion, cotizacion, empresa);
+          this.actualizarCorredorCotizacion(res.IdCotizacion, cotizacion, empresa, Corredor);
         }
       },
       err => {
@@ -399,127 +404,21 @@ export class InicioClienteComponent implements OnInit {
     );
   }
 
-  public actualizarCorredorCotizacion(idCotizacion, cotizacion, empresa) {
-
-    if (this.usuario.Corredores == "1") {
-
-      var suc = this.Sucursal.Union.split("-");
-      var Corredor = {
-        Sucursal: suc[0],
-        PuntoVenta: suc[1],
-        Comision: this.Agente.codigoAgente == "99" ? 0 : parseInt(this.Comision),
-        TipoAgente: parseInt(this.TipoAgente.value),
-        Agente: this.Agente.codigoAgente
-      }
-
-      var Datos = {
-        Identificador: 1,
-        IdCotizacion: idCotizacion,
-        Corredor: JSON.stringify(Corredor)
-      }
-      console.log(Corredor)
-      this.spinner.show();
-      this.conexion.post('Broker/SBroker.svc/cotizacion/actualizar/corredor', Datos, this.usuario.Uid).subscribe(
-        (res: any) => {
-          this.spinner.hide();
-
-          this.eliminarCache();
-          this.kcotizacion.registrarKeyCotizacion({ idCotizacion: idCotizacion, cotizacion, codigoCotizacion: cotizacion, idUsuario: this.usuario.IdUsuario, idEmpresa: empresa });
-          this.router.navigate(['/cliente/cotizacion/cotizacion']);
-        },
-        err => {
-          this.spinner.hide();
-          console.log(err);
-          this.conexion.error(err);
-        }
-      );
-    } else {
-
-      var Corredor_ = {
-        Sucursal: this.usuario.CodigoSucursal,
-        PuntoVenta: this.usuario.CodigoPuntoVenta,
-        Comision: this.usuario.CodigoAgente == "99" ? 0 : parseInt(this.usuario.Comision),
-        TipoAgente: parseInt(this.usuario.CodigoTipoAgente),
-        Agente: this.usuario.CodigoAgente
-      }
-
-      var Datos = {
-        Identificador: 1,
-        IdCotizacion: idCotizacion,
-        Corredor: JSON.stringify(Corredor_)
-      }
-
-      this.spinner.show();
-      this.conexion.post('Broker/SBroker.svc/cotizacion/actualizar/corredor', Datos, this.usuario.Uid).subscribe(
-        (res: any) => {
-          this.spinner.hide();
-
-          this.eliminarCache();
-          this.kcotizacion.registrarKeyCotizacion({ idCotizacion: idCotizacion, cotizacion, codigoCotizacion: cotizacion, idUsuario: this.usuario.IdUsuario, idEmpresa: empresa });
-          this.router.navigate(['/cliente/cotizacion/cotizacion']);
-
-        },
-        err => {
-          this.spinner.hide();
-          console.log(err);
-          this.conexion.error(err);
-        }
-      );
+  public actualizarCorredorCotizacion(idCotizacion, cotizacion, empresa, Corredor) {
+    var Datos = {
+      Identificador: 1,
+      IdCotizacion: idCotizacion,
+      Corredor: JSON.stringify(Corredor)
     }
-  }
-
-  public gestionCatalogoEmpresaCEDULARUCCotizacion() {
-
-    if (this.fmrEmpresa.IdCatalogoEmpresa == 0) {
-      if (!this.valCotizador.gestionValidacionEmpresa(this.fmrEmpresa, this.usuario.broker.Color)) {
-        var datosEmpresa = {
-          NRO_RUC: this.fmrEmpresa.Ruc,
-          RAZON_SOCIAL: this.fmrEmpresa.RazonSocial,
-          NOMBRE_COMERCIAL: this.fmrEmpresa.RazonSocial,
-          NOMBRE_COMPLETO: this.fmrEmpresa.RazonSocial,
-          ACTIVIDAD_ECONOMICA: this.fmrEmpresa.SectorEconomico,
-          FECHA_CONSTITUCION: "",
-          RESIDENCIA: "",
-          CALLES: this.fmrEmpresa.Direccion,
-          CALLES_DOMICILIO: this.fmrEmpresa.Direccion,
-          NRO_DOMICILIO: "",
-          PROVINCIA: "",
-          CANTON: "",
-          CIUDAD: "",
-          PARROQUIA: "",
-          BARRIO: "",
-          CAPITAL: "",
-          NRO_EMPLEADOS: "",
-          TELEFONO: this.fmrEmpresa.Telefono,
-          EMAIL: this.fmrEmpresa.Email,
-          ACTIVIDAD_ECONOMICA_N6: this.fmrEmpresa.GiroNegocio,
-          ESTADO_LEGAL: "",
-          TIPO_COMPANIA: "",
-          INTENDENCIA_CONTROL: "",
-          OBJETO_SOCIAL: ""
-        };
-        this.guardarCatalogoEmpresaCEDULARUCCotizacion(datosEmpresa);
-      }
-    } else {
-      this.guardarEmpresa();
-    }
-  }
-
-  public guardarCatalogoEmpresaCEDULARUCCotizacion(datosEmpresa) {
+    console.log(Corredor)
     this.spinner.show();
-    this.conexion.post("Broker/SBroker.svc/empresa/catalogo/guardar/registro", datosEmpresa, this.usuario.Uid).subscribe(
+    this.conexion.post('Broker/SBroker.svc/cotizacion/actualizar/corredor', Datos, this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
-        this.fmrEmpresa.IdCatalogoEmpresa = res.IdCatalogoEmpresas;
-        this.fmrEmpresa.Telefono = datosEmpresa.TELEFONO;
-        this.fmrEmpresa.Email = datosEmpresa.EMAIL;
-        this.fmrEmpresa.RazonSocial = datosEmpresa.RAZON_SOCIAL;
-        this.fmrEmpresa.GiroNegocio = datosEmpresa.ACTIVIDAD_ECONOMICA_N6;
-        this.fmrEmpresa.Direccion = datosEmpresa.CALLES_DOMICILIO;
-        //this.fmrEmpresa.SectorEconomico = datosEmpresa.ACTIVIDAD_ECONOMICA;
 
-        this.guardarEmpresa();
-        console.log(res);
+        this.eliminarCache();
+        this.kcotizacion.registrarKeyCotizacion({ idCotizacion: idCotizacion, cotizacion, codigoCotizacion: cotizacion, idUsuario: this.usuario.IdUsuario, idEmpresa: empresa });
+        this.router.navigate(['/cliente/cotizacion/cotizacion']);
       },
       err => {
         this.spinner.hide();
@@ -529,7 +428,7 @@ export class InicioClienteComponent implements OnInit {
     );
   }
 
-  public guardarEmpresa() {
+  public guardarEmpresa(Corredor) {
 
     var parametros = {
       "Identificador": this.fmrEmpresa.Identificador,
@@ -572,7 +471,7 @@ export class InicioClienteComponent implements OnInit {
             if (res.IdEmpresa == 0) {
               this.valCotizador.mostrarAlerta("Ocurrio un error al registrar la empresa.", this.usuario.broker.Color);
             } else {
-              this.verificarTotalRegistrosCotizacion(res.IdEmpresa);
+              this.verificarTotalRegistrosCotizacion(res.IdEmpresa, Corredor);
             }
           },
           err => {
@@ -594,12 +493,12 @@ export class InicioClienteComponent implements OnInit {
 
   }
 
-  public verificarTotalRegistrosCotizacion(empresa: any) {
+  public verificarTotalRegistrosCotizacion(empresa: any, Corredor) {
     this.spinner.show();
     this.conexion.get("Broker/SBroker.svc/cotizacion/totalRegistros/" + this.usuario.broker.IdBroker, this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
-        this.generarCodigoCotizacion((res + 1) + "", empresa);
+        this.generarCodigoCotizacion((res + 1) + "", empresa, Corredor);
       },
       err => {
         this.spinner.hide();
@@ -1030,6 +929,10 @@ export class InicioClienteComponent implements OnInit {
 
   }
 
+  public ver(){
+    console.log(this.Comision);
+  }
+
   public actualizarAsegurado() {
 
     if (this.valCotizador.validacion(this.fmrEmpresa, this.usuario.broker.Color)) {
@@ -1039,9 +942,21 @@ export class InicioClienteComponent implements OnInit {
           var Corredor: any;
           if (this.usuario.Corredores == "1") {
             var suc = this.Sucursal.Union.split("-");
-            Corredor = { Sucursal: suc[0], PuntoVenta: suc[1], Comision: this.Comision, TipoAgente: this.TipoAgente.value, Agente: this.Agente.codigoAgente };
+            Corredor = {
+              Sucursal: suc[0],
+              PuntoVenta: suc[1],
+              Comision: this.Comision.value,
+              TipoAgente: this.TipoAgente.value,
+              Agente: this.Agente.codigoAgente
+            };
           } else {
-            Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: parseInt(this.usuario.Comision), TipoAgente: parseInt(this.usuario.CodigoTipoAgente), Agente: this.usuario.CodigoAgente };
+            Corredor = {
+              Sucursal: this.usuario.CodigoSucursal,
+              PuntoVenta: this.usuario.CodigoPuntoVenta,
+              Comision: parseInt(this.usuario.Comision),
+              TipoAgente: parseInt(this.usuario.CodigoTipoAgente),
+              Agente: this.usuario.CodigoAgente
+            };
           }
 
           var Datos = {
@@ -1049,8 +964,6 @@ export class InicioClienteComponent implements OnInit {
             ValAgente: Corredor.Agente,
             ValTipoAgente: Corredor.TipoAgente,
           };
-
-
 
           var datosAsegurado = {
             "CodUsuario": "",
@@ -1153,7 +1066,7 @@ export class InicioClienteComponent implements OnInit {
 
                                 if (datos.Error == 0 && datos.Mensaje == null) {
 
-                                  this.guardarEmpresa();
+                                  this.guardarEmpresa(Corredor);
 
                                 } else {
                                   this.valCotizador.mostrarAlerta("Los datos no pudieron ser actualizados.", this.usuario.broker.Color);

@@ -178,6 +178,17 @@
                       </kendo-dropdownlist>
                     </div>
                   </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Comisión</label>
+                      <kendo-dropdownlist [data]="lstComision" [(ngModel)]="Comision" textField="text"
+                        valueField="value" class="texto">
+                        <ng-template kendoDropDownListItemTemplate let-dataItem>
+                          <span>{{ dataItem.text }}</span>
+                        </ng-template>
+                      </kendo-dropdownlist>
+                    </div>
+                  </div>
                   <!--<div class="col-md-6">
                     <div class="form-group">
                       <label>Comisión (%)</label>
@@ -404,7 +415,6 @@
     </div>
   </div>
 </div>
-
 <!--<div class="modal fade" id="ModalDetallesCotizacion" tabindex="-1" role="dialog"
   aria-labelledby="ModalDetallesCotizacionTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">

@@ -48,6 +48,7 @@ export class GlobalesPipe implements PipeTransform {
       title: titulo,
       html: texto,
       type: tipo,
+      confirmButtonText: 'Aceptar',
       timer: 3000
     }).then((result) => {
       if (result.dismiss === Swal.DismissReason.timer) {

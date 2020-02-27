@@ -521,5 +521,56 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         {
             return CBroCompromiso.BroCerrarCompromiso(aux);
         }
+
+        public List<EBroReporteUsuarios> ReporteListarUsuarios(string IdBroker)
+        {
+            return CBroReportes.ReporteListarUsuarios(IdBroker);
+        }
+
+        public List<EBroReporteCotizaciones> ReporteListarCotizacionesBroker(string IdBroker, string estado)
+        {
+            return CBroReportes.ReporteListarCotizacionesBroker(IdBroker, estado);
+        }
+
+        public List<EBroReporteEmisiones> ReporteListarEmisionesBroker(string IdBroker, string estado)
+        {
+            return CBroReportes.ReporteListarEmisionesBroker(IdBroker, estado);
+        }
+
+
+        public string ReporteCiudadBroker(string IdBroker)
+        {
+            return CBroReportes.ReporteCiudadBroker(IdBroker);
+        }
+
+        public string ReporteListarCiudadesCotizacionesBroker(string IdBroker)
+        {
+            return CBroReportes.ReporteListarCiudadesCotizacionesBroker(IdBroker);
+        }
+
+        public string ReporteListarCiudadesEmisionesBroker(string IdBroker)
+        {
+            return CBroReportes.ReporteListarCiudadesEmisionesBroker(IdBroker);
+        }
+
+        public string ReporteCiudadBrokerCotizaciones(string IdBroker, string estado)
+        {
+            return CBroReportes.ReporteCiudadBrokerCotizaciones(IdBroker, estado);
+        }
+        public string ReporteCiudadBrokerEmisiones(string IdBroker, string estado)
+        {
+            return CBroReportes.ReporteCiudadBrokerEmisiones(IdBroker, estado);
+        }
+
+        public string DetalleValoresCotizacionesBrokerCiudad(EBroReporteDetalleValoresBroker datos)
+        {
+            return CBroReportes.DetalleValoresCotizacionesBrokerCiudad(datos);
+        }
+
+
+        public string DetalleValoresEmisionesBrokerCiudad(EBroReporteDetalleValoresBroker datos)
+        {
+            return CBroReportes.DetalleValoresEmisionesBrokerCiudad(datos);
+        }
     }
 }

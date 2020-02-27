@@ -154,6 +154,15 @@
                     </ng-template>
                   </kendo-dropdownlist>
                 </div>
+                <div *ngIf="usuario.Corredores == '1'" class="col-xs-6 col-sm-6 col-md-6">
+                  <div class="texto-empresa">Comisión</div>
+                  <kendo-dropdownlist [data]="lstComision" [(ngModel)]="Comision" textField="text" valueField="value"
+                    class="texto">
+                    <ng-template kendoDropDownListItemTemplate let-dataItem>
+                      <span>{{ dataItem.text }}</span>
+                    </ng-template>
+                  </kendo-dropdownlist>
+                </div>
               </div>
             </div>
             <br>
@@ -354,7 +363,8 @@
                       <tr *ngFor="let direccion of lstDirecciones; let i = index" style="text-align: center">
                         <td>{{i + 1}}</td>
                         <td>
-                          <input type="text" style="border: 1px solid #3c3c3c !important;" [(ngModel)]="direccion.nombre" class="form-control texto">                      
+                          <input type="text" style="border: 1px solid #3c3c3c !important;"
+                            [(ngModel)]="direccion.nombre" class="form-control texto">
                         </td>
                         <td *ngIf="usuario.broker.Provincias == 1">{{direccion.provincia}}</td>
                         <td>

@@ -444,7 +444,7 @@ export class CotizacionComponent implements OnInit {
 
   //Corredores
   public Sucursal: any;
-  public Comision: any = 20;
+  public Comision: any;
   public TipoAgente: any;
   public Agente: any;
 
@@ -453,6 +453,12 @@ export class CotizacionComponent implements OnInit {
   public lstTipoAgente: Array<{ text: string, value: number }> = [
     { text: "PRODUCTOR", value: 2 },
     { text: "UNIDAD DE PRODUCCIÓN", value: 3 }
+  ];
+
+  public lstComision: Array<{ text: string, value: number }> = [
+    { text: "0%", value: 0 },
+    { text: "20%", value: 20 },
+    { text: "25%", value: 25 }
   ];
 
   public lstAgente = [];
@@ -1059,7 +1065,7 @@ export class CotizacionComponent implements OnInit {
         "Identificador": 2,
         "IdDireccion": parseInt(this.contenido.IdDireccion),
         "DatosDireccion": JSON.stringify(JSONDirecciones),
-        "Cotizacion": { "IdCotizacion": 0 }
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
       }
 
       this.spinner.show();
@@ -1592,6 +1598,7 @@ export class CotizacionComponent implements OnInit {
     this.contratante.SegundoApellido = this.empresa.SegundoApellido;
     this.contratante.Direccion = this.empresa.Direccion;
     this.contratante.Email = this.empresa.Email;
+    this.contratante.Cotizacion.IdCotizacion = this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion;
 
     this.spinner.show();
     this.gestionCotizacion.gestionContratante(this.contratante).then(id => {
@@ -1607,7 +1614,7 @@ export class CotizacionComponent implements OnInit {
     if (this.identificadorGuardado == 1) {
       this.pagadores.Identificador = 2;
     }
-
+    this.pagadores.Cotizacion.IdCotizacion = this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion;
     this.spinner.show();
     this.gestionCotizacion.gestionPagador(this.pagadores).then(id => {
       this.spinner.hide();
@@ -1644,7 +1651,7 @@ export class CotizacionComponent implements OnInit {
         "Identificador": 2,
         "IdDireccion": parseInt(this.contenido.IdDireccion),
         "DatosDireccion": JSON.stringify(this.lstDirecciones),
-        "Cotizacion": { "IdCotizacion": 0 }
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
       }
     }
 
@@ -1684,7 +1691,7 @@ export class CotizacionComponent implements OnInit {
         "Identificador": 2,
         "IdVehiculos": parseInt(this.contenido.IdVehiculos),
         "DatosVehiculo": JSON.stringify(this.listaDetallesVehiculos),
-        "Cotizacion": { "IdCotizacion": 0 }
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
       }
     }
 
@@ -1736,7 +1743,7 @@ export class CotizacionComponent implements OnInit {
         "VistaEstado": JSON.stringify(this.valDiseno.panelesVistaRamos),
         "VistaDiseno": JSON.stringify(this.valDiseno.panelesRamos),
         "VistaValores": JSON.stringify(this.valDiseno.panelesValoresRamos),
-        "Cotizacion": { "IdCotizacion": 0 }
+        "Cotizacion": { "IdCotizacion": this.codigoCotizacion == undefined ? 0 : this.codigoCotizacion.idCotizacion }
       }
     }
 
@@ -1773,12 +1780,22 @@ export class CotizacionComponent implements OnInit {
 
     var Corredor: any;
     if (this.usuario.Corredores == "1") {
-
       var suc = this.Sucursal.Union.split("-");
-      Corredor = { Sucursal: suc[0], PuntoVenta: suc[1], Comision: this.Agente.codigoAgente == "99" ? 0 : parseInt(this.Comision), TipoAgente: this.TipoAgente.value, Agente: this.Agente.codigoAgente };
-
+      Corredor = {
+        Sucursal: suc[0],
+        PuntoVenta: suc[1],
+        Comision: this.Comision.value,
+        TipoAgente: this.TipoAgente.value,
+        Agente: this.Agente.codigoAgente
+      };
     } else {
-      Corredor = Corredor = { Sucursal: this.usuario.CodigoSucursal, PuntoVenta: this.usuario.CodigoPuntoVenta, Comision: this.usuario.CodigoAgente == "99" ? 0 : parseInt(this.usuario.Comision), TipoAgente: parseInt(this.usuario.CodigoTipoAgente), Agente: this.usuario.CodigoAgente };
+      Corredor = {
+        Sucursal: this.usuario.CodigoSucursal,
+        PuntoVenta: this.usuario.CodigoPuntoVenta,
+        Comision: parseInt(this.usuario.Comision),
+        TipoAgente: parseInt(this.usuario.CodigoTipoAgente),
+        Agente: this.usuario.CodigoAgente
+      };
     }
 
     var contenido = {
@@ -1902,7 +1919,7 @@ export class CotizacionComponent implements OnInit {
         PagadorIdentificacion: this.pagadores.Cedula,
         OperacionCodigo: 1,
         Notas: "\nSe registra compromiso con el agente "
-          + agentenombre
+          + this.globales.limpiarDireccion(agentenombre)
           + ", en la línea de negocio PYMES.\nLos ramos cotizados son los siguientes: "
           + JSON.stringify(this.valDiseno.panelesValoresRamos),
       }
@@ -2014,28 +2031,32 @@ export class CotizacionComponent implements OnInit {
     var fechaSeleccionada = moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD");
     var fechaAcual = moment().format("YYYY-MM-DD");
 
-    if (this.numeroPolizasEmitidas == 0) {
-      if (fechaSeleccionada < fechaAcual) {
+    if (this.sucursal_.Agente != "99" && this.sucursal_.Comision == 0) {
+      this.globales.mostarAlertaTiempo("", "La comisión del corredor con código " + this.sucursal_.Agente + " no debe ser 0%", "info");
+    } else {
+      if (this.numeroPolizasEmitidas == 0) {
+        if (fechaSeleccionada < fechaAcual) {
 
-        Swal.fire({
-          type: "info",
-          text: "El asegurado declara que no ha tenido siniestros ocurridos, conocidos ni reportados a la fecha de la emisión del presente programa de seguros.",
-          showCancelButton: true,
-          confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
-          cancelButtonColor: '#d33',
-          cancelButtonText: "Cancelar",
-          confirmButtonText: 'Aceptar'
-        }).then((result) => {
-          if (result.value) {
-            this.actualizarEmpresa(datos);
-          }
-        });
+          Swal.fire({
+            type: "info",
+            text: "El asegurado declara que no ha tenido siniestros ocurridos, conocidos ni reportados a la fecha de la emisión del presente programa de seguros.",
+            showCancelButton: true,
+            confirmButtonColor: "rgb(" + this.usuario.broker.Color + ")",
+            cancelButtonColor: '#d33',
+            cancelButtonText: "Cancelar",
+            confirmButtonText: 'Aceptar'
+          }).then((result) => {
+            if (result.value) {
+              this.actualizarEmpresa(datos);
+            }
+          });
 
+        } else {
+          this.actualizarEmpresa(datos);
+        }
       } else {
         this.actualizarEmpresa(datos);
       }
-    } else {
-      this.actualizarEmpresa(datos);
     }
 
   }
@@ -3486,7 +3507,6 @@ export class CotizacionComponent implements OnInit {
 
           this.numeroCotizacion = res[0].Codigo;
           this.vigenciaCotizacion = res[0].Fecha;
-
           this.sucursal_ = JSON.parse(res[0].Corredor);
           this.listarCorredores(this.sucursal_);
 
@@ -3504,8 +3524,8 @@ export class CotizacionComponent implements OnInit {
   public listarCorredores(corredor) {
 
     this.Sucursal = { Union: corredor.Sucursal + "-" + corredor.PuntoVenta };
-    this.Comision = corredor.Comision;
-    this.TipoAgente = { value: corredor.TipoAgente };
+    this.Comision = { value: parseInt(corredor.Comision) };
+    this.TipoAgente = { value: parseInt(corredor.TipoAgente) };
 
     this.spinner.show();
     this.generico.listarAgentes(corredor.TipoAgente).then(lista => {

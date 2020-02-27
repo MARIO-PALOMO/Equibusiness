@@ -155,7 +155,7 @@ export class GestionService {
       this.conexion.post("Broker/SBroker.svc/cotizacion/cerrar/compromisos/sise", datos, this.usuario.Uid).subscribe(
         (res: any) => {
           var xml = $.parseXML(res);
-
+          console.log(res);
           var codigo = "";
           $(xml).find("CerrarOportunidadGenericoResponse ").each(function () {
             codigo = $(this).find('CerrarOportunidadGenericoResult').text();
