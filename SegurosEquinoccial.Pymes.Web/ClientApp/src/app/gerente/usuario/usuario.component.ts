@@ -30,6 +30,7 @@ export class UsuarioComponent implements OnInit {
   public data: any;
 
   public IdRol: any;
+  
   public IdBroker: any;
   public IdPadre: any;
   public CodigoAgente: any;
@@ -114,7 +115,8 @@ export class UsuarioComponent implements OnInit {
   public contrasenaGuardar = false;
   public contrasenaModificar = false;
 
-  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, private validador: ValidacionCotizadorPipe) {
+  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, 
+              public validador: ValidacionCotizadorPipe, public globales: GlobalesPipe) {
 
   }
 

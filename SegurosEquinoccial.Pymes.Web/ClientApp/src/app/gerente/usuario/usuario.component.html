@@ -177,7 +177,7 @@
             </div>
           </div>
           <div class="col-md-12">
-            <div class="form-group" *ngIf="lstRol.IdRol != 2">
+            <div class="form-group">
               <label><b>Supervisor del Usuario</b></label>
               <kendo-dropdownlist [data]="dataPadre" [(ngModel)]="IdPadre" [filterable]="true" textField="Usuario"
                 valueField="IdUsuario" (filterChange)="filtrarPadre($event)"

@@ -170,8 +170,11 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Usuario.Ciudad) as 'Total' FROM Usuario "
-                + " WHERE Usuario.IdBroker = @broker GROUP BY Usuario.Ciudad "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Usuario.Ciudad) as 'Total' "
+                + " FROM Usuario "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdUsuario = Usuario.IdUsuario "
+                + " INNER JOIN Broker ON Broker.IdBroker = Usuario_Broker.IdBroker "
+                + " WHERE Broker.IdBroker = @broker GROUP BY Usuario.Ciudad "
                 + " FOR JSON AUTO "
                 , getCnn());
 
@@ -208,7 +211,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'Total' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
                 + " AND Cotizacion.Estado != 5 AND Broker.IdBroker = @broker"
                 + " GROUP BY Usuario.Ciudad FOR JSON AUTO "
@@ -243,11 +247,12 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                " SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Broker.IdBroker) AS 'Cantidad', "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Broker.IdBroker) AS 'Cantidad', "
                 + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'Total' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
                 + " AND Cotizacion.Estado = 5 AND Broker.IdBroker = @broker"
                 + " GROUP BY Usuario.Ciudad FOR JSON AUTO "
@@ -282,12 +287,13 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
                 + " FROM Cotizacion "
-                + "INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + "INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
-                + "WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado != @estado AND Cotizacion.IdBroker = @broker "
-                + "GROUP BY Ciudad "
+                + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
+                + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado != @estado AND Cotizacion.IdBroker = @broker "
+                + " GROUP BY Ciudad "
                 + "FOR JSON AUTO ", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
@@ -320,13 +326,14 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
                 + " FROM Cotizacion "
-                + "INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + "INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
-                + "WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado = @estado AND Cotizacion.IdBroker = @broker "
-                + "GROUP BY Ciudad "
-                + "FOR JSON AUTO ", getCnn());
+                + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker"
+                + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker"
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario"
+                + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado = @estado AND Cotizacion.IdBroker = @broker "
+                + " GROUP BY Ciudad "
+                + " FOR JSON AUTO ", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(estado));
@@ -362,7 +369,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 + " IsNull(SUM(Cotizacion.PrimaTotal),0) AS 'Total' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
                 + " AND Cotizacion.Estado != @estado "
                 + " AND Broker.IdBroker = @broker "
@@ -409,7 +417,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 + " IsNull(SUM(Cotizacion.PrimaTotal),0) AS 'Total' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
                 + " AND Cotizacion.Estado = @estado "
                 + " AND Broker.IdBroker = @broker "
