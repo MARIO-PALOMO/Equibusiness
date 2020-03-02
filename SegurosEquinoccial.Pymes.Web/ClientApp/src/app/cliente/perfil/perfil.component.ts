@@ -101,7 +101,8 @@ export class PerfilClienteComponent implements OnInit {
       "CodigoPuntoVenta": "0",
       "CodigoSucursal": "0",
       "Comision": "0",
-      "Corredores" : "0"
+      "Corredores" : "0",
+      "Cedula" : ""
     };
 
     this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', parametros, "").subscribe(
@@ -164,7 +165,8 @@ export class PerfilClienteComponent implements OnInit {
       "CodigoPuntoVenta": "0",
       "CodigoSucursal": "0",
       "Comision": "0",
-      "Corredores" : "0"
+      "Corredores" : "0",
+      "Cedula" : ""
     };
 
     this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', parametros, "").subscribe(

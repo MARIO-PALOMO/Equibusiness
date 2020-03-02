@@ -308,6 +308,8 @@ export class UsuarioComponent implements OnInit {
 
   public gestionUsuario() {
 
+    console.log(this.Corredores,);
+
     this.fmrUsuario.rol.IdRol = this.IdRol.value;
     this.fmrUsuario.broker.IdBroker = this.IdBroker.IdBroker;
     this.fmrUsuario.IdPadre = this.IdPadre.IdUsuario;
@@ -316,8 +318,11 @@ export class UsuarioComponent implements OnInit {
     this.fmrUsuario.CodigoTipoAgente = this.CodigoTipoAgente.value;
     this.fmrUsuario.CodigoPuntoVenta = this.Sucursal.CodigoPuntoVenta;
     this.fmrUsuario.CodigoSucursal = this.Sucursal.CodigoSucursal;
-    this.fmrUsuario.Corredores = this.Corredores == undefined ? "" : this.Corredores.value;
-    this.fmrUsuario.Comision = this.Comision == undefined ? "" : this.Comision.value;
+    this.fmrUsuario.Corredores = "0";//this.Corredores == "" ? 0 : this.Corredores.value;
+    this.fmrUsuario.Comision = 20;//this.Comision == "" ? 20 : this.Comision.value;
+
+    console.log(this.fmrUsuario);
+
     if (this.validador.gestionValidarFormularioUsuarios(this.fmrUsuario, this.usuario.broker.Color)) {
       this.spinner.show();
       this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', this.fmrUsuario, "").subscribe(
@@ -377,6 +382,8 @@ export class UsuarioComponent implements OnInit {
     this.CodigoTipoAgente = {};
     this.CodigoAgente = {};;
     this.Sucursal = {};
+    this.Comision = {};
+    this.Corredores = {};
   }
 
   public abrirModal() {

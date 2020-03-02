@@ -12,7 +12,7 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
     public class EBroReporteDetalleValoresBroker
     {
         [DataMember]
-        public int IdBroker { get; set; }
+        public string Broker { get; set; }
 
         [DataMember]
         public int Estado { get; set; }

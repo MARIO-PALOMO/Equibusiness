@@ -13,13 +13,15 @@ declare var $: any;
 @Component({
   selector: 'app-validacion',
   templateUrl: './validacion.component.html',
-  styleUrls: ['./validacion.component.css']
+  styleUrls: ['./validacion.component.css'],
+  providers: [ValidacionCotizadorPipe]
 })
 export class ValidacionComponent implements OnInit {
 
   usuario : any = [];
 
-  constructor(private spinner: NgxSpinnerService, private conexion: ApiService,private sesion: SesionService) { }
+  constructor(private spinner: NgxSpinnerService, private conexion: ApiService,private sesion: SesionService,
+    public validador: ValidacionCotizadorPipe) { }
 
   public Excepciones : any;
   public Identificacion: any;
@@ -58,8 +60,9 @@ export class ValidacionComponent implements OnInit {
     console.log(this.Excepciones);
     console.log(this.Identificacion);
     console.log(this.brokerSeleccionado);
-
+    
     for (let index = 0; index < this.Excepciones.length; index++) {
+     
       this.lstReglasGenerales = {
         "Igual" : "",
         "Mayor" : "",
@@ -69,6 +72,11 @@ export class ValidacionComponent implements OnInit {
         "IdBroker" : this.brokerSeleccionado
       }      
     }
+    
+    setTimeout(() => {
+      this.validador.mostrarAlertaCorrecta("Proceso realizado exitosamente", this.usuario.broker.Color); 
+    }, 2000);
+    
     console.log(this.lstReglasGenerales)
 
   }

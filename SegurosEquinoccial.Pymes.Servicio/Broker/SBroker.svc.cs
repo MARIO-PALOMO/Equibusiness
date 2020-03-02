@@ -537,7 +537,6 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return CBroReportes.ReporteListarEmisionesBroker(IdBroker, estado);
         }
 
-
         public string ReporteCiudadBroker(string IdBroker)
         {
             return CBroReportes.ReporteCiudadBroker(IdBroker);
