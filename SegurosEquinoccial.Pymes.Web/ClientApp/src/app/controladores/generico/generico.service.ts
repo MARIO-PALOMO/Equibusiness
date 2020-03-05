@@ -905,5 +905,4 @@ export class GenericoService {
       );
     });
   }
-
 }

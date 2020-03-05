@@ -109,7 +109,7 @@ export class CotizacionReporteComponent implements OnInit {
   public enviarEmailReporteCliente() {
     var destinatario = this.datosCotizacion.Empresa.Email;
     var asunto = this.datosCotizacion.Broker.RazonSocial + " | " + "COTIZACIÓN N° " + this.datosCotizacion.Codigo;
-    var url = this.variables.obtenerCredenciales("").conexionWeb + "/cotizacion?IdBroker=" + this.usuario.broker.IdBroker + "&IdContenido=" + this.contenido.IdContenido + "&IdCotizacion=" + this.contenido.IdCotizacion + "&IdDireccion=" + this.contenido.IdDireccion + "&IdVehiculos=" + this.contenido.IdVehiculos + "&IdEmpresa=" + this.cotizacion.idEmpresa + "&Foto=" + "Foto" + "&Color=" + this.usuario.broker.Color + "&Tipo=" + 1;
+    var url = this.variables.ObtenerCredenciales("").conexionWeb + "/cotizacion?IdBroker=" + this.usuario.broker.IdBroker + "&IdContenido=" + this.contenido.IdContenido + "&IdCotizacion=" + this.contenido.IdCotizacion + "&IdDireccion=" + this.contenido.IdDireccion + "&IdVehiculos=" + this.contenido.IdVehiculos + "&IdEmpresa=" + this.cotizacion.idEmpresa + "&Foto=" + "Foto" + "&Color=" + this.usuario.broker.Color + "&Tipo=" + 1;
     var cuerpo = this.email.generarEmailReporte(this.datosCotizacion.Empresa.RazonSocial, this.datosCotizacion.Codigo, this.datosCotizacion.PrimaTotal, url, this.usuario.broker.Color, this.usuario.broker.RazonSocial);
     this.enviarCorreoElectronico(destinatario, asunto, cuerpo);
   }
@@ -117,7 +117,7 @@ export class CotizacionReporteComponent implements OnInit {
   public enviarEmailReporteUsuario() {
     var destinatario = this.usuario.Email;
     var asunto = this.datosCotizacion.Broker.RazonSocial + " | " + "COTIZACIÓN N° " + this.datosCotizacion.Codigo;
-    var url = this.variables.obtenerCredenciales("").conexionWeb + "/cotizacion?IdBroker=" + this.usuario.broker.IdBroker + "&IdContenido=" + this.contenido.IdContenido + "&IdCotizacion=" + this.contenido.IdCotizacion + "&IdDireccion=" + this.contenido.IdDireccion + "&IdVehiculos=" + this.contenido.IdVehiculos + "&IdEmpresa=" + this.cotizacion.idEmpresa + "&Foto=" + "Foto" + "&Color=" + this.usuario.broker.Color + "&Tipo=" + 2;
+    var url = this.variables.ObtenerCredenciales("").conexionWeb + "/cotizacion?IdBroker=" + this.usuario.broker.IdBroker + "&IdContenido=" + this.contenido.IdContenido + "&IdCotizacion=" + this.contenido.IdCotizacion + "&IdDireccion=" + this.contenido.IdDireccion + "&IdVehiculos=" + this.contenido.IdVehiculos + "&IdEmpresa=" + this.cotizacion.idEmpresa + "&Foto=" + "Foto" + "&Color=" + this.usuario.broker.Color + "&Tipo=" + 2;
     var cuerpo = this.email.generarEmailReporte(this.datosCotizacion.Empresa.RazonSocial, this.datosCotizacion.Codigo, this.datosCotizacion.PrimaTotal, url, this.usuario.broker.Color, this.usuario.broker.RazonSocial);
     this.enviarCorreoElectronico(destinatario, asunto, cuerpo);
   }

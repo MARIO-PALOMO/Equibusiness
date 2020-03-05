@@ -64,6 +64,7 @@
     <Compile Include="Broker\DBroCotizacionResultado.cs" />
     <Compile Include="Broker\DBroDireccion.cs" />
     <Compile Include="Broker\DBroEmpresa.cs" />
+    <Compile Include="Broker\DBroExcepciones.cs" />
     <Compile Include="Broker\DBroFormaPago.cs" />
     <Compile Include="Broker\DBrokerRamo.cs" />
     <Compile Include="Broker\DBroProvincia.cs" />

@@ -621,6 +621,13 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "consultar/catalogo/provincias")]
         List<EBroCatalogoProvincias> BroConsultaCatalogoProvincias();
+
+        // CREACION DE EXCEPCIONES 
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "gestion/excepciones/crear")]
+        int BroGestionExcepciones(EBroExcepciones excepcion);
+    
     }
 
 }

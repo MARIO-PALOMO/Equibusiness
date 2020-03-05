@@ -21,7 +21,7 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-6" style="padding-top: 15px; padding-bottom: 15px;">
-                    <h5>Ingrese la Identificación del Cliente </h5>
+                    <h5>Identificación del Cliente </h5>
                   </div>
                 </div>
 
@@ -36,7 +36,7 @@
 
                 <div class="row">
                   <div class="col-md-6">
-                    <h5>Seleccione el Broker</h5>
+                    <h5>Seleccione la Versión de Uso</h5>
                   </div>
                   <div class="col-md-6">
                     <h5>Seleccione las validaciones a evadir</h5>
@@ -46,7 +46,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionado" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" [valuePrimitive]="true"
+                      [valueField]="'IdBroker'" [valuePrimitive]="true" (ngModelChange)="consultarBrokers()"
                       style="width: 100%; font-size: 13px !important; " [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
                         <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>

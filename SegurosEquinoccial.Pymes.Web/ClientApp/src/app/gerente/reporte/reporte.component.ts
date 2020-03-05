@@ -4,7 +4,6 @@ import { ApiService } from '../../servicios/api/api.service';
 import { SesionService } from '../../servicios/sesion/sesion.service';
 import { ValidacionCotizadorPipe } from '../../pipes/gestion-validacion-cotizador/validacion-cotizador.pipe';
 import { Chart } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
@@ -376,12 +375,6 @@ export class ReporteComponent implements OnInit {
           display: true,
           text: titulo
         },
-        tooltips: {
-          xPadding: 10,
-          yPadding: 10,
-          xAlign: -100,
-          yAlign: "center",
-        },
         animation: {
           onComplete: function () {
             var chartInstance = this.chart,
@@ -394,7 +387,7 @@ export class ReporteComponent implements OnInit {
               var meta = chartInstance.controller.getDatasetMeta(i);
               meta.data.forEach(function (bar, index) {
                 var data = dataset.data[index];
-                ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                ctx.fillText(data, bar._model.x, bar._model.y +25);
               });
             });
           }
@@ -445,12 +438,6 @@ export class ReporteComponent implements OnInit {
           display: true,
           text: titulo
         },
-        tooltips: {
-          xPadding: 10,
-          yPadding: 10,
-          xAlign: +100,
-          yAlign: +100,
-        },
         animation: {
           onComplete: function () {
             var chartInstance = this.chart,
@@ -462,7 +449,7 @@ export class ReporteComponent implements OnInit {
               var meta = chartInstance.controller.getDatasetMeta(i);
               meta.data.forEach(function (bar, index) {
                 var data = dataset.data[index];
-                ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                ctx.fillText(data, bar._model.x, bar._model.y +25);
               });
             });
           }

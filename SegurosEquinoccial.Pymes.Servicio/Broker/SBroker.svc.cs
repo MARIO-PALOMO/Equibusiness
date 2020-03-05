@@ -13,6 +13,7 @@ using SegurosEquinoccial.Pymes.Controlador.Polizas.Multiriesgo;
 using SegurosEquinoccial.Pymes.Controlador.Polizas.Pago;
 using SegurosEquinoccial.Pymes.Controlador.Polizas.Validaciones;
 using SegurosEquinoccial.Pymes.Controlador.Polizas.Vehiculos;
+using SegurosEquinoccial.Pymes.Datos.Broker;
 using SegurosEquinoccial.Pymes.Entidad.Administracion;
 using SegurosEquinoccial.Pymes.Entidad.Auxiliares;
 using SegurosEquinoccial.Pymes.Entidad.Broker;
@@ -565,11 +566,16 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         {
             return CBroReportes.DetalleValoresCotizacionesBrokerCiudad(datos);
         }
-
-
+        
         public string DetalleValoresEmisionesBrokerCiudad(EBroReporteDetalleValoresBroker datos)
         {
             return CBroReportes.DetalleValoresEmisionesBrokerCiudad(datos);
         }
+        
+        public int BroGestionExcepciones(EBroExcepciones excepcion)
+        {
+            return DBroExcepciones.BroGestionExcepciones(excepcion);
+        }
+
     }
 }

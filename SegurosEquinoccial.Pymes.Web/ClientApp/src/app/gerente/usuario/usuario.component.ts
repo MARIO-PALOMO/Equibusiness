@@ -307,9 +307,6 @@ export class UsuarioComponent implements OnInit {
   }
 
   public gestionUsuario() {
-
-    console.log(this.Corredores,);
-
     this.fmrUsuario.rol.IdRol = this.IdRol.value;
     this.fmrUsuario.broker.IdBroker = this.IdBroker.IdBroker;
     this.fmrUsuario.IdPadre = this.IdPadre.IdUsuario;
@@ -319,9 +316,9 @@ export class UsuarioComponent implements OnInit {
     this.fmrUsuario.CodigoPuntoVenta = this.Sucursal.CodigoPuntoVenta;
     this.fmrUsuario.CodigoSucursal = this.Sucursal.CodigoSucursal;
     this.fmrUsuario.Corredores = "0";//this.Corredores == "" ? 0 : this.Corredores.value;
-    this.fmrUsuario.Comision = 20;//this.Comision == "" ? 20 : this.Comision.value;
-
-    console.log(this.fmrUsuario);
+    this.fmrUsuario.Comision = this.fmrUsuario.broker.IdBroker == 1 ? 25 : this.fmrUsuario.CodigoAgente == "99" ? 0 : 20;//this.Comision == "" ? 20 : this.Comision.value;
+    
+    console.log("Usuario Prueba \n ",this.fmrUsuario);
 
     if (this.validador.gestionValidarFormularioUsuarios(this.fmrUsuario, this.usuario.broker.Color)) {
       this.spinner.show();

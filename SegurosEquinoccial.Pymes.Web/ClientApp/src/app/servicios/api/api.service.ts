@@ -17,7 +17,7 @@ export class ApiService extends VariablesGlobales {
   constructor(private http: HttpClient, private router: Router) {
     super();
 
-    this.url = this.obtenerCredenciales("").conexionAPI;
+    this.url = this.ObtenerCredenciales("").conexionAPI;
   }
 
   post(endpoint: string, body: any, token: any): Observable<any> {
@@ -63,7 +63,7 @@ export class ApiService extends VariablesGlobales {
         "Authorization": "A1TLHztUKEZRl5YnMU8fqnFcyFMsIXeF"
       })
     };
-    return this.http.post(this.obtenerCredenciales("").conexionAPILinkPago + "" + endpoint, body, httpOptions).pipe(retry(3));;
+    return this.http.post(this.ObtenerCredenciales("").conexionAPILinkPago + "" + endpoint, body, httpOptions).pipe(retry(3));;
   }
 
   getPay(endpoint: string, params?: any, reqOpts?: any): Observable<any> {
@@ -87,7 +87,7 @@ export class ApiService extends VariablesGlobales {
       })
     };
 
-    return this.http.get(this.obtenerCredenciales("").conexionAPILinkPago + "" + endpoint, reqOpts).pipe(retry(3));;
+    return this.http.get(this.ObtenerCredenciales("").conexionAPILinkPago + "" + endpoint, reqOpts).pipe(retry(3));;
   }
 
   error(errores: any) {

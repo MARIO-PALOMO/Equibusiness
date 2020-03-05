@@ -4411,9 +4411,9 @@ export class CotizacionComponent implements OnInit {
   public regenerarPagoTarjeta(forma) {
     var url = "";
     if (forma == 1) {
-      url = this.varGlobales.obtenerCredenciales("").conexionLinkPago + "?c=" + btoa(this.FormaPago.IdPago + "") + "&p=" + this.usuario.broker.Pago;
+      url = this.varGlobales.ObtenerCredenciales("").conexionLinkPago + "?c=" + btoa(this.FormaPago.IdPago + "") + "&p=" + this.usuario.broker.Pago;
     } else {
-      url = this.varGlobales.obtenerCredenciales("").conexionLinkPago + "?c=" + btoa(this.FormaPago.IdPago + "") + "&p=" + this.usuario.broker.Pago + "&d=corriente";
+      url = this.varGlobales.ObtenerCredenciales("").conexionLinkPago + "?c=" + btoa(this.FormaPago.IdPago + "") + "&p=" + this.usuario.broker.Pago + "&d=corriente";
     }
 
     var ramos = this.globales.generarRamos();
