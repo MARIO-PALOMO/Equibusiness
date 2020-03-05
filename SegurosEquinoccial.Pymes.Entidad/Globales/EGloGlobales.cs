@@ -9,7 +9,7 @@ namespace SegurosEquinoccial.Pymes.Entidad.Globales
 {
     public class EGloGlobales
     {
-        public static string ambiente = "DESARROLLO";
+        public static string ambiente = "PRUEBAS";
 
         public static EAdmCatalogoCredenciales ObtenerCredenciales() 
         {

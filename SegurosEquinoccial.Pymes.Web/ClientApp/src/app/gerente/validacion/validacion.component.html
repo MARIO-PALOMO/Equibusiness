@@ -29,7 +29,8 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <input kendoTextBox type="text" [(ngModel)]="Identificacion" placeholder="Ingrese el número de C.I o R.U.C" 
-                        style="font-size: 13px !important; height: 38px !important; width: 100%;"/>
+                        style="font-size: 13px !important; height: 38px !important; width: 100%;"
+                        (keyup)="Identificacion = validador.formatoCampo(Identificacion, '1234567890', 10, 2)" />
                     </div>
                   </div>
                 </div>
@@ -46,20 +47,21 @@
                 <div class="row">
                   <div class="col-md-6">
                     <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionado" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" [valuePrimitive]="true" (ngModelChange)="consultarBrokers()"
-                      style="width: 100%; font-size: 13px !important; " [placeholder]="'Selecccione un Broker'">
+                      [valueField]="'IdBroker'" style="width: 100%; font-size: 13px !important;" 
+                      [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
                         <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
                       </ng-template>
                     </kendo-combobox>
                   </div>
                   <div class="col-md-6">
-                    <kendo-multiselect [data]="lstExcepciones" [(ngModel)]="Excepciones" [textField]="'text'"
-                      [valueField]="'value'" [placeholder]="'Seleccionar las excepciones'" style="font-size: 13px !important;">
-                      <ng-template kendoMultiSelectItemTemplate let-dataItem>
-                        <span class="class-combo" style="padding-left: 10px !important; font-size: 13px !important;">- {{ dataItem.text }}</span>
+                    <kendo-combobox [data]="lstExcepciones" [(ngModel)]="Excepciones" [textField]="'text'"
+                      [valueField]="'value'" [placeholder]="'Seleccionar la excepción'" 
+                      style="width: 100%; font-size: 13px !important; ">
+                      <ng-template kendoComboBoxItemTemplate let-dataItem>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.text }}</span>
                       </ng-template>
-                    </kendo-multiselect>
+                    </kendo-combobox>
                   </div>
                 </div>
 

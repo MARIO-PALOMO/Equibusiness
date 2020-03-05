@@ -64,7 +64,6 @@ export class ValidacionComponent implements OnInit {
   }
 
   public crearExcepciones() {
-
     if (this.Identificacion == undefined) {
       this.validador.mostrarAlerta("Llene el campo Identificación", this.usuario.broker.Color);
     } else if (this.brokerSeleccionado == undefined) {
@@ -72,46 +71,29 @@ export class ValidacionComponent implements OnInit {
     } else if (this.Excepciones == undefined || this.Excepciones == "") {
       this.validador.mostrarAlerta("Elija por lo menos una excepción para este cliente.", this.usuario.broker.Color);
     } else {
+      this.lstReglasGenerales = {
+        "Identificador": 1,
+        "IdBroker": this.brokerSeleccionado.IdBroker,
+        "Nombre": this.Identificacion + "-" + this.Excepciones.text
+      }
       this.spinner.show();
-      for (let i = 0; i < this.Excepciones.length; i++) {
-        this.lstReglasGenerales = {
-          "Identificador": 1,
-          "IdBroker": this.brokerSeleccionado,
-          "Nombre": this.Identificacion + "-" + this.Excepciones[i].text
-        }
-        this.conexion.post('Broker/SBroker.svc/gestion/excepciones/crear', this.lstReglasGenerales, this.usuario.Uid).subscribe(
-          (res: any) => {
-            console.log(res);
-            this.spinner.hide();
-            setTimeout(() => {
-              this.validador.mostrarAlertaCorrecta("Proceso realizado exitosamente", this.usuario.broker.Color);
-            }, 1500);
-          },
-          err => {
-            console.log(err);
-            this.spinner.hide();
-            this.conexion.error(err);
-          }
-        );
-      } 
-
-      
-    }
-    /*    
-    this.spinner.show();
-    for (let index = 0; index < this.Excepciones.length; index++) {
-      this.generico.verificarReglasGenerales(this.brokerSeleccionado, this.Identificacion + "-" + this.Excepciones[index].text).then(reglaC => {
-        this.spinner.hide();
-        if (reglaC.Broker == null) {
- 
-          this.lstReglasGenerales = {
-            "Identificador": 1,
-            "IdBroker": this.brokerSeleccionado,
-            "Nombre": this.Identificacion + "-" + this.Excepciones[index].text
-          }
-          
+      this.generico.verificarReglasGenerales(this.brokerSeleccionado.IdBroker,  this.lstReglasGenerales.Nombre).then(excepcion => {
+        if (excepcion.Broker == null) {
+          this.conexion.post('Broker/SBroker.svc/gestion/excepciones/crear', this.lstReglasGenerales, this.usuario.Uid).subscribe(
+            (res: any) => {
+              this.spinner.hide();
+              console.log(res);
+              this.validador.mostrarAlertaCorrecta("Se ha creado la excepción exitosamente para la versión de uso "+this.brokerSeleccionado.RazonSocial, this.usuario.broker.Color);
+            },
+            err => {
+              this.spinner.hide();
+              console.log(err);              
+              this.conexion.error(err);
+            }
+          );
         } else {
-          this.validador.mostrarAlerta("El Cliente ya tiene una excepción registrada con otro  ", this.usuario.broker.Color);
+          this.spinner.hide();
+          this.validador.mostrarAlerta("El Cliente ya tiene registrada esta excepción para la vesión de uso "+this.brokerSeleccionado.RazonSocial, this.usuario.broker.Color);
         }
       }).catch(err => {
         this.spinner.hide();
@@ -119,13 +101,6 @@ export class ValidacionComponent implements OnInit {
         this.conexion.error(err);
       });
     }
-    setTimeout(() => {
-      this.validador.mostrarAlertaCorrecta("Proceso realizado exitosamente", this.usuario.broker.Color);
-      this.Identificacion = "";
-      this.lstBrokers = [];
-      this.lstExcepciones = [];
-    }, 1500);
- */
   }
 
   // GESTIÓN DE BOTON COLOR 

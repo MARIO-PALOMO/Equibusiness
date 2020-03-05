@@ -890,7 +890,7 @@ export class GenericoService {
       );
     });
   }
-
+  
   public verificarReglasGenerales(idBroker, nombre) {
     return new Promise<any>((resolve, reject) => {
       this.conexion.get('Broker/SBroker.svc/broker/reglas/generales/consultar?broker=' + idBroker + '&nombre=' + nombre, this.usuario.Uid).subscribe(
