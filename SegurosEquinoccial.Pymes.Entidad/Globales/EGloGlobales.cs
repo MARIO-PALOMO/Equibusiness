@@ -9,14 +9,14 @@ namespace SegurosEquinoccial.Pymes.Entidad.Globales
 {
     public class EGloGlobales
     {
-        public static string ambiente = "PRUEBAS";
+        public static string ambiente = "DESARROLLO";
 
         public static EAdmCatalogoCredenciales ObtenerCredenciales() 
         {
             EAdmCatalogoCredenciales reCredenciales = new EAdmCatalogoCredenciales();
             if (ambiente == "DESARROLLO")
             {
-                reCredenciales.HostDB = "10.10.30.28";
+                reCredenciales.HostDB = "10.10.30.32";
                 reCredenciales.NameDB = "CotizadorBackup";
                 reCredenciales.UserDB = "sa";
                 reCredenciales.PasswordDB = "123";

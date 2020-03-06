@@ -73,17 +73,18 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 {
                     rsReporteCotizacionesBroker = new EBroReporteCotizaciones();
 
-                    rsReporteCotizacionesBroker.A_Broker = rdr["Broker"].ToString();
+                    rsReporteCotizacionesBroker.A_Version = rdr["Broker"].ToString();
                     rsReporteCotizacionesBroker.B_Empresa = rdr["Empresa"].ToString();
                     rsReporteCotizacionesBroker.C_Codigo = rdr["Codigo"].ToString();
                     rsReporteCotizacionesBroker.D_Fecha = rdr["Fecha"].ToString();
                     rsReporteCotizacionesBroker.E_CotizacionYear = rdr["CotizacionYear"].ToString();
                     rsReporteCotizacionesBroker.F_CotizacionMonth = rdr["CotizacionMonth"].ToString();
                     rsReporteCotizacionesBroker.G_Usuario = rdr["Usuario"].ToString();
-                    rsReporteCotizacionesBroker.H_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
-                    rsReporteCotizacionesBroker.I_Tipo = rdr["Tipo"].ToString();
-                    rsReporteCotizacionesBroker.J_Ciudad = rdr["Ciudad"].ToString();
-                    rsReporteCotizacionesBroker.K_Corredor = rdr["Corredor"].ToString();
+                    rsReporteCotizacionesBroker.H_PrimaNeta = rdr["PrimaNeta"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaNeta"]);
+                    rsReporteCotizacionesBroker.I_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
+                    rsReporteCotizacionesBroker.J_Tipo = rdr["Tipo"].ToString();
+                    rsReporteCotizacionesBroker.K_Ciudad = rdr["Ciudad"].ToString();
+                    rsReporteCotizacionesBroker.L_Corredor = rdr["Corredor"].ToString();
                     //rsReporteCotizacionesBroker.L_CodigoAgente = rdr["CodigoAgente"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["CodigoAgente"]);
                     //rsReporteCotizacionesBroker.M_Estado = rdr["Estado"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["Estado"]);
                     //rsReporteCotizacionesBroker.N_IdBroker = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
@@ -127,23 +128,24 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 {
                     rsReporteEmisionesBroker = new EBroReporteEmisiones();
 
-                    rsReporteEmisionesBroker.A_Broker = rdr["Broker"].ToString();
+                    rsReporteEmisionesBroker.A_Version = rdr["Broker"].ToString();
                     rsReporteEmisionesBroker.B_Empresa = rdr["Empresa"].ToString();
                     rsReporteEmisionesBroker.C_Codigo = rdr["Codigo"].ToString();
                     rsReporteEmisionesBroker.D_FechaCotizacion = rdr["FechaCotizacion"].ToString();
                     rsReporteEmisionesBroker.E_CotizacionYear = rdr["CotizacionYear"].ToString();
                     rsReporteEmisionesBroker.F_CotizacionMonth = rdr["CotizacionMonth"].ToString();
                     rsReporteEmisionesBroker.G_Usuario = rdr["Usuario"].ToString();
-                    rsReporteEmisionesBroker.H_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
-                    rsReporteEmisionesBroker.I_Tipo = rdr["Tipo"].ToString();
-                    rsReporteEmisionesBroker.J_Ciudad = rdr["Ciudad"].ToString();
-                    rsReporteEmisionesBroker.K_FechaEmision = rdr["FechaEmision"].ToString();
-                    rsReporteEmisionesBroker.L_EmisionYear = rdr["EmisionYear"].ToString();
-                    rsReporteEmisionesBroker.M_EmisionMonth = rdr["EmisionMonth"].ToString();
-                    rsReporteEmisionesBroker.N_Corredor = rdr["Corredor"].ToString();
-                    //rsReporteEmisionesBroker.O_CodigoAgente = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
-                    //rsReporteEmisionesBroker.P_Estado = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
-                    //rsReporteEmisionesBroker.Q_IdBroker = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
+                    rsReporteEmisionesBroker.H_PrimaNeta = rdr["PrimaNeta"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaNeta"]);
+                    rsReporteEmisionesBroker.I_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
+                    rsReporteEmisionesBroker.J_Tipo = rdr["Tipo"].ToString();
+                    rsReporteEmisionesBroker.K_Ciudad = rdr["Ciudad"].ToString();
+                    rsReporteEmisionesBroker.L_FechaEmision = rdr["FechaEmision"].ToString();
+                    rsReporteEmisionesBroker.M_EmisionYear = rdr["EmisionYear"].ToString();
+                    rsReporteEmisionesBroker.N_EmisionMonth = rdr["EmisionMonth"].ToString();
+                    rsReporteEmisionesBroker.O_Corredor = rdr["Corredor"].ToString();
+                    //rsReporteEmisionesBroker.P_CodigoAgente = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
+                    //rsReporteEmisionesBroker.Q_Estado = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
+                    //rsReporteEmisionesBroker.R_IdBroker = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
 
                     lstReporteEmisionesBroker.Add(rsReporteEmisionesBroker);
 
@@ -369,7 +371,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 + " (SELECT Broker.RazonSocial FROM Broker WHERE Cotizacion.IdBroker = Broker.IdBroker) AS 'Broker', "
                 + " Usuario.Ciudad AS 'Ciudad', "
                 + " COUNT(Broker.IdBroker) as 'Cantidad'," 
-                + " IsNull(SUM(Cotizacion.PrimaTotal),0) AS 'Total' "
+                + " IsNull(SUM(Cotizacion.PrimaNetaTotal),0) AS 'PrimaNeta', "
+                + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'PrimaTotal' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
                 + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker "
@@ -420,7 +423,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 + " (SELECT Broker.RazonSocial FROM Broker WHERE Cotizacion.IdBroker = Broker.IdBroker) AS 'Broker', "
                 + " Usuario.Ciudad AS 'Ciudad', " 
                 + " COUNT(Broker.IdBroker) as 'Cantidad', "
-                + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'Total' "
+                + " IsNull(SUM(Cotizacion.PrimaNetaTotal),0) AS 'PrimaNeta', "
+                + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'PrimaTotal' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
                 + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker "

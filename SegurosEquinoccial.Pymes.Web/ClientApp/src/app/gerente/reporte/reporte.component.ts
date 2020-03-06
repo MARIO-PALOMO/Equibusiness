@@ -51,6 +51,9 @@ export class ReporteComponent implements OnInit {
   public totalCotizaciones: any;
   public totalEmisiones: any;
 
+  public totalPrimaNetaCotizaciones: any;
+  public totalPrimaNetaEmisiones: any;
+
   public rsBroker = [];
 
 
@@ -122,6 +125,8 @@ export class ReporteComponent implements OnInit {
             this.lstDetalleValoresEmisionesBrokerCiudad = [];
             this.totalCotizaciones = [];
             this.totalEmisiones = [];
+            this.totalPrimaNetaCotizaciones= [];
+            this.totalPrimaNetaEmisiones= [];
           } else {
             this.mensaje.mostrarAlertaInformativa('El broker seleccionado no posee cotizaciones.', this.usuario.broker.Color);
             this.filtros.lstCiudadesCotizadas = [];
@@ -153,6 +158,8 @@ export class ReporteComponent implements OnInit {
             this.lstDetalleValoresEmisionesBrokerCiudad = [];
             this.totalCotizaciones = [];
             this.totalEmisiones = [];
+            this.totalPrimaNetaCotizaciones= [];
+            this.totalPrimaNetaEmisiones= [];
           } else {
             this.mensaje.mostrarAlertaInformativa('El broker seleccionado no posee emisiones.', this.usuario.broker.Color);
             this.filtros.lstCiudadesEmitidas = [];
@@ -167,7 +174,6 @@ export class ReporteComponent implements OnInit {
       );
     }
   }
-
 
   public CargarTablaDetalleValores(broker: any) {
     if (broker == "") {
@@ -197,16 +203,25 @@ export class ReporteComponent implements OnInit {
         if (res != "") {
           this.lstDetalleValoresCotizacionesBrokerCiudad = JSON.parse(res);
           var valor = 0;
+          var valor3 = 0;
           for (let cotizaciones of this.lstDetalleValoresCotizacionesBrokerCiudad) {
-            valor += parseFloat(cotizaciones.Total);
+            valor += parseFloat(cotizaciones.PrimaTotal);
+            valor3 += parseFloat(cotizaciones.PrimaNeta);
           }
           this.totalCotizaciones = Math.round(valor * 100) / 100;
           this.totalCotizaciones = this.totalCotizaciones.toFixed(2);
+          this.totalCotizaciones = this.globales.formatearNumero(this.totalCotizaciones,2);
+
+          this.totalPrimaNetaCotizaciones = Math.round(valor3 * 100) / 100;
+          this.totalPrimaNetaCotizaciones = this.totalPrimaNetaCotizaciones.toFixed(2);
+          this.totalPrimaNetaCotizaciones = this.globales.formatearNumero(this.totalPrimaNetaCotizaciones,2);
+
           this.detalleValoresEmisionesBrokerCiudad(datos);
         } else {
           this.mensaje.mostrarAlertaInformativa('El Broker seleccionado no tiene cotizaciones realizadas en el rango de fechas elegidas.', this.usuario.broker.Color);
           this.lstDetalleValoresCotizacionesBrokerCiudad = [];
           this.totalCotizaciones = [];
+          this.totalPrimaNetaCotizaciones = [];
 
           setTimeout(() => {
             this.detalleValoresEmisionesBrokerCiudad(datos);
@@ -231,15 +246,24 @@ export class ReporteComponent implements OnInit {
           this.lstDetalleValoresEmisionesBrokerCiudad = JSON.parse(res);
 
           var valor2 = 0;
+          var valor4 = 0;
           for (let emisiones of this.lstDetalleValoresEmisionesBrokerCiudad) {
-            valor2 += parseFloat(emisiones.Total);
+            valor2 += parseFloat(emisiones.PrimaTotal);
+            valor4 += parseFloat(emisiones.PrimaNeta);
           }
           this.totalEmisiones = Math.round(valor2 * 100) / 100;
           this.totalEmisiones = this.totalEmisiones.toFixed(2);
+          this.totalEmisiones = this.globales.formatearNumero(this.totalEmisiones,2);
+
+          this.totalPrimaNetaEmisiones = Math.round(valor4 * 100) / 100;
+          this.totalPrimaNetaEmisiones = this.totalPrimaNetaEmisiones.toFixed(2);
+          this.totalPrimaNetaEmisiones = this.globales.formatearNumero(this.totalPrimaNetaEmisiones,2);
+
         } else {
           this.mensaje.mostrarAlertaInformativa('El Broker seleccionado no tiene emisiones realizadas en el rango de fechas elegidas.', this.usuario.broker.Color);
           this.lstDetalleValoresEmisionesBrokerCiudad = [];
           this.totalEmisiones = [];
+          this.totalPrimaNetaEmisiones = [];
         }
       },
       err => {
@@ -473,7 +497,6 @@ export class ReporteComponent implements OnInit {
       }
     });
   }
-
 
   public generarGraficoPie(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
     if (this.chartReportePie) this.chartReportePie.destroy();

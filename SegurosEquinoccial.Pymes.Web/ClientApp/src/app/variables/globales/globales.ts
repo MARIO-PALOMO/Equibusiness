@@ -1,6 +1,6 @@
 export class VariablesGlobales {
 
-  public ambiente = "PRUEBAS";
+  public ambiente = "DESARROLLO";
 
   public ObtenerCredenciales(documento) {
 

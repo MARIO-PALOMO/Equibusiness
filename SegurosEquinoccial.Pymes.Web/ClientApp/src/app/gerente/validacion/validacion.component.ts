@@ -13,6 +13,7 @@ declare var $: any;
   styleUrls: ['./validacion.component.css'],
   providers: [ValidacionCotizadorPipe]
 })
+
 export class ValidacionComponent implements OnInit {
 
   usuario: any = [];
@@ -24,6 +25,8 @@ export class ValidacionComponent implements OnInit {
   public Identificacion: any;
   public lstBrokers = [];
   public brokerSeleccionado: any;
+  public archivo : any;
+
 
   public lstReglasGenerales: any = {
     "Identificador": 1,

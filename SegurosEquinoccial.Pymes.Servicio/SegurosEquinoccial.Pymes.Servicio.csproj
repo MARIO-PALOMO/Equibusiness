@@ -68,7 +68,7 @@
     <Content Include="Gestion\SGesTransacciones.svc" />
     <Content Include="Global.asax" />
     <Content Include="Service1.svc" />
-    <None Include="Properties\PublishProfiles\Equi-ProdBPymesApiAppService - ServicioAzurePruebas.pubxml" />
+    <None Include="Properties\PublishProfiles\Equi-ProdBPymesApiAppService - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ServicioProduccion.pubxml" />
     <None Include="Properties\PublishProfiles\ServicioPruebas.pubxml" />
     <None Include="Properties\Settings.settings">

@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { PDFExportModule } from '@progress/kendo-angular-pdf-export';
-import { NgxMaskModule } from 'ngx-mask'
+import { NgxMaskModule } from 'ngx-mask';
 
 import { AppComponent } from './app.component';
 import { NavBarAdministracionComponent } from './administracion/complementos/nav-bar/nav-bar.component';
@@ -83,6 +83,7 @@ import { ReporteComponent } from './gerente/reporte/reporte.component';
 import { MultiViewCalendarModule } from '@progress/kendo-angular-dateinputs';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { ValidacionComponent } from './gerente/validacion/validacion.component';
+import { UploadModule } from '@progress/kendo-angular-upload';
 
 @NgModule({
   declarations: [
@@ -151,6 +152,7 @@ import { ValidacionComponent } from './gerente/validacion/validacion.component';
     TooltipModule,
     NgxSpinnerModule,
     PDFExportModule,
+    UploadModule,
     MultiViewCalendarModule,
     DatePickerModule,
     InputsModule,

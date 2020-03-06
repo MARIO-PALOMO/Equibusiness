@@ -39,6 +39,7 @@ export class UsuarioComponent implements OnInit {
   public Corredores = null;
   public Comision = null;
   public Ciudad: any;
+  public Email: any;
 
   public lstRol: Array<{ text: string, value: number }> = [
     { text: "ADMINISTRADOR", value: 2 },
@@ -307,6 +308,8 @@ export class UsuarioComponent implements OnInit {
   }
 
   public gestionUsuario() {
+
+    this.Email = this.fmrUsuario.Email.split('@');
     this.fmrUsuario.rol.IdRol = this.IdRol.value;
     this.fmrUsuario.broker.IdBroker = this.IdBroker.IdBroker;
     this.fmrUsuario.IdPadre = this.IdPadre.IdUsuario;
@@ -315,11 +318,9 @@ export class UsuarioComponent implements OnInit {
     this.fmrUsuario.CodigoTipoAgente = this.CodigoTipoAgente.value;
     this.fmrUsuario.CodigoPuntoVenta = this.Sucursal.CodigoPuntoVenta;
     this.fmrUsuario.CodigoSucursal = this.Sucursal.CodigoSucursal;
-    this.fmrUsuario.Corredores = "0";//this.Corredores == "" ? 0 : this.Corredores.value;
+    this.fmrUsuario.Corredores = this.Email[1] == "segurosequinoccial.com" ? "1" : "0";
     this.fmrUsuario.Comision = this.fmrUsuario.broker.IdBroker == 1 ? 25 : this.fmrUsuario.CodigoAgente == "99" ? 0 : 20;//this.Comision == "" ? 20 : this.Comision.value;
     
-    console.log("Usuario Prueba \n ",this.fmrUsuario);
-
     if (this.validador.gestionValidarFormularioUsuarios(this.fmrUsuario, this.usuario.broker.Color)) {
       this.spinner.show();
       this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', this.fmrUsuario, "").subscribe(
@@ -339,7 +340,7 @@ export class UsuarioComponent implements OnInit {
           this.conexion.error(err);
         }
       );
-    }
+    } 
   }
 
   public limpiarCampos() {
