@@ -326,10 +326,9 @@ export class MapaPipe implements PipeTransform {
             if (status === 'OK') {
               if (results[0]) {
                 var emision = obtenerLocalizacionEmision(results[0].address_components, lstProvinciasCiuidades);
-                console.log(emision);
+              
                 if (emision == undefined) {
                   mostarAlerta("", "La ciudad seleccionada no está disponible.", "info");
-                  alert()
                 } else {
                   lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global"), codigoPais: emision.CodigoPais, codigoDepartameto: emision.CodigoDepartamento, codigoMunicipio: emision.CodigoMunicipio });
                 }

@@ -23,6 +23,46 @@ export class GeneradorService {
 
   public generarXML(datos, pago, clausulas, asegurado, contratante, pagador, items) {
 
+    var Comision: any;
+    if (datos.codigoAgente == 99) {
+      Comision = 0;
+    } else if (datos.codigoAgente == 3) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 101) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 103) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 108) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 109) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 288) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 307) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 308) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 309) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 900) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 902) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 903) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 904) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 998) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 1002) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 1034) {
+      Comision = 25;
+    } else if (datos.codigoAgente == 1063) {
+      Comision = 25;
+    } else {
+      Comision = 20;
+    }
     var xml = `<cabecera xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                 <id_pv>`+ datos.certificado + `</id_pv>
                 <cod_suc>`+ datos.sucursal + `</cod_suc>
@@ -48,7 +88,7 @@ export class GeneradorService {
                 <cod_usuario>USRPYMES</cod_usuario>
                 <fec_ing>`+ datos.fechaDesde + `</fec_ing>
                 <cod_agente>`+ datos.codigoAgente + `</cod_agente>
-                <pje_comision>`+ datos.comision + `</pje_comision>
+                <pje_comision>`+ Comision + `</pje_comision>
                 <cod_usuario_aprob>1</cod_usuario_aprob>
                 <fec_aprob>`+ datos.fechaDesde + `</fec_aprob>
                 <imp_seg_camp>`+ datos.seguroCampesino + `</imp_seg_camp>

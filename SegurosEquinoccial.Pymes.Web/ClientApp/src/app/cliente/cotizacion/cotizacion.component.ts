@@ -1621,19 +1621,7 @@ export class CotizacionComponent implements OnInit {
       this.guardarDirecciones(IdContratante, id, Seleccion);
     }).catch(err => {
       this.spinner.hide();
-      var datos = {
-        IdContratante: IdContratante,
-        IdPagador: 0,
-        IdDireccion: 0,
-        IdVehiculos: 0,
-        IdContenido: 0,
-        IdCotizacion: 0
-      }
-      this.gestionCotizacion.eliminarDatosCotizacion(1, datos).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      console.log(err);
     });
   }
 
@@ -1661,19 +1649,7 @@ export class CotizacionComponent implements OnInit {
       this.guardarVehiculos(IdContratante, IdPagador, id, Seleccion);
     }).catch(err => {
       this.spinner.hide();
-      var datos = {
-        IdContratante: IdContratante,
-        IdPagador: IdPagador,
-        IdDireccion: 0,
-        IdVehiculos: 0,
-        IdContenido: 0,
-        IdCotizacion: 0
-      }
-      this.gestionCotizacion.eliminarDatosCotizacion(2, datos).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      console.log(err);
     });
   }
 
@@ -1701,19 +1677,7 @@ export class CotizacionComponent implements OnInit {
       this.guardarComplementoCotizacion(IdContratante, IdPagador, IdDireccion, id, Seleccion);
     }).catch(err => {
       this.spinner.hide();
-      var datos = {
-        IdContratante: IdContratante,
-        IdPagador: IdPagador,
-        IdDireccion: IdDireccion,
-        IdVehiculos: 0,
-        IdContenido: 0,
-        IdCotizacion: 0
-      }
-      this.gestionCotizacion.eliminarDatosCotizacion(3, datos).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      console.log(err);
     });
   }
 
@@ -1754,19 +1718,6 @@ export class CotizacionComponent implements OnInit {
     }).catch(err => {
       this.spinner.hide();
       console.log(err);
-      var datos = {
-        IdContratante: IdContratante,
-        IdPagador: IdPagador,
-        IdDireccion: IdDireccion,
-        IdVehiculos: IdVehiculos,
-        IdContenido: 0,
-        IdCotizacion: 0
-      }
-      this.gestionCotizacion.eliminarDatosCotizacion(4, datos).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
     });
   }
 
@@ -1779,20 +1730,99 @@ export class CotizacionComponent implements OnInit {
     }
 
     var Corredor: any;
+    var Comision: any;
     if (this.usuario.Corredores == "1") {
       var suc = this.Sucursal.Union.split("-");
+      if (this.Agente.codigoAgente == 99) {
+        Comision = 0;
+      } else if (this.Agente.codigoAgente == 3) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 101) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 103) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 108) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 109) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 288) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 307) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 308) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 309) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 900) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 902) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 903) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 904) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 998) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 1002) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 1034) {
+        Comision = 25;
+      } else if (this.Agente.codigoAgente == 1063) {
+        Comision = 25;
+      } else {
+        Comision = 20;
+      }
       Corredor = {
         Sucursal: suc[0],
         PuntoVenta: suc[1],
-        Comision: this.Comision.value,
+        Comision: Comision,
         TipoAgente: this.TipoAgente.value,
         Agente: this.Agente.codigoAgente
       };
     } else {
+      if (this.usuario.CodigoAgente == 99) {
+        Comision = 0;
+      } else if (this.usuario.CodigoAgente == 3) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 101) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 103) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 108) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 109) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 288) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 307) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 308) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 309) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 900) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 902) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 903) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 904) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 998) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 1002) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 1034) {
+        Comision = 25;
+      } else if (this.usuario.CodigoAgente == 1063) {
+        Comision = 25;
+      } else {
+        Comision = 20;
+      }
       Corredor = {
         Sucursal: this.usuario.CodigoSucursal,
         PuntoVenta: this.usuario.CodigoPuntoVenta,
-        Comision: parseInt(this.usuario.Comision),
+        Comision: Comision,
         TipoAgente: parseInt(this.usuario.CodigoTipoAgente),
         Agente: this.usuario.CodigoAgente
       };
@@ -1823,19 +1853,7 @@ export class CotizacionComponent implements OnInit {
       this.guardarCotizacionResultado(IdContratante, IdPagador, IdDireccion, IdVehiculos, IdContenido, id, Seleccion);
     }).catch(err => {
       this.spinner.hide();
-      var datos = {
-        IdContratante: IdContratante,
-        IdPagador: IdPagador,
-        IdDireccion: IdDireccion,
-        IdVehiculos: IdVehiculos,
-        IdContenido: IdContenido,
-        IdCotizacion: 0
-      }
-      this.gestionCotizacion.eliminarDatosCotizacion(5, datos).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      console.log(err);
     });
   }
 
@@ -1875,21 +1893,8 @@ export class CotizacionComponent implements OnInit {
       this.guardarCotizacionCompromiso(IdContratante, IdPagador, IdDireccion, IdVehiculos, IdContenido, IdCotizacion, Seleccion);
 
     }).catch(err => {
-
       this.spinner.hide();
-      var datos = {
-        IdContratante: IdContratante,
-        IdPagador: IdPagador,
-        IdDireccion: IdDireccion,
-        IdVehiculos: IdVehiculos,
-        IdContenido: IdContenido,
-        IdCotizacion: IdCotizacion
-      }
-      this.gestionCotizacion.eliminarDatosCotizacion(6, datos).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      console.log(err);
     });
   }
 
@@ -1984,37 +1989,11 @@ export class CotizacionComponent implements OnInit {
       }).catch(err => {
         this.spinner.hide();
         console.log(err);
-        var datos = {
-          IdContratante: IdContratante,
-          IdPagador: IdPagador,
-          IdDireccion: IdDireccion,
-          IdVehiculos: IdVehiculos,
-          IdContenido: IdContenido,
-          IdCotizacion: IdCotizacion
-        }
-        this.gestionCotizacion.eliminarDatosCotizacion(6, datos).then(res => {
-          console.log(res);
-        }).catch(err => {
-          console.log(err);
-        });
       });
 
     }).catch(err => {
       this.spinner.hide();
       console.log(err);
-      var datos = {
-        IdContratante: IdContratante,
-        IdPagador: IdPagador,
-        IdDireccion: IdDireccion,
-        IdVehiculos: IdVehiculos,
-        IdContenido: IdContenido,
-        IdCotizacion: IdCotizacion
-      }
-      this.gestionCotizacion.eliminarDatosCotizacion(6, datos).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
     });
   }
 
@@ -2032,7 +2011,7 @@ export class CotizacionComponent implements OnInit {
     var fechaAcual = moment().format("YYYY-MM-DD");
 
     if (this.sucursal_.Agente != "99" && this.sucursal_.Comision == 0) {
-      this.globales.mostarAlertaTiempo("", "La comisión del corredor con código " + this.sucursal_.Agente + " no debe ser 0%", "info");
+      this.globales.mostarAlertaTiempo("", "La comisión del corredor con código " + this.sucursal_.Agente + " no debe ser 0%, por favor comuniquese con su ejecutivo de cuenta.", "info");
     } else {
       if (this.numeroPolizasEmitidas == 0) {
         if (fechaSeleccionada < fechaAcual) {

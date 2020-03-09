@@ -929,7 +929,7 @@ export class InicioClienteComponent implements OnInit {
 
   }
 
-  public ver(){
+  public ver() {
     console.log(this.Comision);
   }
 
@@ -940,20 +940,102 @@ export class InicioClienteComponent implements OnInit {
         if (this.valCotizador.validacionCorredor(this.Sucursal, this.Comision, this.TipoAgente, this.Agente, this.usuario.Corredores, this.usuario.broker.Color)) {
 
           var Corredor: any;
+          var Comision: any;
           if (this.usuario.Corredores == "1") {
             var suc = this.Sucursal.Union.split("-");
+
+            if (this.Agente.codigoAgente == 99) {
+              Comision = 0;
+            } else if (this.Agente.codigoAgente == 3) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 101) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 103) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 108) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 109) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 288) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 307) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 308) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 309) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 900) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 902) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 903) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 904) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 998) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 1002) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 1034) {
+              Comision = 25;
+            } else if (this.Agente.codigoAgente == 1063) {
+              Comision = 25;
+            } else {
+              Comision = 20;
+            }
+
             Corredor = {
               Sucursal: suc[0],
               PuntoVenta: suc[1],
-              Comision: this.Comision.value,
+              Comision: Comision,
               TipoAgente: this.TipoAgente.value,
               Agente: this.Agente.codigoAgente
             };
           } else {
+            if (this.usuario.CodigoAgente == 99) {
+              Comision = 0;
+            } else if (this.usuario.CodigoAgente == 3) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 101) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 103) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 108) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 109) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 288) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 307) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 308) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 309) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 900) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 902) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 903) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 904) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 998) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 1002) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 1034) {
+              Comision = 25;
+            } else if (this.usuario.CodigoAgente == 1063) {
+              Comision = 25;
+            } else {
+              Comision = 20;
+            }
+
             Corredor = {
               Sucursal: this.usuario.CodigoSucursal,
               PuntoVenta: this.usuario.CodigoPuntoVenta,
-              Comision: parseInt(this.usuario.Comision),
+              Comision: Comision,
               TipoAgente: parseInt(this.usuario.CodigoTipoAgente),
               Agente: this.usuario.CodigoAgente
             };

@@ -59,10 +59,7 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     if (corredor == "0") {
       validacion = true;
     } else {
-      if (comision == undefined) {
-        validacion = false;
-        this.mostrarAlerta("Seleccionar Porcentaje de Comisión", color);
-      } else if (tipoAgente == undefined) {
+      if (tipoAgente == undefined) {
         validacion = false;
         this.mostrarAlerta("Seleccionar Tipo de Agente", color);
       } else if (agente == undefined) {
@@ -264,7 +261,7 @@ export class ValidacionCotizadorPipe implements PipeTransform {
   }
 
   public mostrarAlertaDinamica(descripcion: any, tipo, color: any) {
-    
+
     Swal.fire({
       type: tipo,
       text: descripcion,
@@ -314,9 +311,9 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     })
   }
 
-  public gestionValidarFormularioUsuarios(fmrUsuario:any,color:any){
+  public gestionValidarFormularioUsuarios(fmrUsuario: any, color: any) {
     var validacion = true;
-    if (fmrUsuario.Usuario == "") { 
+    if (fmrUsuario.Usuario == "") {
       validacion = false;
       this.mostrarAlerta("Llene el campo Nombre.", color);
     } else if (fmrUsuario.Usuario.length <= 4) {
@@ -352,7 +349,7 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     } else if (fmrUsuario.CodigoPuntoVenta == undefined) {
       validacion = false;
       this.mostrarAlerta("El campo Punto de Venta - Sucursal no puede estar vacío.", color);
-    } else if (fmrUsuario.Comision == null ) {
+    } else if (fmrUsuario.Comision == null) {
       validacion = false;
       this.mostrarAlerta("El campo comisión no puede estar vacío.", color);
     } else if (fmrUsuario.Corredores == "") {
