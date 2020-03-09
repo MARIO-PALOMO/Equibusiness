@@ -68,7 +68,7 @@
     <Content Include="Gestion\SGesTransacciones.svc" />
     <Content Include="Global.asax" />
     <Content Include="Service1.svc" />
-    <None Include="Properties\PublishProfiles\Equi-ProdBPymesApiAppService - Azure-Servicio.pubxml" />
+    <None Include="Properties\PublishProfiles\Equi-ProdBPymesApiAppService - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ServicioProduccion.pubxml" />
     <None Include="Properties\PublishProfiles\ServicioPruebas.pubxml" />
     <None Include="Properties\Settings.settings">
@@ -127,6 +127,10 @@
     <ProjectReference Include="..\SegurosEquinoccial.Pymes.Controlador\SegurosEquinoccial.Pymes.Controlador.csproj">
       <Project>{8a7a98be-c635-4132-af96-afc926a56672}</Project>
       <Name>SegurosEquinoccial.Pymes.Controlador</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SegurosEquinoccial.Pymes.Datos\SegurosEquinoccial.Pymes.Datos.csproj">
+      <Project>{CE4B8E9F-E128-48F6-A5C6-8F897B27DA68}</Project>
+      <Name>SegurosEquinoccial.Pymes.Datos</Name>
     </ProjectReference>
     <ProjectReference Include="..\SegurosEquinoccial.Pymes.Entidad\SegurosEquinoccial.Pymes.Entidad.csproj">
       <Project>{2cd34647-be94-4b76-9835-af079dd550f4}</Project>

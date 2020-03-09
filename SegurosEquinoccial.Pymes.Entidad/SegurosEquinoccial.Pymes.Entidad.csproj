@@ -70,6 +70,7 @@
     <Compile Include="Broker\EBroDerechosEmision.cs" />
     <Compile Include="Broker\EBroDireccion.cs" />
     <Compile Include="Broker\EBroEmpresa.cs" />
+    <Compile Include="Broker\EBroExcepciones.cs" />
     <Compile Include="Broker\EBroFormaPago.cs" />
     <Compile Include="Broker\EBroPagador.cs" />
     <Compile Include="Broker\EBroProvincia.cs" />

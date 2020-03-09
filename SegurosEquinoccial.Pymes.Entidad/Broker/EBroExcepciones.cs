@@ -9,19 +9,16 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
 {
     [DataContract]
     [Serializable]
-    public class EBroReporteDetalleValoresBroker
+    public class EBroExcepciones
     {
         [DataMember]
-        public string Broker { get; set; }
+        public int Identificador { get; set; }
 
         [DataMember]
-        public int Estado { get; set; }
+        public int IdBroker { get; set; }
 
         [DataMember]
-        public string FechaInicio { get; set; }
-
-        [DataMember]
-        public string FechaFin { get; set; }
+        public string Nombre { get; set; } 
 
     }
 }

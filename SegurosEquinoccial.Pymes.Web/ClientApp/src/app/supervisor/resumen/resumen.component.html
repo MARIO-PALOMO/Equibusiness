@@ -26,7 +26,7 @@
                       (ngModelChange)="consultarResumenCotizaciones()">
                       <ng-template kendoMultiSelectItemTemplate let-dataItem>
                         <img class="img-xs rounded-circle" src="{{dataItem.foto}}" alt="IMG">
-                        <span style="padding: 15px">{{ dataItem.texto }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.texto }}</span>
                       </ng-template>
                     </kendo-multiselect>
                   </div>

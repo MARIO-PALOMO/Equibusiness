@@ -28,6 +28,11 @@
             <i class="mdi mdi-file-multiple eicon"></i> Reportes</a>
         </li>
         <li *ngIf="panelMenu.menu" class="contenido-web"
+          [ngStyle]="{'background-color': url == '/gerencia/validacion' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
+            [routerLink]="['/gerencia/validacion']">
+            <i class="mdi mdi-checkbox-multiple-marked-outline eicon"></i> Validaciones</a>
+        </li>
+        <li *ngIf="panelMenu.menu" class="contenido-web"
           [ngStyle]="{'background-color': url == '/gerencia/usuario' ? 'rgba(8, 8, 8, 0.2)': ''}"><a
             [routerLink]="['/gerencia/usuario']">
             <i class="mdi mdi-account-multiple-plus eicon"></i> Usuarios</a>
@@ -73,6 +78,10 @@
   <a [routerLink]="['/gerencia/reporte']"
     [ngStyle]="{'background-color': url == '/gerencia/reporte' ? 'rgba(8, 8, 8, 0.2)': ''}">
     <i class="mdi mdi-file-multiple eicon-sidebar"></i>Reportes
+  </a>
+  <a [routerLink]="['/gerencia/validacion']"
+    [ngStyle]="{'background-color': url == '/gerencia/validacion' ? 'rgba(8, 8, 8, 0.2)': ''}">
+    <i class="mdi mdi-checkbox-multiple-marked-outline eicon-sidebar"></i>Validaciones
   </a>
   <a [routerLink]="['/gerencia/usuario']"
     [ngStyle]="{'background-color': url == '/gerencia/usuario' ? 'rgba(8, 8, 8, 0.2)': ''}">

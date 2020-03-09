@@ -6,6 +6,7 @@ import { process, State } from '@progress/kendo-data-query';
 import { GridDataResult, DataStateChangeEvent } from '@progress/kendo-angular-grid';
 import { ValidacionCotizadorPipe } from '../../pipes/gestion-validacion-cotizador/validacion-cotizador.pipe';
 import Swal from 'sweetalert2';
+import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
 
 declare var $: any;
 
@@ -13,7 +14,7 @@ declare var $: any;
   selector: 'app-usuario',
   templateUrl: './usuario.component.html',
   styleUrls: ['./usuario.component.css'],
-  providers: [ValidacionCotizadorPipe]
+  providers: [ValidacionCotizadorPipe,GlobalesPipe]
 })
 export class UsuarioComponent implements OnInit {
 
@@ -29,23 +30,32 @@ export class UsuarioComponent implements OnInit {
   public data: any;
 
   public IdRol: any;
+  
   public IdBroker: any;
   public IdPadre: any;
   public CodigoAgente: any;
   public Sucursal: any;
   public CodigoTipoAgente: any;
   public Corredores = null;
+  public Comision = null;
   public Ciudad: any;
+  public Email: any;
 
   public lstRol: Array<{ text: string, value: number }> = [
-    { text: "PERFIL 1", value: 2 },
-    { text: "PERFIL 2", value: 4 },
-    { text: "PERFIL 3", value: 3 }
+    { text: "ADMINISTRADOR", value: 2 },
+    { text: "SUPERVISOR", value: 4 },
+    { text: "COTIZADOR", value: 3 }
   ];
 
   public lstCorredores: Array<{ text: string, value: number }> = [
     { text: "NO", value: 0 },
     { text: "SI", value: 1 }
+  ];
+
+  public lstComisiones: Array<{ text: string, value: number }> = [
+    { text: " 0 %", value: 0 },
+    { text: "20 %", value: 20 },
+    { text: "25 %", value: 25 }
   ];
 
   public lstPadres = [];
@@ -90,6 +100,7 @@ export class UsuarioComponent implements OnInit {
     "Usuario": "",
     "UsuarioPadre": null,
     "Corredores": "",
+    "Cedula" : "",
     "broker": {
       "IdBroker": 0
     },
@@ -105,7 +116,8 @@ export class UsuarioComponent implements OnInit {
   public contrasenaGuardar = false;
   public contrasenaModificar = false;
 
-  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, public validador: ValidacionCotizadorPipe) {
+  constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, 
+              public validador: ValidacionCotizadorPipe, public globales: GlobalesPipe) {
 
   }
 
@@ -137,14 +149,12 @@ export class UsuarioComponent implements OnInit {
 
   public listarUsuarios() {
     this.spinner.show();
-
     this.lstUsuarios = [];
-
     this.conexion.get('Broker/SBroker.svc/consultar/usuarios', this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
         this.lstUsuarios = res;
-        this.data = this.lstUsuarios.slice();
+        this.data = this.lstUsuarios.slice();        
         this.gridData = process(this.lstUsuarios, this.state);
         this.listarCiudades();
       },
@@ -270,6 +280,7 @@ export class UsuarioComponent implements OnInit {
     this.fmrUsuario.Comision = parseInt(datos.Comision);
     this.IdRol = { text: "", value: this.fmrUsuario.rol.IdRol };
     this.Corredores = { text: datos.Corredores == 1 ? "SI" : "NO", value: parseInt(datos.Corredores) };
+    this.Comision =   { text: datos.Comision == 0 ? " 0 %" : datos.Comision == 20 ? "20 %" : "25 %", value: parseInt(datos.Comision) };
     this.IdBroker = datos.broker;
     this.IdPadre = { Usuario: "", IdUsuario: datos.IdPadre };
     this.Ciudad = { Nombre: datos.Ciudad };
@@ -297,7 +308,8 @@ export class UsuarioComponent implements OnInit {
   }
 
   public gestionUsuario() {
-    
+
+    this.Email = this.fmrUsuario.Email.split('@');
     this.fmrUsuario.rol.IdRol = this.IdRol.value;
     this.fmrUsuario.broker.IdBroker = this.IdBroker.IdBroker;
     this.fmrUsuario.IdPadre = this.IdPadre.IdUsuario;
@@ -306,12 +318,19 @@ export class UsuarioComponent implements OnInit {
     this.fmrUsuario.CodigoTipoAgente = this.CodigoTipoAgente.value;
     this.fmrUsuario.CodigoPuntoVenta = this.Sucursal.CodigoPuntoVenta;
     this.fmrUsuario.CodigoSucursal = this.Sucursal.CodigoSucursal;
-    this.fmrUsuario.Corredores = this.Corredores == undefined ? "" : this.Corredores.value;
+    this.fmrUsuario.Corredores = this.Email[1] == "segurosequinoccial.com" ? "1" : "0";
+    this.fmrUsuario.Comision = this.fmrUsuario.broker.IdBroker == 1 ? 25 : this.fmrUsuario.CodigoAgente == "99" ? 0 : 20;//this.Comision == "" ? 20 : this.Comision.value;
+    
     if (this.validador.gestionValidarFormularioUsuarios(this.fmrUsuario, this.usuario.broker.Color)) {
       this.spinner.show();
       this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', this.fmrUsuario, "").subscribe(
         (res: any) => {
           this.spinner.hide();
+          if(res != undefined){
+            this.validador.mostrarAlertaCorrecta("Proceso realizado exitosamente", this.usuario.broker.Color);
+          }else{
+            this.validador.mostrarAlerta("Surgió un problema al crear el usuario", this.usuario.broker.Color);
+          }
           $("#modalUsuario").css("display", "none");
           this.listarBroker();
         },
@@ -321,7 +340,7 @@ export class UsuarioComponent implements OnInit {
           this.conexion.error(err);
         }
       );
-    }
+    } 
   }
 
   public limpiarCampos() {
@@ -345,6 +364,7 @@ export class UsuarioComponent implements OnInit {
       "Usuario": "",
       "UsuarioPadre": null,
       "Corredores": "",
+      "Cedula" : "",
       "broker": {
         "IdBroker": 0
       },
@@ -360,6 +380,8 @@ export class UsuarioComponent implements OnInit {
     this.CodigoTipoAgente = {};
     this.CodigoAgente = {};;
     this.Sucursal = {};
+    this.Comision = {};
+    this.Corredores = {};
   }
 
   public abrirModal() {
@@ -405,6 +427,7 @@ export class UsuarioComponent implements OnInit {
       "Usuario": "",
       "UsuarioPadre": null,
       "Corredores": "",
+      "Cedula" : "",
       "broker": {
         "IdBroker": 0
       },

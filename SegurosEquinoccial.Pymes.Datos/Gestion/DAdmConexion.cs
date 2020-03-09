@@ -19,7 +19,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Gestion
 
         public static void Conectar()
         {
-            EAdmCatalogoCredenciales credenciales = EGloGlobales.obtenerCredenciales();
+            EAdmCatalogoCredenciales credenciales = EGloGlobales.ObtenerCredenciales();
             cnn = new SqlConnection("Data Source=" + credenciales.HostDB + ";Initial Catalog=" + credenciales.NameDB + ";User ID=" + credenciales.UserDB + ";Password=" + credenciales.PasswordDB + ";");
             cnn.Open();
         }

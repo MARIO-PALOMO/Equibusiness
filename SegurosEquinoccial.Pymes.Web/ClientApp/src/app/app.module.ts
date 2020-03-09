@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { PDFExportModule } from '@progress/kendo-angular-pdf-export';
-import { NgxMaskModule } from 'ngx-mask'
+import { NgxMaskModule } from 'ngx-mask';
 
 import { AppComponent } from './app.component';
 import { NavBarAdministracionComponent } from './administracion/complementos/nav-bar/nav-bar.component';
@@ -82,6 +82,8 @@ import { GeneradorCompromisosService } from './metodos/generador-compromiso/gene
 import { ReporteComponent } from './gerente/reporte/reporte.component';
 import { MultiViewCalendarModule } from '@progress/kendo-angular-dateinputs';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
+import { ValidacionComponent } from './gerente/validacion/validacion.component';
+import { UploadModule } from '@progress/kendo-angular-upload';
 
 @NgModule({
   declarations: [
@@ -130,7 +132,8 @@ import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
     ZCotizacionReporteEmailUsuarioComponent,
     CotizacionReporteEmailComponent,
     UsuarioComponent,
-    ReporteComponent
+    ReporteComponent,
+    ValidacionComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -149,6 +152,7 @@ import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
     TooltipModule,
     NgxSpinnerModule,
     PDFExportModule,
+    UploadModule,
     MultiViewCalendarModule,
     DatePickerModule,
     InputsModule,
@@ -171,6 +175,7 @@ import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
       { path: 'gerencia/resumen', component: ResumenGerenteComponent },
       { path: 'gerencia/usuario', component: UsuarioComponent },
       { path: 'gerencia/reporte', component: ReporteComponent},
+      { path: 'gerencia/validacion', component: ValidacionComponent},
       { path: 'cotizacion', component: CotizacionReporteEmailComponent }
     ])
   ],

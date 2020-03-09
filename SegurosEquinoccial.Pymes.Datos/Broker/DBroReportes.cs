@@ -20,7 +20,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             try
             {
                 Conectar();
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaReporteUsuarios WHERE Broker = @broker ORDER BY Ciudad DESC", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaReporteUsuarios WHERE Broker = @broker ORDER BY Agente", getCnn());
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
@@ -62,8 +62,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 Conectar();
                 SqlCommand cmd = new SqlCommand("SET LANGUAGE Spanish; "
                 + " SELECT * FROM ConsultaReporteCotizacionesBroker "
-                + " WHERE Estado != @estado AND IdBroker = @broker "
-                + " ORDER BY Fecha, Ciudad ASC, CodigoAgente ASC ", getCnn());
+                + " WHERE IdBroker = @broker "
+                + " ORDER BY Fecha ASC ", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(estado));
@@ -73,17 +73,18 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 {
                     rsReporteCotizacionesBroker = new EBroReporteCotizaciones();
 
-                    rsReporteCotizacionesBroker.A_Broker = rdr["Broker"].ToString();
+                    rsReporteCotizacionesBroker.A_Version = rdr["Broker"].ToString();
                     rsReporteCotizacionesBroker.B_Empresa = rdr["Empresa"].ToString();
                     rsReporteCotizacionesBroker.C_Codigo = rdr["Codigo"].ToString();
                     rsReporteCotizacionesBroker.D_Fecha = rdr["Fecha"].ToString();
                     rsReporteCotizacionesBroker.E_CotizacionYear = rdr["CotizacionYear"].ToString();
                     rsReporteCotizacionesBroker.F_CotizacionMonth = rdr["CotizacionMonth"].ToString();
                     rsReporteCotizacionesBroker.G_Usuario = rdr["Usuario"].ToString();
-                    rsReporteCotizacionesBroker.H_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
-                    rsReporteCotizacionesBroker.I_Tipo = rdr["Tipo"].ToString();
-                    rsReporteCotizacionesBroker.J_Ciudad = rdr["Ciudad"].ToString();
-                    rsReporteCotizacionesBroker.K_Corredor = rdr["Corredor"].ToString();
+                    rsReporteCotizacionesBroker.H_PrimaNeta = rdr["PrimaNeta"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaNeta"]);
+                    rsReporteCotizacionesBroker.I_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
+                    rsReporteCotizacionesBroker.J_Tipo = rdr["Tipo"].ToString();
+                    rsReporteCotizacionesBroker.K_Ciudad = rdr["Ciudad"].ToString();
+                    rsReporteCotizacionesBroker.L_Corredor = rdr["Corredor"].ToString();
                     //rsReporteCotizacionesBroker.L_CodigoAgente = rdr["CodigoAgente"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["CodigoAgente"]);
                     //rsReporteCotizacionesBroker.M_Estado = rdr["Estado"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["Estado"]);
                     //rsReporteCotizacionesBroker.N_IdBroker = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
@@ -116,8 +117,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 Conectar();
                 SqlCommand cmd = new SqlCommand("SET LANGUAGE Spanish; "
                 + " SELECT * FROM ConsultaReporteEmisionesBroker "
-                + " WHERE Estado = @estado AND IdBroker = @broker "
-                + " ORDER BY FechaCotizacion, Ciudad ASC, CodigoAgente ASC ", getCnn());
+                + " WHERE IdBroker = @broker "
+                + " ORDER BY FechaCotizacion", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(estado));
@@ -127,23 +128,24 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 {
                     rsReporteEmisionesBroker = new EBroReporteEmisiones();
 
-                    rsReporteEmisionesBroker.A_Broker = rdr["Broker"].ToString();
+                    rsReporteEmisionesBroker.A_Version = rdr["Broker"].ToString();
                     rsReporteEmisionesBroker.B_Empresa = rdr["Empresa"].ToString();
                     rsReporteEmisionesBroker.C_Codigo = rdr["Codigo"].ToString();
                     rsReporteEmisionesBroker.D_FechaCotizacion = rdr["FechaCotizacion"].ToString();
                     rsReporteEmisionesBroker.E_CotizacionYear = rdr["CotizacionYear"].ToString();
                     rsReporteEmisionesBroker.F_CotizacionMonth = rdr["CotizacionMonth"].ToString();
                     rsReporteEmisionesBroker.G_Usuario = rdr["Usuario"].ToString();
-                    rsReporteEmisionesBroker.H_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
-                    rsReporteEmisionesBroker.I_Tipo = rdr["Tipo"].ToString();
-                    rsReporteEmisionesBroker.J_Ciudad = rdr["Ciudad"].ToString();
-                    rsReporteEmisionesBroker.K_FechaEmision = rdr["FechaEmision"].ToString();
-                    rsReporteEmisionesBroker.L_EmisionYear = rdr["EmisionYear"].ToString();
-                    rsReporteEmisionesBroker.M_EmisionMonth = rdr["EmisionMonth"].ToString();
-                    rsReporteEmisionesBroker.N_Corredor = rdr["Corredor"].ToString();
-                    //rsReporteEmisionesBroker.O_CodigoAgente = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
-                    //rsReporteEmisionesBroker.P_Estado = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
-                    //rsReporteEmisionesBroker.Q_IdBroker = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
+                    rsReporteEmisionesBroker.H_PrimaNeta = rdr["PrimaNeta"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaNeta"]);
+                    rsReporteEmisionesBroker.I_PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
+                    rsReporteEmisionesBroker.J_Tipo = rdr["Tipo"].ToString();
+                    rsReporteEmisionesBroker.K_Ciudad = rdr["Ciudad"].ToString();
+                    rsReporteEmisionesBroker.L_FechaEmision = rdr["FechaEmision"].ToString();
+                    rsReporteEmisionesBroker.M_EmisionYear = rdr["EmisionYear"].ToString();
+                    rsReporteEmisionesBroker.N_EmisionMonth = rdr["EmisionMonth"].ToString();
+                    rsReporteEmisionesBroker.O_Corredor = rdr["Corredor"].ToString();
+                    //rsReporteEmisionesBroker.P_CodigoAgente = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
+                    //rsReporteEmisionesBroker.Q_Estado = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
+                    //rsReporteEmisionesBroker.R_IdBroker = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
 
                     lstReporteEmisionesBroker.Add(rsReporteEmisionesBroker);
 
@@ -170,8 +172,11 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Usuario.Ciudad) as 'Total' FROM Usuario "
-                + " WHERE Usuario.IdBroker = @broker GROUP BY Usuario.Ciudad "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Usuario.Ciudad) as 'Total' "
+                + " FROM Usuario "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdUsuario = Usuario.IdUsuario "
+                + " INNER JOIN Broker ON Broker.IdBroker = Usuario_Broker.IdBroker "
+                + " WHERE Broker.IdBroker = @broker GROUP BY Usuario.Ciudad "
                 + " FOR JSON AUTO "
                 , getCnn());
 
@@ -208,7 +213,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'Total' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
                 + " AND Cotizacion.Estado != 5 AND Broker.IdBroker = @broker"
                 + " GROUP BY Usuario.Ciudad FOR JSON AUTO "
@@ -243,11 +249,12 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                " SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Broker.IdBroker) AS 'Cantidad', "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Broker.IdBroker) AS 'Cantidad', "
                 + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'Total' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
                 + " AND Cotizacion.Estado = 5 AND Broker.IdBroker = @broker"
                 + " GROUP BY Usuario.Ciudad FOR JSON AUTO "
@@ -282,12 +289,13 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
                 + " FROM Cotizacion "
-                + "INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + "INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
-                + "WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado != @estado AND Cotizacion.IdBroker = @broker "
-                + "GROUP BY Ciudad "
+                + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
+                + " INNER JOIN Usuario_Broker On Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
+                + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado != @estado AND Cotizacion.IdBroker = @broker "
+                + " GROUP BY Ciudad "
                 + "FOR JSON AUTO ", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
@@ -320,13 +328,14 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
+                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Cotizacion.IdCotizacion) AS 'Total' "
                 + " FROM Cotizacion "
-                + "INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + "INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
-                + "WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado = @estado AND Cotizacion.IdBroker = @broker "
-                + "GROUP BY Ciudad "
-                + "FOR JSON AUTO ", getCnn());
+                + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker"
+                + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker"
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario"
+                + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario AND Cotizacion.Estado = @estado AND Cotizacion.IdBroker = @broker "
+                + " GROUP BY Ciudad "
+                + " FOR JSON AUTO ", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(estado));
@@ -358,19 +367,24 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Broker.IdBroker) as 'Cantidad'," 
-                + " IsNull(SUM(Cotizacion.PrimaTotal),0) AS 'Total' "
+                "   SELECT " 
+                + " (SELECT Broker.RazonSocial FROM Broker WHERE Cotizacion.IdBroker = Broker.IdBroker) AS 'Broker', "
+                + " Usuario.Ciudad AS 'Ciudad', "
+                + " COUNT(Broker.IdBroker) as 'Cantidad'," 
+                + " IsNull(SUM(Cotizacion.PrimaNetaTotal),0) AS 'PrimaNeta', "
+                + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'PrimaTotal' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
-                + " AND Cotizacion.Estado != @estado "
-                + " AND Broker.IdBroker = @broker "
+                + " AND Cotizacion.Estado != @estado AND Cotizacion.Estado != 1 "
+                + " AND ( +"+ datos.Broker + " ) "
                 + " AND  CONVERT(VARCHAR,Cotizacion.Fecha,23) BETWEEN @fechaInicio AND @fechaFin "
-                + " GROUP BY Usuario.Ciudad "
+                + " GROUP BY Usuario.Ciudad, Cotizacion.IdBroker ORDER BY Broker "
                 + " FOR JSON AUTO ", getCnn());
 
-                cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(datos.IdBroker));
+                //cmd.Parameters.AddWithValue("@broker", datos.Broker);
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(datos.Estado));
                 cmd.Parameters.AddWithValue("@fechaInicio", datos.FechaInicio);
                 cmd.Parameters.AddWithValue("@fechaFin", datos.FechaFin);
@@ -405,19 +419,24 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
                 SqlCommand cmd = new SqlCommand(
-                "   SELECT Usuario.Ciudad AS 'Ciudad', COUNT(Broker.IdBroker) as 'Cantidad', "
-                + " IsNull(SUM(Cotizacion.PrimaTotal),0) AS 'Total' "
+                "   SELECT "
+                + " (SELECT Broker.RazonSocial FROM Broker WHERE Cotizacion.IdBroker = Broker.IdBroker) AS 'Broker', "
+                + " Usuario.Ciudad AS 'Ciudad', " 
+                + " COUNT(Broker.IdBroker) as 'Cantidad', "
+                + " IsNull(SUM(Cotizacion.PrimaNetaTotal),0) AS 'PrimaNeta', "
+                + " IsNull(SUM(Cotizacion.PrimaTotal), 0) AS 'PrimaTotal' "
                 + " FROM Cotizacion "
                 + " INNER JOIN Broker ON Broker.IdBroker = Cotizacion.IdBroker "
-                + " INNER JOIN Usuario ON Usuario.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdBroker = Broker.IdBroker "
+                + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
                 + " AND Cotizacion.Estado = @estado "
-                + " AND Broker.IdBroker = @broker "
-                + " AND  CONVERT(VARCHAR,Cotizacion.Fecha,23) BETWEEN @fechaInicio AND @fechaFin "
-                + " GROUP BY Usuario.Ciudad "
+                + " AND ( +" + datos.Broker + " ) "
+                + " AND  CONVERT(VARCHAR, Cotizacion.Fecha, 23) BETWEEN @fechaInicio AND @fechaFin "
+                + " GROUP BY Usuario.Ciudad, Cotizacion.IdBroker ORDER BY Broker "
                 + " FOR JSON AUTO ", getCnn());
 
-                cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(datos.IdBroker));
+                //cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(datos.Broker));
                 cmd.Parameters.AddWithValue("@estado", Convert.ToInt32(datos.Estado));
                 cmd.Parameters.AddWithValue("@fechaInicio", datos.FechaInicio);
                 cmd.Parameters.AddWithValue("@fechaFin", datos.FechaFin);

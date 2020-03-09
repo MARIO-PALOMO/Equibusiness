@@ -62,7 +62,7 @@ export class MapaPipe implements PipeTransform {
             if (results[0]) {
               var emision = this.obtenerLocalizacionEmision(results[0].address_components, lstProvinciasCiuidades);
               if (emision == undefined) {
-                this.mostarAlerta("", "La ciudad seleccionada no está disponible.", "info");
+                this.mostarAlerta("", "Se debe ingresar un punto más exacto a la dirección seleccionada.", "info");
               } else {
                 this.agregarMarcador(e.latLng, this.currentId, map, marcadores, lstDirecciones);
                 lstDirecciones.push({ id: this.currentId, latitud: e.latLng.lat(), longitud: e.latLng.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? this.obtenerProvincia(results[0].address_components) : "Global"), codigoPais: emision.CodigoPais, codigoDepartameto: emision.CodigoDepartamento, codigoMunicipio: emision.CodigoMunicipio });
@@ -326,9 +326,10 @@ export class MapaPipe implements PipeTransform {
             if (status === 'OK') {
               if (results[0]) {
                 var emision = obtenerLocalizacionEmision(results[0].address_components, lstProvinciasCiuidades);
-              
+                console.log(emision);
                 if (emision == undefined) {
-                  mostarAlerta("", "La ciudad seleccionada no está disponible.", "info");
+                  mostarAlerta("", "Se debe ingresar un punto más exacto a la dirección seleccionada.", "info");
+                  alert()
                 } else {
                   lstDirecciones.push({ id: currentId, latitud: coordenadas.lat(), longitud: coordenadas.lng(), nombre: results[0].formatted_address, provincia: (estadoProvincia == 1 ? obtenerProvincia(results[0].address_components) : "Global"), codigoPais: emision.CodigoPais, codigoDepartameto: emision.CodigoDepartamento, codigoMunicipio: emision.CodigoMunicipio });
                 }

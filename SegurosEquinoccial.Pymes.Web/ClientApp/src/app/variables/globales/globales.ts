@@ -2,7 +2,7 @@ export class VariablesGlobales {
 
   public ambiente = "DESARROLLO";
 
-  public obtenerCredenciales(documento) {
+  public ObtenerCredenciales(documento) {
 
     var credenciales: any = {};
     

@@ -11,10 +11,10 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
     [Serializable]
     public class EBroReporteCotizaciones
     {
-        [DataMember] public string A_Broker { get; set; }
+        [DataMember] public string A_Version { get; set; }
 
         [DataMember] public string B_Empresa { get; set; }
-
+         
         [DataMember] public string C_Codigo { get; set; }
 
         [DataMember] public string D_Fecha { get; set; }
@@ -25,19 +25,21 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
 
         [DataMember] public string G_Usuario { get; set; }
 
-        [DataMember] public double H_PrimaTotal { get; set; }
+        [DataMember] public double H_PrimaNeta { get; set; } 
 
-        [DataMember] public string I_Tipo { get; set; }
+        [DataMember] public double I_PrimaTotal { get; set; }
 
-        [DataMember] public string J_Ciudad { get; set; }
+        [DataMember] public string J_Tipo { get; set; }
 
-        [DataMember] public string K_Corredor { get; set; }
+        [DataMember] public string K_Ciudad { get; set; }
+
+        [DataMember] public string L_Corredor { get; set; }
         
-        //[DataMember] public int L_CodigoAgente { get; set; }
+        //[DataMember] public int M_CodigoAgente { get; set; }
 
-        //[DataMember] public int M_Estado { get; set; }
+        //[DataMember] public int N_Estado { get; set; }
 
-        //[DataMember] public int N_IdBroker { get; set; }
+        //[DataMember] public int O_IdBroker { get; set; }
                
     }
 }

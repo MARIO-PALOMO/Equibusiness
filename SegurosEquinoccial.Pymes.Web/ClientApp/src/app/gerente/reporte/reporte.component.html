@@ -19,26 +19,18 @@
             </div>
             <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordionExample">
               <div class="card-body">
-                <div class="row">
+                <div class="row" id="filtros">
                   <div class="col-md-4" style="padding-top: 15px; padding-bottom: 15px;">
-                    <h5>Seleccione un broker</h5>
+                    <h5 style="padding-bottom: 20px !important;">Versión de Uso</h5>
+                    <kendo-multiselect [data]="lstBrokers" [(ngModel)]="rsBroker" [textField]="'RazonSocial'"
+                      [valueField]="'IdBroker'" [placeholder]="'Listado de Brokers'">
+                      <ng-template kendoMultiSelectItemTemplate let-dataItem>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
+                      </ng-template>
+                    </kendo-multiselect>
                   </div>
                   <div class="col-md-8" style="padding-top: 15px; padding-bottom: 15px;">
-                    <h5>Seleccione el rango de fechas</h5>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-4">
-                    <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionadoUno" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" [valuePrimitive]="true"
-                      [placeholder]="'Listado de Brokers'" style="width: 100%">
-                      <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding-left: 15px !important;">{{ dataItem.RazonSocial }}</span>
-                      </ng-template>
-                    </kendo-combobox>
-                  </div>
-
-                  <div class="col-md-8">
+                    <h5 style="padding-bottom: 20px !important;">Seleccione el rango de fechas</h5>
                     <kendo-daterange>
                       <div class="row">
                         <div class="col-md-6">
@@ -54,135 +46,103 @@
                       </div>
                     </kendo-daterange>
                   </div>
-                </div>
-                <div class="row" style="margin-top: 20px !important; margin-bottom: 20px !important;">
-                  <div class="col-md-4">
+                  <div class="col-md-4" style="padding-top: 15px; padding-bottom: 15px;">
+                    <h5 style="padding-bottom: 20px !important;">Consultar</h5>
                     <button class="btn-broker btn-effect-white btn btn-block"
-                     (click)="CargarTablaDetalleValores(brokerSeleccionadoUno)">Consultar Datos</button>
+                      (click)="CargarTablaDetalleValores(rsBroker)">Consultar Datos</button>
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="row table-responsive" style="text-align: center;">
-                      <h6><b>Detalle de Valores - Cotizacines</b></h6>
-                      <table class="table table-bordered" id="detalleCotizaciones">
-                        <thead class="thead-dark">
-                          <tr>
-                            <th><b>Ciudad</b></th>
-                            <th><b>Cantidad</b></th>
-                            <th><b>Total</b></th>
-                          </tr>
-                        </thead>
-                        <tbody *ngFor="let datos of lstDetalleValoresCotizacionesBrokerCiudad">
-                          <tr>
-                            <td style="text-align: justify;">{{ datos.Ciudad }}</td>
-                            <td>{{ datos.Cantidad }}</td>
-                            <td><b>$</b><span style="padding-left: 20px;"></span>{{ datos.Total.toFixed(2) }}</td>
-                          </tr>
-                        </tbody>
-                        <tfoot style="background-color: #E0E0E0 !important;">
-                          <tr>
-                            <td colspan="2" style="text-align: right !important; font-weight: bold !important;">
-                              Total Cotizado:
-                            </td>
-                            <td><b>$</b><span style="padding-left: 20px;"></span>{{ totalCotizaciones }}</td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="row table-responsive" style="text-align: center;">
-                      <h6><b>Detalle de Valores - Emisiones</b></h6>
-                      <table class="table table-bordered" id="detalleEmisiones">
-                        <thead class="thead-dark">
-                          <tr>
-                            <th><b>Ciudad</b></th>
-                            <th><b>Cantidad</b></th>
-                            <th><b>Total</b></th>
-                          </tr>
-                        </thead>
-                        <tbody *ngFor="let datos of lstDetalleValoresEmisionesBrokerCiudad">
-                          <tr>
-                            <td style="text-align: justify;">{{ datos.Ciudad }}</td>
-                            <td>{{ datos.Cantidad }}</td>
-                            <td><b>$</b><span style="padding-left: 20px;"></span>{{ datos.Total.toFixed(2) }}</td>
-                          </tr>
-                        </tbody>
-                        <tfoot style="background-color: #E0E0E0 !important;">
-                          <tr>
-                            <td colspan="2" style="text-align: right !important; font-weight: bold !important;">
-                              Total Emitido:
-                            </td>
-                            <td><b>$</b><span style="padding-left: 20px;"></span>{{ totalEmisiones }}</td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  </div>
-                </div><br><br><br>
-                <div class="row">
                   <div class="col-md-4"></div>
-                  <div class="col-md-4"></div>
-                  <div class="col-md-4">
-                    <button type="button" class="btn-broker btn btn-block" (click)="exportartableToExcel(brokerSeleccionadoUno)">
+                  <div class="col-md-4" style="padding-top: 15px; padding-bottom: 15px;">
+                    <h5 style="padding-bottom: 20px !important;">Exportar Datos</h5>
+                    <button type="button" class="btn-broker btn btn-block" (click)="exportartableToExcel(rsBroker)">
                       <span class="mdi mdi-file-excel">
                         <b>Exportar a Excel</b>
                       </span>
                     </button>
-                    <div id="exportExcel"></div>
+                  </div>
+                </div>
+                <div class="row" id="tablas" style="margin-top: 50px !important;">
+                  <div class="col-md-12">
+                    <div class="row table-responsive" style="text-align: center;">
+                      <h6><b>Detalle de Valores - Cotizaciones</b></h6>
+                      <table class="table table-bordered" id="detalleCotizaciones" style="margin-top: 15px !important;">
+                        <thead class="thead-dark">
+                          <tr>
+                            <th><b>Versión de Uso</b></th>
+                            <th><b>Ciudad</b></th>
+                            <th><b>Cantidad</b></th>
+                            <th><b>Prima Neta</b></th>
+                            <th><b>Prima Total</b></th>
+                          </tr>
+                        </thead>
+                        <tbody *ngFor="let datos of lstDetalleValoresCotizacionesBrokerCiudad">
+                          <tr>
+                            <td style="text-align: justify;">{{ datos.Broker }}</td>
+                            <td style="text-align: justify;">{{ datos.Ciudad }}</td>
+                            <td>{{ datos.Cantidad }}</td>
+                            <td style="font-size: 13px !important;"><b>$</b><span
+                              style="padding-left: 20px;"></span>{{ globales.formatearNumero(datos.PrimaNeta,2) }}</td>
+                            <td style="font-size: 13px !important;"><b>$</b><span
+                                style="padding-left: 20px;"></span>{{ globales.formatearNumero(datos.PrimaTotal,2) }}</td>
+                          </tr>
+                        </tbody>
+                        <tfoot style="background-color: #E0E0E0 !important;">
+                          <tr>
+                            <td colspan="3" style="text-align: right !important; font-weight: bold !important;">
+                              Total:
+                            </td>
+                            <td style="font-size: 15px !important;"><b>$<span
+                              style="padding-left: 20px;">{{ totalPrimaNetaCotizaciones }}</span></b></td>
+                            <td style="font-size: 15px !important;"><b>$<span
+                                  style="padding-left: 20px;">{{ totalCotizaciones }}</span></b></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="col-md-12" style="margin-top: 25px !important;">
+                    <div class="row table-responsive" style="text-align: center;">
+                      <h6><b>Detalle de Valores - Emisiones</b></h6>
+                      <table class="table table-bordered" id="detalleEmisiones" style="margin-top: 15px !important;">
+                        <thead class="thead-dark">
+                          <tr>
+                            <th><b>Versión de Uso</b></th>
+                            <th><b>Ciudad</b></th>
+                            <th><b>Cantidad</b></th>
+                            <th><b>Prima Neta</b></th>
+                            <th><b>Prima Total</b></th>
+                          </tr>
+                        </thead>
+                        <tbody *ngFor="let datos of lstDetalleValoresEmisionesBrokerCiudad">
+                          <tr>
+                            <td style="text-align: justify;">{{ datos.Broker }}</td>
+                            <td style="text-align: justify;">{{ datos.Ciudad }}</td>
+                            <td>{{ datos.Cantidad }}</td>
+                            <td style="font-size: 13px !important;"><b>$</b><span
+                              style="padding-left: 20px;"></span>{{ globales.formatearNumero(datos.PrimaNeta,2) }}</td>
+                            <td style="font-size: 13px !important;"><b>$</b><span
+                                style="padding-left: 20px;"></span>{{ globales.formatearNumero(datos.PrimaTotal,2) }}</td>
+                          </tr>
+                        </tbody>
+                        <tfoot style="background-color: #E0E0E0 !important;">
+                          <tr>
+                            <td colspan="3" style="text-align: right !important; font-weight: bold !important;">
+                              Total:
+                            </td>
+                            <td style="font-size: 15px !important;"><b>$<span
+                              style="padding-left: 20px;">{{ totalPrimaNetaEmisiones }}</span></b></td>
+                            <td style="font-size: 15px !important;"><b>$<span
+                                  style="padding-left: 20px;">{{ totalEmisiones }}</span></b></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <!-- FIN REPORTE DETALLE DE VALORES DE COTIZACIONES Y EMISIONES -->
-
-          <!-- INICIO REPORTE DE USUARIOS POR BROKER -->
-          <div class="card">
-            <div class="card-header" id="headingOne">
-              <h2 class="mb-0">
-                <a class="titulo-tarjeta" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false"
-                  aria-controls="collapseOne">
-                  Generar Reporte de Usuarios
-                </a>
-              </h2>
-            </div>
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-4" style="padding-top: 15px; padding-bottom: 15px; padding-left: 35px;">
-                    <h5>Seleccione un broker</h5>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-4" style="padding-left: 35px;">
-                    <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionadoDos" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" [valuePrimitive]="true"
-                      (ngModelChange)="graficarReporteUsuariosBrokerCiudad(brokerSeleccionadoDos)" style="width: 100%"
-                      [placeholder]="'Selecccione un Broker'">
-                      <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.RazonSocial }}</span>
-                      </ng-template>
-                    </kendo-combobox>
-                  </div>
-                  <div class="col-md-4"></div>
-                  <div class="col-md-4">
-                    <button type="button" class="btn-broker btn btn-block" (click)="listarReporteUsuariosBroker(brokerSeleccionadoDos)">
-                      <span class="mdi mdi-file-excel">
-                        <b>Exportar a Excel</b>
-                      </span>
-                    </button>
-                    <div id="exportExcel"></div>
-                  </div>
-                </div>
-                <div class="row">
-                  <canvas id="canvasUsuarios" height="80">{{ chartReportePie }}</canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- FIN REPORTE DE USUARIOS POR BROKER -->
 
           <!-- INICIO REPORTE NUMERO DE COTIZACIONES POR BROKER Y VARIAS CIUDADES -->
           <div class="card">
@@ -207,24 +167,26 @@
                 <div class="row">
                   <div class="col-md-4" style="padding-left: 35px;">
                     <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionadoTres" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" [valuePrimitive]="true" (ngModelChange)="consultarCotizacionesCiudadesBroker(brokerSeleccionadoTres)"
-                      style="width: 100%" [placeholder]="'Selecccione un Broker'">
+                      [valueField]="'IdBroker'" [valuePrimitive]="true"
+                      (ngModelChange)="consultarCotizacionesCiudadesBroker(brokerSeleccionadoTres)" style="width: 100%"
+                      [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.RazonSocial }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
                       </ng-template>
                     </kendo-combobox>
                   </div>
                   <div class="col-md-4">
-                    <kendo-multiselect [data]="lstReporteCiudadBroker" [(ngModel)]="filtros.lstCiudades"
+                    <kendo-multiselect [data]="lstReporteCiudadBrokerC" [(ngModel)]="filtros.lstCiudadesCotizadas"
                       [textField]="'Ciudad'" [valueField]="'Ciudad'" [placeholder]="'Seleccionar la ciudad'"
                       (ngModelChange)="graficarReporteCotizacionesBrokerCiudad(brokerSeleccionadoTres)">
                       <ng-template kendoMultiSelectItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.Ciudad }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.Ciudad }}</span>
                       </ng-template>
                     </kendo-multiselect>
                   </div>
                   <div class="col-md-4">
-                    <button type="button" class="btn-broker btn btn-block" (click)="listarReporteCotizacionesBroker(brokerSeleccionadoTres)">
+                    <button type="button" class="btn-broker btn btn-block"
+                      (click)="listarReporteCotizacionesBroker(brokerSeleccionadoTres)">
                       <span class="mdi mdi-file-excel">
                         <b>Exportar a Excel</b>
                       </span>
@@ -233,7 +195,8 @@
                   </div>
                 </div>
                 <div class="row">
-                  <canvas id="canvasCotizaciones" height="80">{{ chartReporteBar }}</canvas>
+                  <canvas style="margin-top: 15px;" id="canvasCotizaciones"
+                    height="100">{{ chartReporteBarCotizaciones }}</canvas>
                 </div>
               </div>
             </div>
@@ -263,25 +226,27 @@
                 </div>
                 <div class="row">
                   <div class="col-md-4" style="padding-left: 35px;">
-                    <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionadoCuatro" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" [valuePrimitive]="true" (ngModelChange)="consultarEmisionesCiudadesBroker(brokerSeleccionadoCuatro)"
-                      style="width: 100%" [placeholder]="'Selecccione un Broker'">
+                    <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionadoCuatro"
+                      [textField]="'RazonSocial'" [valueField]="'IdBroker'" [valuePrimitive]="true"
+                      (ngModelChange)="consultarEmisionesCiudadesBroker(brokerSeleccionadoCuatro)" style="width: 100%"
+                      [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.RazonSocial }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
                       </ng-template>
                     </kendo-combobox>
                   </div>
                   <div class="col-md-4">
-                    <kendo-multiselect [data]="lstReporteCiudadBroker" [(ngModel)]="filtros.lstCiudades"
+                    <kendo-multiselect [data]="lstReporteCiudadBrokerE" [(ngModel)]="filtros.lstCiudadesEmitidas"
                       [textField]="'Ciudad'" [valueField]="'Ciudad'" [placeholder]="'Seleccionar la ciudad'"
                       (ngModelChange)="graficarReporteEmisionesBrokerCiudad(brokerSeleccionadoCuatro)">
                       <ng-template kendoMultiSelectItemTemplate let-dataItem>
-                        <span style="padding: 15px">{{ dataItem.Ciudad }}</span>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.Ciudad }}</span>
                       </ng-template>
                     </kendo-multiselect>
                   </div>
                   <div class="col-md-4">
-                    <button type="button" class="btn-broker btn btn-block" (click)="listarReporteEmisionesBroker(brokerSeleccionadoCuatro)">
+                    <button type="button" class="btn-broker btn btn-block"
+                      (click)="listarReporteEmisionesBroker(brokerSeleccionadoCuatro)">
                       <span class="mdi mdi-file-excel">
                         <b>Exportar a Excel</b>
                       </span>
@@ -290,7 +255,8 @@
                   </div>
                 </div>
                 <div class="row">
-                  <canvas id="canvasEmisiones" height="80">{{ chartReporteBarEmisiones }}</canvas>
+                  <canvas style="margin-top: 15px;" id="canvasEmisiones"
+                    height="100">{{ chartReporteBarEmisiones }}</canvas>
                 </div>
               </div>
             </div>
@@ -298,3 +264,6 @@
           <!-- FIN REPORTE NUMERO DE EMISIONES POR BROKER Y VARIAS CIUDADES -->
         </div>
       </div>
+    </div>
+  </div>
+</div>

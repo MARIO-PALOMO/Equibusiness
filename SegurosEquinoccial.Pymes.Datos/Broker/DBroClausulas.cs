@@ -22,19 +22,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT "
-                + " Clausula.IdClausula, "
-                + " Clausula.Codigo, "
-                + " Clausula.Descripcion, "
-                + " Clausula.Estado, "
-                + " Ramo.IdRamo, "
-                + " Ramo.Codigo AS 'CodigoRamo'"
-                + " FROM "
-                + " Broker "
-                + " INNER JOIN Ramo ON Ramo.IdBroker = Broker.IdBroker "
-                + " INNER JOIN Clausula ON Clausula.IdRamo = Ramo.IdRamo "
-                + " WHERE "
-                + " Broker.IdBroker = @broker AND Clausula.Estado = 1", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaClausulasRamosBroker WHERE IdBroker = @broker AND Estado = 1", getCnn());
                 cmd.Parameters.AddWithValue("@broker", aux.IdBroker);
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())

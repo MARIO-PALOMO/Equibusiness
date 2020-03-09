@@ -76,7 +76,6 @@ export class InicioGerenciaComponent implements OnInit {
     var parametros = {
       Cadena: cadena.substr(0, (cadena.length - 4)),
     };
-
     this.conexion.post('Broker/SBroker.svc/usuarios/consultar/dependientes/supervisor', parametros, this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
@@ -85,19 +84,14 @@ export class InicioGerenciaComponent implements OnInit {
           x: [],
           y: []
         };
-        console.log(this.lstUsuariosDependientesSupervisoresResumen);
         for (let usuarios of this.lstUsuariosDependientesSupervisoresResumen) {
           dataset.x.push(usuarios.Ciudad);
           dataset.y.push(usuarios.Total);
         }
-        console.log("DATASET");
-        console.log(dataset);
-
 
         this.generarGraficoResumenSupervision(dataset.x, dataset.y, 'bar', 'N° de Operadores por Sucursal', 'Gráfico Operadores por Sucursal/Supervisor');
         this.listarUsuariosDependientesOperadores(cadena);
 
-        console.log(res);
       },
       err => {
         this.spinner.hide();

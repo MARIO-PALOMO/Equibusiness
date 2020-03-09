@@ -22,7 +22,7 @@ declare var moment: any;
 export class ReporteComponent implements OnInit {
 
   usuario: any = [];
-  public chartReporteBar: Chart;
+  public chartReporteBarCotizaciones: Chart;
   public chartReportePie: Chart;
   public chartReporteBarEmisiones: Chart;
 
@@ -32,6 +32,9 @@ export class ReporteComponent implements OnInit {
   public listadoReporteEmisionesBrokerCiudadExportar = [];
 
   public lstReporteCiudadBroker: any;
+  public lstReporteCiudadBrokerC: any;
+  public lstReporteCiudadBrokerE: any;
+
   public lstReporteCotizacionesCiudadBroker: any;
   public lstReporteEmisionesCiudadBroker: any;
 
@@ -48,9 +51,15 @@ export class ReporteComponent implements OnInit {
   public totalCotizaciones: any;
   public totalEmisiones: any;
 
+  public totalPrimaNetaCotizaciones: any;
+  public totalPrimaNetaEmisiones: any;
+
+  public rsBroker = [];
+
 
   public filtros = {
-    lstCiudades: []
+    lstCiudadesCotizadas: [],
+    lstCiudadesEmitidas: []
   };
 
   public rango = {
@@ -76,7 +85,6 @@ export class ReporteComponent implements OnInit {
     });
   }
 
-
   gestionFecha() {
     var today = moment()
     this.fechaInicio = new Date('01-01-2019');
@@ -84,8 +92,6 @@ export class ReporteComponent implements OnInit {
     this.rango.Fin = new Date();
     this.fechaFin = new Date(moment(today).add(30, "days"));
   }
-
-
 
   // CONSUILTA DE BROKERS A LA BASE DE DATOS 
   public consultarBrokers() {
@@ -113,16 +119,18 @@ export class ReporteComponent implements OnInit {
         (res: any) => {
           this.spinner.hide();
           if (res != "") {
-            this.lstReporteCiudadBroker = JSON.parse(res);
-            this.filtros.lstCiudades = [];
+            this.lstReporteCiudadBrokerC = JSON.parse(res);
+            this.filtros.lstCiudadesCotizadas = [];
             this.lstDetalleValoresCotizacionesBrokerCiudad = [];
             this.lstDetalleValoresEmisionesBrokerCiudad = [];
             this.totalCotizaciones = [];
             this.totalEmisiones = [];
+            this.totalPrimaNetaCotizaciones= [];
+            this.totalPrimaNetaEmisiones= [];
           } else {
             this.mensaje.mostrarAlertaInformativa('El broker seleccionado no posee cotizaciones.', this.usuario.broker.Color);
-            this.filtros.lstCiudades = [];
-            this.lstReporteCiudadBroker = [];
+            this.filtros.lstCiudadesCotizadas = [];
+            this.lstReporteCiudadBrokerC = [];
           }
 
         },
@@ -144,16 +152,18 @@ export class ReporteComponent implements OnInit {
         (res: any) => {
           this.spinner.hide();
           if (res != "") {
-            this.lstReporteCiudadBroker = JSON.parse(res);
-            this.filtros.lstCiudades = [];
+            this.lstReporteCiudadBrokerE = JSON.parse(res);
+            this.filtros.lstCiudadesEmitidas = [];
             this.lstDetalleValoresCotizacionesBrokerCiudad = [];
             this.lstDetalleValoresEmisionesBrokerCiudad = [];
             this.totalCotizaciones = [];
             this.totalEmisiones = [];
+            this.totalPrimaNetaCotizaciones= [];
+            this.totalPrimaNetaEmisiones= [];
           } else {
             this.mensaje.mostrarAlertaInformativa('El broker seleccionado no posee emisiones.', this.usuario.broker.Color);
-            this.filtros.lstCiudades = [];
-            this.lstReporteCiudadBroker = [];
+            this.filtros.lstCiudadesEmitidas = [];
+            this.lstReporteCiudadBrokerE = [];
           }
         },
         err => {
@@ -165,46 +175,59 @@ export class ReporteComponent implements OnInit {
     }
   }
 
-
   public CargarTablaDetalleValores(broker: any) {
-    if (broker == undefined) {
+    if (broker == "") {
       this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
     } else {
+      var aux = "";
+      for (let i = 0; i < broker.length; i++) {
+        aux += "Broker.IdBroker = " + broker[i].IdBroker + " OR ";
+      }
       var datos = {
-        IdBroker: broker,
+        Broker: aux.slice(0, -4),
         Estado: 5,
         FechaInicio: moment(this.rango.Inicio).format("YYYY-MM-DD"),
         FechaFin: moment(this.rango.Fin).format("YYYY-MM-DD")
       }
       this.detalleValoresCotizacionesBrokerCiudad(datos);
-
     }
   }
 
-  // CONSULTAR DETALLE DE VALORES DE COTIAZCIONES Y EMISIONES POR BROKER Y CIUDAD 
+  // CONSULTAR DETALLE DE VALORES DE COTIZACIONES Y EMISIONES POR BROKER Y CIUDAD 
   public detalleValoresCotizacionesBrokerCiudad(datos: any) {
     this.spinner.show();
     this.conexion.post('Broker/SBroker.svc/reporte/datalle/valores/cotizaciones', datos, this.usuario.Uid).subscribe(
       (res: any) => {
+
         this.spinner.hide();
         if (res != "") {
           this.lstDetalleValoresCotizacionesBrokerCiudad = JSON.parse(res);
           var valor = 0;
+          var valor3 = 0;
           for (let cotizaciones of this.lstDetalleValoresCotizacionesBrokerCiudad) {
-            valor += parseFloat(cotizaciones.Total);
+            valor += parseFloat(cotizaciones.PrimaTotal);
+            valor3 += parseFloat(cotizaciones.PrimaNeta);
           }
-
           this.totalCotizaciones = Math.round(valor * 100) / 100;
+          this.totalCotizaciones = this.totalCotizaciones.toFixed(2);
+          this.totalCotizaciones = this.globales.formatearNumero(this.totalCotizaciones,2);
+
+          this.totalPrimaNetaCotizaciones = Math.round(valor3 * 100) / 100;
+          this.totalPrimaNetaCotizaciones = this.totalPrimaNetaCotizaciones.toFixed(2);
+          this.totalPrimaNetaCotizaciones = this.globales.formatearNumero(this.totalPrimaNetaCotizaciones,2);
+
           this.detalleValoresEmisionesBrokerCiudad(datos);
         } else {
           this.mensaje.mostrarAlertaInformativa('El Broker seleccionado no tiene cotizaciones realizadas en el rango de fechas elegidas.', this.usuario.broker.Color);
           this.lstDetalleValoresCotizacionesBrokerCiudad = [];
           this.totalCotizaciones = [];
+          this.totalPrimaNetaCotizaciones = [];
 
           setTimeout(() => {
             this.detalleValoresEmisionesBrokerCiudad(datos);
           }, 3000);
         }
+
       },
       err => {
         this.spinner.hide();
@@ -221,15 +244,26 @@ export class ReporteComponent implements OnInit {
         this.spinner.hide();
         if (res != "") {
           this.lstDetalleValoresEmisionesBrokerCiudad = JSON.parse(res);
+
           var valor2 = 0;
+          var valor4 = 0;
           for (let emisiones of this.lstDetalleValoresEmisionesBrokerCiudad) {
-            valor2 += parseFloat(emisiones.Total);
+            valor2 += parseFloat(emisiones.PrimaTotal);
+            valor4 += parseFloat(emisiones.PrimaNeta);
           }
           this.totalEmisiones = Math.round(valor2 * 100) / 100;
+          this.totalEmisiones = this.totalEmisiones.toFixed(2);
+          this.totalEmisiones = this.globales.formatearNumero(this.totalEmisiones,2);
+
+          this.totalPrimaNetaEmisiones = Math.round(valor4 * 100) / 100;
+          this.totalPrimaNetaEmisiones = this.totalPrimaNetaEmisiones.toFixed(2);
+          this.totalPrimaNetaEmisiones = this.globales.formatearNumero(this.totalPrimaNetaEmisiones,2);
+
         } else {
           this.mensaje.mostrarAlertaInformativa('El Broker seleccionado no tiene emisiones realizadas en el rango de fechas elegidas.', this.usuario.broker.Color);
           this.lstDetalleValoresEmisionesBrokerCiudad = [];
           this.totalEmisiones = [];
+          this.totalPrimaNetaEmisiones = [];
         }
       },
       err => {
@@ -241,35 +275,6 @@ export class ReporteComponent implements OnInit {
   }
 
   // FUNCIONES PARA GRAFICAR LOS CANVAS 
-  public graficarReporteUsuariosBrokerCiudad(broker: any) {
-    if (broker == undefined) {
-      this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
-    } else {
-      this.spinner.show();
-      this.conexion.get('Broker/SBroker.svc/reporte/ciudad/broker/' + broker, this.usuario.Uid).subscribe(
-        (res: any) => {
-          this.spinner.hide();
-          this.lstReporteCiudadBroker = JSON.parse(res);
-          var dataset = {
-            x: [],
-            y: [],
-            z: []
-          };
-          for (let corredores of this.lstReporteCiudadBroker) {
-            dataset.x.push(corredores.Ciudad);
-            dataset.y.push(corredores.Total);
-            dataset.z.push(this.colorAleatorio());
-          }
-          this.generarGraficoPie(dataset.x, dataset.y, dataset.z, 'pie', 'N° de Operadores por Ciudad', 'Gráfico Operadores por Ciudad');
-        },
-        err => {
-          this.spinner.hide();
-          console.log(err);
-          this.conexion.error(err);
-        }
-      );
-    }
-  }
 
   public graficarReporteCotizacionesBrokerCiudad(broker: any) {
     this.spinner.show();
@@ -277,7 +282,6 @@ export class ReporteComponent implements OnInit {
       (res: any) => {
         this.spinner.hide();
         this.lstReporteCotizacionesCiudadBroker = JSON.parse(res);
-        //console.log(this.lstReporteCotizacionesCiudadBroker);
 
         var datasetCotizaciones = {
           x: [],
@@ -285,7 +289,7 @@ export class ReporteComponent implements OnInit {
           z: []
         };
 
-        for (var listado of this.filtros.lstCiudades) {
+        for (var listado of this.filtros.lstCiudadesCotizadas) {
           for (let cotizaciones of this.lstReporteCotizacionesCiudadBroker) {
             if (listado.Ciudad === cotizaciones.Ciudad) {
               datasetCotizaciones.x.push(cotizaciones.Ciudad);
@@ -294,7 +298,7 @@ export class ReporteComponent implements OnInit {
             }
           }
         }
-        this.generarGraficoBar(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Listado Cotizaciones Por Ciudad', 'Gráfico de Cotizaciones por Ciudad');
+        this.generarGraficoBar(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Cotizaciones Por Ciudad', 'Gráfico de Cotizaciones por Ciudad');
 
       },
       err => {
@@ -317,11 +321,7 @@ export class ReporteComponent implements OnInit {
           y: [],
           z: []
         };
-
-        console.log("1", this.lstReporteEmisionesCiudadBroker);
-        console.log("2", this.filtros.lstCiudades);
-
-        for (var listado of this.filtros.lstCiudades) {
+        for (var listado of this.filtros.lstCiudadesEmitidas) {
           for (let emisiones of this.lstReporteEmisionesCiudadBroker) {
             if (listado.Ciudad === emisiones.Ciudad && emisiones.Total > 0) {
               datasetCotizaciones.x.push(emisiones.Ciudad);
@@ -330,8 +330,7 @@ export class ReporteComponent implements OnInit {
             }
           }
         }
-        console.log(datasetCotizaciones);
-        this.generarGraficoBarEmisiones(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Listado Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad');
+        this.generarGraficoBarEmisiones(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad');
 
       },
       err => {
@@ -342,7 +341,163 @@ export class ReporteComponent implements OnInit {
     );
   }
 
-  // FUNCIONES DE LOS GRAFICOS 
+  public graficarReporteUsuariosBrokerCiudad(broker: any) {
+    if (broker == undefined) {
+      this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
+    } else {
+      this.spinner.show();
+      this.conexion.get('Broker/SBroker.svc/reporte/ciudad/broker/' + broker, this.usuario.Uid).subscribe(
+        (res: any) => {
+          this.spinner.hide();
+          this.lstReporteCiudadBroker = JSON.parse(res);
+          var dataset = {
+            x: [],
+            y: [],
+            z: []
+          };
+
+          for (let corredores of this.lstReporteCiudadBroker) {
+            dataset.x.push(corredores.Ciudad);
+            dataset.y.push(corredores.Total);
+            dataset.z.push(this.colorAleatorio());
+          }
+          this.generarGraficoPie(dataset.x, dataset.y, dataset.z, 'pie', 'N° de Operadores por Ciudad', 'Gráfico Operadores por Ciudad');
+        },
+        err => {
+          this.spinner.hide();
+          console.log(err);
+          this.conexion.error(err);
+        }
+      );
+    }
+  }
+
+  // FUNCIONES DE LOS GRAFICOS
+  public generarGraficoBar(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
+    if (this.chartReporteBarCotizaciones || this.lstReporteCiudadBrokerC == "") {
+      this.chartReporteBarCotizaciones.destroy();
+    }
+    this.chartReporteBarCotizaciones = new Chart('canvasCotizaciones', {
+      type: '' + tipo + '',
+      data: {
+        labels: textos,
+        datasets: [
+          {
+            label: leyenda,
+            data: valores,
+            borderColor: colores,
+            backgroundColor: colores,
+            border: 1
+          }
+        ]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: titulo
+        },
+        animation: {
+          onComplete: function () {
+            var chartInstance = this.chart,
+              ctx = chartInstance.ctx;
+            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+
+            this.data.datasets.forEach(function (dataset, i) {
+              var meta = chartInstance.controller.getDatasetMeta(i);
+              meta.data.forEach(function (bar, index) {
+                var data = dataset.data[index];
+                ctx.fillText(data, bar._model.x, bar._model.y +25);
+              });
+            });
+          }
+        },
+        scales: {
+          xAxes: [{
+            display: true
+          }],
+          yAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true,
+              userCallback: function (label, index, labels) {
+                if (Math.floor(label) === label) {
+                  return label;
+                }
+              },
+            }
+          }],
+        }
+      }
+    });
+  }
+
+  public generarGraficoBarEmisiones(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
+    if (this.chartReporteBarEmisiones || this.lstReporteCiudadBrokerE == "") {
+      this.chartReporteBarEmisiones.destroy();
+    }
+    this.chartReporteBarEmisiones = new Chart('canvasEmisiones', {
+      type: '' + tipo + '',
+      data: {
+        labels: textos,
+        datasets: [
+          {
+            label: leyenda,
+            data: valores,
+            borderColor: colores,
+            backgroundColor: colores,
+            border: 1
+          }
+        ]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: titulo
+        },
+        animation: {
+          onComplete: function () {
+            var chartInstance = this.chart,
+              ctx = chartInstance.ctx;
+            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            this.data.datasets.forEach(function (dataset, i) {
+              var meta = chartInstance.controller.getDatasetMeta(i);
+              meta.data.forEach(function (bar, index) {
+                var data = dataset.data[index];
+                ctx.fillText(data, bar._model.x, bar._model.y +25);
+              });
+            });
+          }
+        },
+        scales: {
+          xAxes: [{
+            display: true
+          }],
+          yAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true,
+              userCallback: function (label, index, labels) {
+                if (Math.floor(label) === label) {
+                  return label;
+                }
+              },
+            }
+          }],
+        },
+      }
+    });
+  }
+
   public generarGraficoPie(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
     if (this.chartReportePie) this.chartReportePie.destroy();
     this.chartReportePie = new Chart('canvasUsuarios', {
@@ -368,118 +523,7 @@ export class ReporteComponent implements OnInit {
     });
   }
 
-  public generarGraficoBar(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
-    if (this.chartReporteBar) this.chartReporteBar.destroy();
-
-    this.chartReporteBar = new Chart('canvasCotizaciones', {
-      type: '' + tipo + '',
-      data: {
-        labels: textos,
-        datasets: [
-          {
-            label: leyenda,
-            data: valores,
-            borderColor: colores,
-            backgroundColor: colores,
-            border: 1
-          }
-        ]
-      },
-      options: {
-        legend: {
-          display: true
-        },
-        title: {
-          display: true,
-          text: titulo
-        },
-        scales: {
-          xAxes: [{
-            display: true
-          }],
-          yAxes: [{
-            display: true,
-            ticks: {
-              beginAtZero: true,
-              userCallback: function (label, index, labels) {
-                if (Math.floor(label) === label) {
-                  return label;
-                }
-              },
-            }
-          }],
-        }
-      }
-    });
-  }
-
-  public generarGraficoBarEmisiones(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
-    if (this.chartReporteBar) this.chartReporteBar.destroy();
-
-    this.chartReporteBar = new Chart('canvasEmisiones', {
-      type: '' + tipo + '',
-      data: {
-        labels: textos,
-        datasets: [
-          {
-            label: leyenda,
-            data: valores,
-            borderColor: colores,
-            backgroundColor: colores,
-            border: 1
-          }
-        ]
-      },
-      options: {
-        legend: {
-          display: true
-        },
-        title: {
-          display: true,
-          text: titulo
-        },
-        scales: {
-          xAxes: [{
-            display: true
-          }],
-          yAxes: [{
-            display: true,
-            ticks: {
-              beginAtZero: true,
-              userCallback: function (label, index, labels) {
-                if (Math.floor(label) === label) {
-                  return label;
-                }
-              },
-            }
-          }],
-        }
-      }
-    });
-  }
-
   // LISTAR DATOS DE LA BASE PARA EXPORTAR A EXCEL 
-  public listarReporteUsuariosBroker(broker: any) {
-    if (broker == undefined) {
-      this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
-    } else {
-      this.spinner.show();
-      this.conexion.get('Broker/SBroker.svc/reporte/listar/usuarios/' + broker, this.usuario.Uid).subscribe(
-        (res: any) => {
-          this.spinner.hide();
-          this.listadoReporteUsuariosExportar = res;
-          console.log(this.listadoReporteUsuariosExportar);
-          this.exportarReportesExcel("Usuarios", this.listadoReporteUsuariosExportar);
-        },
-        err => {
-          this.spinner.hide();
-          console.log(err);
-          this.conexion.error(err);
-        }
-      );
-    }
-  }
-
   public listarReporteCotizacionesBroker(broker: any) {
     if (broker == undefined) {
       this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
@@ -489,7 +533,6 @@ export class ReporteComponent implements OnInit {
         (res: any) => {
           this.spinner.hide();
           this.listadoReporteCotizacionesBrokerCiudadExportar = res;
-          console.log(this.listadoReporteCotizacionesBrokerCiudadExportar);
           this.exportarReportesExcel("Cotizaciones", this.listadoReporteCotizacionesBrokerCiudadExportar);
         },
         err => {
@@ -498,31 +541,6 @@ export class ReporteComponent implements OnInit {
           this.conexion.error(err);
         }
       );
-    }
-  }
-
-  public exportartableToExcel(broker: any) {
-    if (broker == undefined) {
-      this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
-    } else {
-      console.log(this.lstDetalleValoresCotizacionesBrokerCiudad);
-      console.log(this.lstDetalleValoresEmisionesBrokerCiudad);
-
-      if (this.lstDetalleValoresCotizacionesBrokerCiudad == undefined || this.lstDetalleValoresEmisionesBrokerCiudad == undefined) {
-        this.mensaje.mostrarAlerta('No hay datos para exportar.', this.usuario.broker.Color);
-      } else {
-        const ws2: XLSX.WorkSheet = XLSX.utils.table_to_sheet(document.getElementById('detalleCotizaciones'));
-        const ws3: XLSX.WorkSheet = XLSX.utils.table_to_sheet(document.getElementById('detalleEmisiones'));
-        const wb: XLSX.WorkBook = XLSX.utils.book_new();
-        wb.Props = {
-          Title: "Detalle Valores de Cotizaciones y Emisiones " + this.globales.obtenerFecha('-'),
-          Author: this.usuario.Usuario,
-          CreatedDate: this.globales.obtenerFecha('-')
-        }
-        XLSX.utils.book_append_sheet(wb, ws2, 'Detalle Cotizaciones');
-        XLSX.utils.book_append_sheet(wb, ws3, 'Detalle Emisiones');
-        XLSX.writeFile(wb, "Detalle Valores de Cotizaciones y Emisiones " + this.globales.obtenerFecha('-') + '.xlsx');
-      }
     }
   }
 
@@ -539,9 +557,28 @@ export class ReporteComponent implements OnInit {
           if (this.listadoReporteEmisionesBrokerCiudadExportar.length == 0) {
             this.mensaje.mostrarAlerta('El Broker sellecionado no tiene pólizas emitidas hasta el momento.', this.usuario.broker.Color);
           } else {
-            console.log(this.listadoReporteEmisionesBrokerCiudadExportar);
             this.exportarReportesExcel("Emisiones", this.listadoReporteEmisionesBrokerCiudadExportar);
           }
+        },
+        err => {
+          this.spinner.hide();
+          console.log(err);
+          this.conexion.error(err);
+        }
+      );
+    }
+  }
+
+  public listarReporteUsuariosBroker(broker: any) {
+    if (broker == undefined) {
+      this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
+    } else {
+      this.spinner.show();
+      this.conexion.get('Broker/SBroker.svc/reporte/listar/usuarios/' + broker, this.usuario.Uid).subscribe(
+        (res: any) => {
+          this.spinner.hide();
+          this.listadoReporteUsuariosExportar = res;
+          this.exportarReportesExcel("Usuarios", this.listadoReporteUsuariosExportar);
         },
         err => {
           this.spinner.hide();
@@ -563,6 +600,28 @@ export class ReporteComponent implements OnInit {
     }
     XLSX.utils.book_append_sheet(wb, ws, 'Hoja1');
     XLSX.writeFile(wb, 'Reporte ' + titulo + " " + this.globales.obtenerFecha('-') + '.xlsx');
+  }
+
+  public exportartableToExcel(broker: any) {
+    if (broker == "") {
+      this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
+    } else {
+      if (this.lstDetalleValoresCotizacionesBrokerCiudad == undefined || this.lstDetalleValoresEmisionesBrokerCiudad == undefined) {
+        this.mensaje.mostrarAlerta('No hay datos para exportar.', this.usuario.broker.Color);
+      } else {
+        const ws2: XLSX.WorkSheet = XLSX.utils.table_to_sheet(document.getElementById('detalleCotizaciones'));
+        const ws3: XLSX.WorkSheet = XLSX.utils.table_to_sheet(document.getElementById('detalleEmisiones'));
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        wb.Props = {
+          Title: "Detalle Valores de Cotizaciones y Emisiones " + this.globales.obtenerFecha('-'),
+          Author: this.usuario.Usuario,
+          CreatedDate: this.globales.obtenerFecha('-')
+        }
+        XLSX.utils.book_append_sheet(wb, ws2, 'Detalle Cotizaciones');
+        XLSX.utils.book_append_sheet(wb, ws3, 'Detalle Emisiones');
+        XLSX.writeFile(wb, "Detalle Valores de Cotizaciones y Emisiones " + this.globales.obtenerFecha('-') + '.xlsx');
+      }
+    }
   }
 
   // GENERAR COLORES ALEATORIOS

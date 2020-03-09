@@ -14,5 +14,11 @@ namespace SegurosEquinoccial.Pymes.Controlador.Broker
         {
             return DBroReglasGenerales.BroConsultaReglasGenerales(idBroker, nombre);
         }
+
+        public static int BroGestionExcepciones(EBroExcepciones excepcion)
+        {
+            return DBroExcepciones.BroGestionExcepciones(excepcion);
+        }
+
     }
 }
