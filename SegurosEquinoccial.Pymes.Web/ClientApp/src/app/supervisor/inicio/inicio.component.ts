@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../servicios/api/api.service';
 import { SesionService } from '../../servicios/sesion/sesion.service';
-import { Chart } from 'chart.js';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { GridComponent, GridDataResult, DataStateChangeEvent } from '@progress/kendo-angular-grid';
 import { process, State } from '@progress/kendo-data-query';
 import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
+import * as Chart from 'chart.js';
 
 declare var $: any;
 
@@ -102,12 +102,7 @@ export class InicioSupervisionComponent implements OnInit {
           yAxes: [{
             display: true,
             ticks: {
-              beginAtZero: true,
-              userCallback: function (label, index, labels) {
-                if (Math.floor(label) === label) {
-                  return label;
-                }
-              },
+              beginAtZero: true
             }
           }],
         }
@@ -190,9 +185,6 @@ export class InicioSupervisionComponent implements OnInit {
         this.cotizacionesResumen.sinEmitir = resumen.sinEmitir;
         this.cotizacionesResumen.total = resumen.total;
 
-        console.log(this.lstCotizaciones);
-        console.log(this.lstCotizacionesUsuario);
-
       },
       err => {
         this.spinner.hide();
@@ -228,7 +220,7 @@ export class InicioSupervisionComponent implements OnInit {
             cEmitidas += 1;
             total += datos.PrimaTotal;
           }
-          if (datos.Estado != 5) {
+          if (datos.Estado == 5 || datos.Estado == 4 || datos.Estado == 3 || datos.Estado == 2 || datos.Estado == 1) {
             cSinEmitir += 1;
           }
         }

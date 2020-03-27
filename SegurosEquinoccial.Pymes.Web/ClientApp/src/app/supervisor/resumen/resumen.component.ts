@@ -5,7 +5,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
 import { GridComponent, GridDataResult, DataStateChangeEvent } from '@progress/kendo-angular-grid';
 import { GroupDescriptor, process, State } from '@progress/kendo-data-query';
-import { Chart } from 'chart.js';
+import * as Chart from 'chart.js';
+
+declare var moment: any;
 
 @Component({
   selector: 'app-resumen',
@@ -23,8 +25,8 @@ export class ResumenSupervisionComponent implements OnInit {
 
   public filtros = {
     usuarios: [],
-    fechaInicio: "",
-    fechaFin: ""
+    fechaInicio: null,
+    fechaFin: null
   }
 
   public usuario: any;
@@ -56,8 +58,15 @@ export class ResumenSupervisionComponent implements OnInit {
 
   ngOnInit() {
     this.usuario = this.sesion.obtenerDatos();
+    this.gestionFecha();
     this.listarUsuariosDependientes();
   }
+
+  gestionFecha() {
+    var today = moment();
+    this.filtros.fechaInicio = new Date(moment(today).subtract(90, 'days'));
+    this.filtros.fechaFin = new Date();
+  }  
 
   public listarUsuariosDependientes() {
     this.spinner.show();
@@ -120,7 +129,7 @@ export class ResumenSupervisionComponent implements OnInit {
               suma += datos.PrimaTotal;
               this.cotizacionesResumen.total = suma + "";
               emitidas.push(datos.Estado);
-            } if (datos.Estado != 5) {
+            } if (datos.Estado == 5 || datos.Estado == 4 || datos.Estado == 3 || datos.Estado == 2 || datos.Estado == 1) {
               sinEmitir.push(datos.Estado);
             }
           }
@@ -130,7 +139,6 @@ export class ResumenSupervisionComponent implements OnInit {
 
           this.gestionarDatosGraficos();
 
-          console.log(res);
         },
         err => {
           this.spinner.hide();
@@ -245,7 +253,6 @@ export class ResumenSupervisionComponent implements OnInit {
     this.generarGraficoEmitidas(emitidas.x, emitidas.y);
     this.generarGraficoSinEmitir(sinEmitir.x, sinEmitir.y);
     this.generarGraficoTotales(Totales.x, Totales.y);
-    console.log(resultados)
   }
 
   public gestionarDatosLista(IdUsuario: number): any {
@@ -262,7 +269,7 @@ export class ResumenSupervisionComponent implements OnInit {
             cEmitidas += 1;
             total += datos.PrimaTotal;
           }
-          if (datos.Estado != 5) {
+          if (datos.Estado == 5 || datos.Estado == 4 || datos.Estado == 3 || datos.Estado == 2 || datos.Estado == 1) {
             cSinEmitir += 1;
           }
         }

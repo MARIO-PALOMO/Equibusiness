@@ -10,6 +10,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { PDFExportModule } from '@progress/kendo-angular-pdf-export';
 import { NgxMaskModule } from 'ngx-mask';
 
+
 import { AppComponent } from './app.component';
 import { NavBarAdministracionComponent } from './administracion/complementos/nav-bar/nav-bar.component';
 import { InicioClienteComponent } from './cliente/inicio/inicio.component';

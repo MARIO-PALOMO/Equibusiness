@@ -5,7 +5,7 @@
         type="ball-atom">
       </ngx-spinner>
       <div class="row w-100">
-        <div class="col-lg-3 mx-auto">
+        <div class="col-lg-4 mx-auto">
           <div class="auto-form-wrapper" style="background-color: rgba(255, 255, 255, 0.8)">
             <form [formGroup]="fmrInicioSesion" (ngSubmit)="verificarUsuario(fmrInicioSesion.value)">
               <div>
@@ -48,12 +48,13 @@
               </div>
               <br>
               <!--<div class="form-group d-flex justify-content-between">
-                <a href="#" class="text-small forgot-password text-black"><i class="mdi mdi-key-change"></i> Recuperar
-                  Contraseña</a>
-              </div>-->
-              <!--<div class="form-group">
-                <button class="btn btn-outline-primary submit-btn btn-block">Solicitar Cuenta</button>
-              </div>-->
+<a href="#" class="text-small forgot-password text-black"><i class="mdi mdi-key-change"></i> Recuperar
+Contraseña</a>
+</div>
+<div class="form-group">
+<button class="btn btn-outline-primary submit-btn btn-block">Solicitar Cuenta</button>
+</div>
+-->
             </form>
           </div>
           <br>
@@ -63,3 +64,52 @@
     </div>
   </div>
 </div>
+
+<div id="modalOpciones" class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="modalOpciones" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalOpciones">Versión Aplicación. </h5>
+        <button type="button" class="close" style="color: rgb(139, 16, 16);" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" style="padding: 20px !important;">
+          <span style="padding-left: 20px !important; font-size: 12px !important;">
+            Su usuario posee varios perfiles para esta plataforma, por favor eliga a cuál quiere ingresar.
+          </span>
+        </div>
+        <div class="row" style="margin-top: 30px !important;">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">
+            <div class="form-group">
+              <label><b>Versión de Uso</b></label><br>
+              <kendo-dropdownlist [data]="opcionesBroker" [(ngModel)]="brokerSeleccionado" textField="Broker" valueField="IdBroker" 
+              (ngModelChange)="cargarRoles()" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                <ng-template kendoDropDownListItemTemplate let-dataItem>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Broker }}</span>
+                </ng-template>
+              </kendo-dropdownlist>
+            </div>
+            <div class="form-group">
+              <label><b>Rol</b></label><br>
+              <kendo-dropdownlist [data]="opcionesRol" [(ngModel)]="rolSeleccionado" textField="Rol" valueField="IdRol"
+                style="font-size: 13px !important; height: 38px !important; width: 100%">
+                <ng-template kendoDropDownListItemTemplate let-dataItem>
+                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Rol }}</span>
+                </ng-template>
+              </kendo-dropdownlist>
+            </div>
+            <br><br><br>
+            <div class="form-group" style="margin-top: 20px !important; margin-bottom: 50px !important;">
+              <button class="btn btn-primary btn-block" (click)="abrirSesion()">Continuar</button>
+            </div>
+          </div>
+          <div class="col-md-1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -464,4 +464,62 @@ export class UsuarioComponent implements OnInit {
     });
   }
 
+  public eliminarUsuario(){
+    var datos = {
+      "Ciudad": "",
+      "CodigoAgente": "",
+      "CodigoPuntoVenta": "",
+      "CodigoSucursal": "",
+      "CodigoTipoAgente": "",
+      "Comision": 0,
+      "Contrasena": "Qw12345678",
+      "Email": "",
+      "Estado": 1,
+      "EstadoSesion": 0,
+      "Foto": "",
+      "IdPadre": 0,
+      "IdUsuario": this.fmrUsuario.IdUsuario,
+      "Identificador": 4,
+      "Total": 0,
+      "Uid": null,
+      "Usuario": "",
+      "UsuarioPadre": null,
+      "Corredores": "",
+      "Cedula" : "",
+      "broker": {
+        "IdBroker": 0
+      },
+      "rol": {
+        "IdRol": 0,
+      }
+    };
+    Swal.fire({
+      title: 'Confirmación',
+      html: "Esta seguro de eliminar al usuario.",
+      type: 'warning',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonText: 'Aceptar',
+    }).then((result) => {
+      if (result.value) {
+        this.spinner.show();
+        this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', datos, "").subscribe(
+          (res: any) => {
+            this.spinner.hide();
+            $("#modalContrasena").css("display", "none");        
+            this.validador.mostrarAlertaCorrecta("Usuario Eliminado Exitosamente", this.usuario.broker.Color);
+            this.listarUsuarios();
+          },
+          err => {
+            this.spinner.hide();
+            console.log(err);
+            this.validador.mostrarAlerta("No se pudo eliminar al usuario", this.usuario.broker.Color);
+            this.conexion.error(err);
+          }
+        );
+      } else {
+        $("#modalContrasena").css("display", "none");
+      }
+    });
+  }
 }

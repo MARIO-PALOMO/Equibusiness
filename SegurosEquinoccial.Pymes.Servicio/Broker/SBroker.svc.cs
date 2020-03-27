@@ -448,6 +448,11 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return CAdmUsuarios.BroListarUsuarios();
         }
 
+        public List<EAdmUsuarios> BroListarUsuariosBroker(string IdBroker)
+        {
+            return CAdmUsuarios.BroListarUsuariosBroker(IdBroker);
+        }
+
         public List<EAdmBroker> BroListarBrokers()
         {
             return CBroBroker.BroListarBrokers();
@@ -577,5 +582,6 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return DBroExcepciones.BroGestionExcepciones(excepcion);
         }
 
+       
     }
 }

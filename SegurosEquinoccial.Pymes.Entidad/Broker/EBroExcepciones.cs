@@ -18,7 +18,10 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
         public int IdBroker { get; set; }
 
         [DataMember]
-        public string Nombre { get; set; } 
+        public string Nombre { get; set; }
+
+        [DataMember]
+        public int IdUsuario { get; set; }
 
     }
 }

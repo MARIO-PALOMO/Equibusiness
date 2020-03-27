@@ -14,7 +14,7 @@ namespace SegurosEquinoccial.Pymes.Servicio.Gestion
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "usuario/verificar")]
-        EAdmUsuarios AdmVerificacionUsuario(EAdmUsuarios usuario);
+        List<EAdmUsuarios> AdmVerificacionUsuario(EAdmUsuarios usuario);
 
         //CONSULTAR SUBRAMOS TRANSPORTE
         [OperationContract]

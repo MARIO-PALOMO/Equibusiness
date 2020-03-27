@@ -545,9 +545,13 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
-        UriTemplate = "consultar/brokers")]
-        List<EAdmBroker> BroListarBrokers();
+        UriTemplate = "consultar/usuario/broker/{IdBroker}")]
+        List<EAdmUsuarios> BroListarUsuariosBroker(string IdBroker);
 
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "consultar/brokers")]
+        List<EAdmBroker> BroListarBrokers();        
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,

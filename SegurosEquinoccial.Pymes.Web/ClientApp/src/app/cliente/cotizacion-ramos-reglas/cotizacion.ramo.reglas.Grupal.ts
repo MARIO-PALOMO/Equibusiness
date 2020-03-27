@@ -32,7 +32,7 @@ export class CotizacionRamoReglasGrupal {
         }
       }
 
-      var cuadriculaIdentificador: any = Object.values(this.agrupacion(cuadricula, 'Identificador'));
+      var cuadriculaIdentificador: any = Object["values"](this.agrupacion(cuadricula, 'Identificador'));
 
       for (var agrupacion_ of cuadriculaIdentificador) {
         var totales = this.sumatoriaIdentificador(agrupacion_)[0];
@@ -83,7 +83,7 @@ export class CotizacionRamoReglasGrupal {
         }
       }
 
-      var cuadriculaIdentificador: any = Object.values(this.agrupacion(cuadricula, 'Identificador'));
+      var cuadriculaIdentificador: any = Object["values"](this.agrupacion(cuadricula, 'Identificador'));
 
       for (var agrupacion_ of cuadriculaIdentificador) {
         var totales = this.sumatoriaIdentificador(agrupacion_)[0];
@@ -134,7 +134,7 @@ export class CotizacionRamoReglasGrupal {
         }
       }
 
-      var cuadriculaIdentificador: any = Object.values(this.agrupacion(cuadricula, 'Identificador'));
+      var cuadriculaIdentificador: any = Object["values"](this.agrupacion(cuadricula, 'Identificador'));
 
       for (var agrupacion_ of cuadriculaIdentificador) {
         var totales = this.sumatoriaIdentificador(agrupacion_)[0];
@@ -382,7 +382,7 @@ export class CotizacionRamoReglasGrupal {
         }
       }
 
-      var cuadriculaIdentificador: any = Object.values(this.agrupacion(cuadricula, 'Identificador'));
+      var cuadriculaIdentificador: any = Object["values"](this.agrupacion(cuadricula, 'Identificador'));
 
       for (var agrupacion_ of cuadriculaIdentificador) {
         var totales = this.sumatoriaIdentificador(agrupacion_)[0];

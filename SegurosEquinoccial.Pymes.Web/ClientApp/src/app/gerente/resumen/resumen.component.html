@@ -30,12 +30,12 @@
               </div>
               <div class="col-md-3">
                 <span>Fecha Inicio:</span><br>
-                <kendo-datepicker [(ngModel)]="filtros.fechaInicio" (ngModelChange)="listarCotizacionesOperadores()">
+                <kendo-datepicker [(ngModel)]="filtros.fechaInicio" (ngModelChange)="listarCotizacionesOperadores()" [format]="'yyyy - MM - dd'">
                 </kendo-datepicker>
               </div>
               <div class="col-md-3">
                 <span>Fecha Fin:</span><br>
-                <kendo-datepicker [(ngModel)]="filtros.fechaFin" (ngModelChange)="listarCotizacionesOperadores()">
+                <kendo-datepicker [(ngModel)]="filtros.fechaFin" (ngModelChange)="listarCotizacionesOperadores()" [format]="'yyyy - MM - dd'">
                 </kendo-datepicker>
               </div>
               <!--<div class="col-md-6">

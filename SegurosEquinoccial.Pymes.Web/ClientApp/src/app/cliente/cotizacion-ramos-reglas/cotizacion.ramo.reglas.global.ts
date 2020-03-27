@@ -30,7 +30,7 @@ export class CotizacionRamoReglasGlobal {
       }, {});
     };
 
-    var cuadriculaIdentificador: any = Object.values(agrupacion(cuadricula, 'Identificador'));
+    var cuadriculaIdentificador: any = Object["values"](agrupacion(cuadricula, 'Identificador'));
 
     const sumatoriaIdentificador = function (lista) {
       return lista.map((value, index, array) => {
@@ -93,7 +93,7 @@ export class CotizacionRamoReglasGlobal {
       }, {});
     };
 
-    var cuadriculaIdentificador: any = Object.values(agrupacion(cuadricula, 'Identificador'));
+    var cuadriculaIdentificador: any = Object["values"](agrupacion(cuadricula, 'Identificador'));
 
     const sumatoriaIdentificador = function (lista) {
       return lista.map((value, index, array) => {

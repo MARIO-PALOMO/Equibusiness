@@ -13,7 +13,7 @@ namespace SegurosEquinoccial.Pymes.Servicio.Gestion
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class SGesConsultas : ISGesConsultas
     {
-        public EAdmUsuarios AdmVerificacionUsuario(EAdmUsuarios usuario)
+        public List<EAdmUsuarios> AdmVerificacionUsuario(EAdmUsuarios usuario)
         {
             return CAdmUsuarios.AdmVerificacionUsuario(usuario);
         }

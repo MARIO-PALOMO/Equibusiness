@@ -32,12 +32,12 @@
                   </div>
                   <div class="col-md-3">
                     <span>Fecha Inicio:</span>
-                    <kendo-datepicker [(ngModel)]="filtros.fechaInicio"
+                    <kendo-datepicker [(ngModel)]="filtros.fechaInicio" [format]="'yyyy - MM - dd'"
                       (ngModelChange)="consultarResumenCotizaciones()"></kendo-datepicker>
                   </div>
                   <div class="col-md-3">
                     <span>Fecha Fin:</span>
-                    <kendo-datepicker [(ngModel)]="filtros.fechaFin" (ngModelChange)="consultarResumenCotizaciones()">
+                    <kendo-datepicker [(ngModel)]="filtros.fechaFin" (ngModelChange)="consultarResumenCotizaciones()" [format]="'yyyy - MM - dd'">
                     </kendo-datepicker>
                   </div>
                 </div>
@@ -46,7 +46,12 @@
           </div>
         </div>
         <br>
+
+        <!--INICIO DE LA PARTE DE LOS CUADROS -->
+        
         <div class="row" style="color: black">
+
+          <!-- INICIO CUADRO DEl USUARIO -->
           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
             <div class="card card-statistics">
               <div class="card-body">
@@ -94,27 +99,33 @@
               </div>
             </div>
           </div>
+          <!-- FIN CUADRO DEl USUARIO -->
+          
+          <!-- INICIO CUADRO DEl TOTAL COTIZADO -->
           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
             <div class="card card-statistics">
               <div class="card-body">
                 <div class="clearfix">
                   <div class="float-left">
-                    <i class="mdi mdi-cube text-danger icon-lg"></i>
+                    <i class="mdi mdi-receipt text-warning icon-lg"></i>
                   </div>
                   <div class="float-right">
-                    <p class="mb-0 text-right">Ingresos<br>Cotizaciones</p>
+                    <p class="mb-0 text-right">Cotizaciones<br>Realizadas</p>
                     <div class="fluid-container">
-                      <h3 class="font-weight-medium text-right mb-0"><small>$</small> {{ cotizacionesResumen.total }}
-                      </h3>
+                      <h3 class="font-weight-medium text-right mb-0"><small>N°</small>
+                        {{ cotizacionesResumen.noConcretadas }}</h3>
                     </div>
                   </div>
                 </div>
                 <p class="text-muted mt-3 mb-0">
-                  <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i>Cotizaciones Emitidas
+                  <i class="mdi mdi-calendar mr-1" aria-hidden="true"></i> Total Cotizaciones
                 </p>
               </div>
             </div>
           </div>
+          <!-- FIN CUADRO DEl TOTAL COTIZADO -->
+
+          <!-- INICIO CUADRO DEl TOTAL EMITIDO -->
           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
             <div class="card card-statistics">
               <div class="card-body">
@@ -131,33 +142,40 @@
                   </div>
                 </div>
                 <p class="text-muted mt-3 mb-0">
-                  <i class="mdi mdi-bookmark-outline mr-1" aria-hidden="true"></i> N° Cotizaciones
+                  <i class="mdi mdi-bookmark-outline mr-1" aria-hidden="true"></i> Total Emisiones
                 </p>
               </div>
             </div>
           </div>
+          <!-- FIN CUADRO DEl TOTAL EMITIDO -->
+
+          <!-- INICIO CUADRO DEl TOTAL DE RECAUDADO -->
           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
             <div class="card card-statistics">
               <div class="card-body">
                 <div class="clearfix">
                   <div class="float-left">
-                    <i class="mdi mdi-receipt text-warning icon-lg"></i>
+                    <i class="mdi mdi-cube text-danger icon-lg"></i>
                   </div>
                   <div class="float-right">
-                    <p class="mb-0 text-right">Cotizaciones<br>Sin Emitir</p>
+                    <p class="mb-0 text-right">Ingresos<br>Emisiones</p>
                     <div class="fluid-container">
-                      <h3 class="font-weight-medium text-right mb-0"><small>N°</small>
-                        {{ cotizacionesResumen.noConcretadas }}</h3>
+                      <h3 class="font-weight-medium text-right mb-0"><small>$</small> {{ cotizacionesResumen.total }}
+                      </h3>
                     </div>
                   </div>
                 </div>
                 <p class="text-muted mt-3 mb-0">
-                  <i class="mdi mdi-calendar mr-1" aria-hidden="true"></i> N° Cotizaciones
+                  <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i>Total Recaudado
                 </p>
               </div>
             </div>
           </div>
+          <!-- FIN CUADRO DEl TOTAL DE RECAUDADO -->
+
         </div>
+
+        <!--FIN DE LA PARTE DE LOS CUADROS -->
 
         <div class="row">
           <div class="col-md-12">
@@ -309,6 +327,8 @@
             </kendo-grid>
           </div>
         </div>
+
+
         <br>
         <div class="row">
           <div class="col-md-12">
@@ -317,7 +337,7 @@
                 <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
                   aria-expanded="true" aria-controls="collapseOne" style="cursor: pointer; background-color: #333333">
                   <h5 class="mb-0" style="float: left">
-                    Comparativa Usuarios | Gráficos
+                    Comparativa de Datos | Gráficos
                   </h5>
                   <i style="float: right" class="mdi mdi-chevron-down"></i>
                 </div>
@@ -329,34 +349,36 @@
 
                       <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
-                          <a class="nav-link active" data-toggle="tab" href="#home">N° Cotizaciones Emitidas</a>
+                          <a class="nav-link active" data-toggle="tab" href="#menu1"> N° Cotizaciones Realizadas</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" data-toggle="tab" href="#menu1"> N° Cotizaciones Sin Emitir</a>
+                          <a class="nav-link" data-toggle="tab" href="#home">N° Cotizaciones Emitidas</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" data-toggle="tab" href="#menu2">Total Cotizaciones Emitidas</a>
+                          <a class="nav-link" data-toggle="tab" href="#menu2">Recaudado Cotizaciones Emitidas</a>
                         </li>
                       </ul>
 
                       <div class="tab-content">
-                        <div id="home" class="container tab-pane active"><br>
-                          <small>Gráfico comparativo entre el número de cotizaciones emitidas por usuario.</small>
-                          <br>
-                          <canvas id="canvasEmitidas" height="100">{{ chartEmitidas }}</canvas>
-                        </div>
-                        <div id="menu1" class="container tab-pane fade"><br>
-                          <small>Gráfico comparativo entre el número de cotizaciones no emitidas por
-                            usuario.</small>
+
+                        <div id="menu1" class="container tab-pane active"><br>
+                          <small>Gráfico comparativo de cotizaciones realizadas por usuario.</small>
                           <br>
                           <canvas id="canvasSinEmitir" height="100">{{ chartSinEmitir }}</canvas>
                         </div>
+
+                        <div id="home" class="container tab-pane fade"><br>
+                          <small>Gráfico comparativo de cotizaciones emitidas por usuario.</small>
+                          <br>
+                          <canvas id="canvasEmitidas" height="100">{{ chartEmitidas }}</canvas>
+                        </div>
+                        
                         <div id="menu2" class="container tab-pane fade"><br>
-                          <small>Gráfico comparativo entre el dinero total de las cotizaciones emitidas por
-                            usuario.</small>
+                          <small>Gráfico comparativo total recaudado de cotizaciones emitidas por usuario.</small>
                           <br>
                           <canvas id="canvasTotal" height="100">{{ chartTotal }}</canvas>
                         </div>
+
                       </div>
                     </div>
 
@@ -378,7 +400,7 @@
                         <thead>
                           <tr>
                             <th>Usuario</th>
-                            <th>N° Cotizaciones<br>Sin Emitir</th>
+                            <th>N° Cotizaciones<br>Realizadas</th>
                             <th>N° Cotizaciones<br>Emitidas</th>
                             <th>Ingresos Generados<br>Cotizaciones Emitidas</th>
                           </tr>

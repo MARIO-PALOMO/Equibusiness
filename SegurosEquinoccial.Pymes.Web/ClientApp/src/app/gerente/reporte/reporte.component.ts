@@ -3,14 +3,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ApiService } from '../../servicios/api/api.service';
 import { SesionService } from '../../servicios/sesion/sesion.service';
 import { ValidacionCotizadorPipe } from '../../pipes/gestion-validacion-cotizador/validacion-cotizador.pipe';
-import { Chart } from 'chart.js';
-import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
 import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
-
+import * as XLSX from 'xlsx';
+import * as Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 declare var $: any;
-declare var getColumns: any;
 declare var moment: any;
 
 @Component({
@@ -23,8 +21,10 @@ export class ReporteComponent implements OnInit {
 
   usuario: any = [];
   public chartReporteBarCotizaciones: Chart;
-  public chartReportePie: Chart;
   public chartReporteBarEmisiones: Chart;
+  public chartReportePieEmisiones: any;
+  public chartReportePieCotizaciones: Chart;
+
 
   public lstBrokers = [];
   public listadoReporteUsuariosExportar = [];
@@ -125,8 +125,8 @@ export class ReporteComponent implements OnInit {
             this.lstDetalleValoresEmisionesBrokerCiudad = [];
             this.totalCotizaciones = [];
             this.totalEmisiones = [];
-            this.totalPrimaNetaCotizaciones= [];
-            this.totalPrimaNetaEmisiones= [];
+            this.totalPrimaNetaCotizaciones = [];
+            this.totalPrimaNetaEmisiones = [];
           } else {
             this.mensaje.mostrarAlertaInformativa('El broker seleccionado no posee cotizaciones.', this.usuario.broker.Color);
             this.filtros.lstCiudadesCotizadas = [];
@@ -158,8 +158,8 @@ export class ReporteComponent implements OnInit {
             this.lstDetalleValoresEmisionesBrokerCiudad = [];
             this.totalCotizaciones = [];
             this.totalEmisiones = [];
-            this.totalPrimaNetaCotizaciones= [];
-            this.totalPrimaNetaEmisiones= [];
+            this.totalPrimaNetaCotizaciones = [];
+            this.totalPrimaNetaEmisiones = [];
           } else {
             this.mensaje.mostrarAlertaInformativa('El broker seleccionado no posee emisiones.', this.usuario.broker.Color);
             this.filtros.lstCiudadesEmitidas = [];
@@ -210,11 +210,11 @@ export class ReporteComponent implements OnInit {
           }
           this.totalCotizaciones = Math.round(valor * 100) / 100;
           this.totalCotizaciones = this.totalCotizaciones.toFixed(2);
-          this.totalCotizaciones = this.globales.formatearNumero(this.totalCotizaciones,2);
+          this.totalCotizaciones = this.globales.formatearNumero(this.totalCotizaciones, 2);
 
           this.totalPrimaNetaCotizaciones = Math.round(valor3 * 100) / 100;
           this.totalPrimaNetaCotizaciones = this.totalPrimaNetaCotizaciones.toFixed(2);
-          this.totalPrimaNetaCotizaciones = this.globales.formatearNumero(this.totalPrimaNetaCotizaciones,2);
+          this.totalPrimaNetaCotizaciones = this.globales.formatearNumero(this.totalPrimaNetaCotizaciones, 2);
 
           this.detalleValoresEmisionesBrokerCiudad(datos);
         } else {
@@ -253,11 +253,11 @@ export class ReporteComponent implements OnInit {
           }
           this.totalEmisiones = Math.round(valor2 * 100) / 100;
           this.totalEmisiones = this.totalEmisiones.toFixed(2);
-          this.totalEmisiones = this.globales.formatearNumero(this.totalEmisiones,2);
+          this.totalEmisiones = this.globales.formatearNumero(this.totalEmisiones, 2);
 
           this.totalPrimaNetaEmisiones = Math.round(valor4 * 100) / 100;
           this.totalPrimaNetaEmisiones = this.totalPrimaNetaEmisiones.toFixed(2);
-          this.totalPrimaNetaEmisiones = this.globales.formatearNumero(this.totalPrimaNetaEmisiones,2);
+          this.totalPrimaNetaEmisiones = this.globales.formatearNumero(this.totalPrimaNetaEmisiones, 2);
 
         } else {
           this.mensaje.mostrarAlertaInformativa('El Broker seleccionado no tiene emisiones realizadas en el rango de fechas elegidas.', this.usuario.broker.Color);
@@ -298,7 +298,8 @@ export class ReporteComponent implements OnInit {
             }
           }
         }
-        this.generarGraficoBar(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Cotizaciones Por Ciudad', 'Gráfico de Cotizaciones por Ciudad');
+        this.generarGraficoBar(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Cotizaciones Por Ciudad', 'Gráfico de Cotizaciones por Ciudad Barras');
+        this.generarGraficoPieCotizaciones(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'pie', 'Cotizaciones Por Ciudad', 'Gráfico de Cotizaciones por Ciudad Pastel');
 
       },
       err => {
@@ -330,7 +331,8 @@ export class ReporteComponent implements OnInit {
             }
           }
         }
-        this.generarGraficoBarEmisiones(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad');
+        this.generarGraficoBarEmisiones(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad Barras');
+        this.generarGraficoPie(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'pie', 'Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad Pastel');
 
       },
       err => {
@@ -387,7 +389,6 @@ export class ReporteComponent implements OnInit {
             data: valores,
             borderColor: colores,
             backgroundColor: colores,
-            border: 1
           }
         ]
       },
@@ -399,23 +400,6 @@ export class ReporteComponent implements OnInit {
           display: true,
           text: titulo
         },
-        animation: {
-          onComplete: function () {
-            var chartInstance = this.chart,
-              ctx = chartInstance.ctx;
-            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-
-            this.data.datasets.forEach(function (dataset, i) {
-              var meta = chartInstance.controller.getDatasetMeta(i);
-              meta.data.forEach(function (bar, index) {
-                var data = dataset.data[index];
-                ctx.fillText(data, bar._model.x, bar._model.y +25);
-              });
-            });
-          }
-        },
         scales: {
           xAxes: [{
             display: true
@@ -424,11 +408,6 @@ export class ReporteComponent implements OnInit {
             display: true,
             ticks: {
               beginAtZero: true,
-              userCallback: function (label, index, labels) {
-                if (Math.floor(label) === label) {
-                  return label;
-                }
-              },
             }
           }],
         }
@@ -450,7 +429,6 @@ export class ReporteComponent implements OnInit {
             data: valores,
             borderColor: colores,
             backgroundColor: colores,
-            border: 1
           }
         ]
       },
@@ -462,22 +440,6 @@ export class ReporteComponent implements OnInit {
           display: true,
           text: titulo
         },
-        animation: {
-          onComplete: function () {
-            var chartInstance = this.chart,
-              ctx = chartInstance.ctx;
-            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            this.data.datasets.forEach(function (dataset, i) {
-              var meta = chartInstance.controller.getDatasetMeta(i);
-              meta.data.forEach(function (bar, index) {
-                var data = dataset.data[index];
-                ctx.fillText(data, bar._model.x, bar._model.y +25);
-              });
-            });
-          }
-        },
         scales: {
           xAxes: [{
             display: true
@@ -486,11 +448,6 @@ export class ReporteComponent implements OnInit {
             display: true,
             ticks: {
               beginAtZero: true,
-              userCallback: function (label, index, labels) {
-                if (Math.floor(label) === label) {
-                  return label;
-                }
-              },
             }
           }],
         },
@@ -499,8 +456,11 @@ export class ReporteComponent implements OnInit {
   }
 
   public generarGraficoPie(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
-    if (this.chartReportePie) this.chartReportePie.destroy();
-    this.chartReportePie = new Chart('canvasUsuarios', {
+
+    if (this.chartReportePieEmisiones) this.chartReportePieEmisiones.destroy();
+    this.chartReportePieEmisiones = document.getElementById('canvasEmisionesPastel');
+    var ctx = this.chartReportePieEmisiones.getContext('2d');
+    this.chartReportePieEmisiones = new Chart(ctx, {
       type: '' + tipo + '',
       data: {
         labels: textos,
@@ -510,7 +470,31 @@ export class ReporteComponent implements OnInit {
             data: valores,
             borderColor: colores,
             backgroundColor: colores,
-            border: 1
+          }
+        ]
+      },
+      plugins: [ChartDataLabels],
+      options: {
+        title: {
+          display: true,
+          text: titulo
+        }
+      }
+    });
+  }
+
+  public generarGraficoPieCotizaciones(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
+    if (this.chartReportePieCotizaciones) this.chartReportePieCotizaciones.destroy();
+    this.chartReportePieCotizaciones = new Chart('canvasCotizacionesPastel', {
+      type: '' + tipo + '',
+      data: {
+        labels: textos,
+        datasets: [
+          {
+            label: leyenda,
+            data: valores,
+            borderColor: colores,
+            backgroundColor: colores
           }
         ]
       },
@@ -522,6 +506,8 @@ export class ReporteComponent implements OnInit {
       }
     });
   }
+
+
 
   // LISTAR DATOS DE LA BASE PARA EXPORTAR A EXCEL 
   public listarReporteCotizacionesBroker(broker: any) {
@@ -637,6 +623,4 @@ export class ReporteComponent implements OnInit {
       $(".btn-broker").css("color", "white");
     }, 100);
   }
-
-
 }

@@ -55,7 +55,7 @@ export class CotizacionRamoReglasVertical {
     }
 
     //AGRUPA LA LISTA CUADRICULA POR IDENTIFICADOR
-    var cuadriculaIdentificador: any = Object.values(agrupacion(cuadricula, 'Identificador'));
+    var cuadriculaIdentificador: any = Object["values"](agrupacion(cuadricula, 'Identificador'));
 
     //REALIZA LA SUMTORIA SEGUN EL GRUPO SELECCIONADO
     /*

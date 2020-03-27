@@ -193,7 +193,7 @@
                   <tr>
                     <th></th>
                     <th>Usuario</th>
-                    <th>N° Cotizaciones<br>Sin Emitir</th>
+                    <th>N° Cotizaciones<br>Realizadas</th>
                     <th>N° Cotizaciones<br>Emitidas</th>
                     <th>Ingresos Generados<br>Cotizaciones Emitidas</th>
                   </tr>
@@ -202,7 +202,7 @@
                   <tr *ngIf="lstResumenOperadores.length == 0">
                     <td colspan="5">No se encontró ningún operador.</td>
                   </tr>
-                  <tr *ngFor="let resumenOperadores of lstResumenOperadores">
+                  <tr *ngFor="let resumenOperadores of lstResumenOperadores" style="text-align: center !important;">
                     <td>
                       <img alt="PYMES" class="img-xs rounded-circle" src="{{ resumenOperadores.Foto }}">
                     </td>

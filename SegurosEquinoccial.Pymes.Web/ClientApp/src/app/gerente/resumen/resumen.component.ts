@@ -5,7 +5,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
 import { GridComponent, GridDataResult, DataStateChangeEvent } from '@progress/kendo-angular-grid';
 import { GroupResult, groupBy, GroupDescriptor, process, State } from '@progress/kendo-data-query';
-import { Chart } from 'chart.js';
+import * as Chart from 'chart.js';
+
+declare var moment: any;
 
 @Component({
   selector: 'app-resumen',
@@ -35,8 +37,8 @@ export class ResumenGerenteComponent implements OnInit {
   public filtros = {
     supervisores: [],
     operadores: [],
-    fechaInicio: "",
-    fechaFin: ""
+    fechaInicio: null,
+    fechaFin: null
   }
 
   public usuario: any;
@@ -69,9 +71,16 @@ export class ResumenGerenteComponent implements OnInit {
   constructor(private conexion: ApiService, private sesion: SesionService, private spinner: NgxSpinnerService, private globales: GlobalesPipe) { }
 
   ngOnInit() {
+    this.gestionFecha();
     this.usuario = this.sesion.obtenerDatos();
     this.listarSupervisoresDependientes();
   }
+
+  gestionFecha() {
+    var today = moment();
+    this.filtros.fechaInicio = new Date(moment(today).subtract(90, 'days'));
+    this.filtros.fechaFin = new Date();
+  }  
 
   public listarSupervisoresDependientes() {
     this.spinner.show();
@@ -235,7 +244,7 @@ export class ResumenGerenteComponent implements OnInit {
           }, {});
         }
 
-        this.lstCotizacionesSupervisoresResumen = Object.values(gestionResumenSupervisores(this.lstCotizacionesOperadoresResumen, 'IdPadre'));
+        this.lstCotizacionesSupervisoresResumen = Object["values"](gestionResumenSupervisores(this.lstCotizacionesOperadoresResumen, 'IdPadre'));
 
         this.cargarItemsResumenSupervisor();
         this.cargarItemsResumenOperador();
@@ -292,7 +301,6 @@ export class ResumenGerenteComponent implements OnInit {
 
     return gestion;
   }
-
 
   private cargarItems(): void {
     this.gridData = process(this.lstCotizacionesOperadores, this.state);

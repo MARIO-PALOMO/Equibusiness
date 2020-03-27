@@ -583,7 +583,7 @@ export class CotizacionReporteComponent implements OnInit {
       }
     }
 
-    var agrupacion = Object.values(this.agrupacion(deduciblesTemporal, "Agrupacion"));
+    var agrupacion = Object["values"](this.agrupacion(deduciblesTemporal, "Agrupacion"));
 
     for (let i = 0; i < agrupacion.length; i++) {
       /* for (let j = 0; j < agrupacion[i].length; j++) {

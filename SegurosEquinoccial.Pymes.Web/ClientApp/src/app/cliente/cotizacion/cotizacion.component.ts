@@ -3460,7 +3460,6 @@ export class CotizacionComponent implements OnInit {
       this.spinner.show();
       this.conexion.get("Broker/SBroker.svc/empresa/consultar?cotizacion=" + this.codigoCotizacion.idCotizacion + "&broker=" + this.usuario.broker.IdBroker + "&empresa=" + this.codigoCotizacion.idEmpresa + "", this.usuario.Uid).subscribe(
         (res: any) => {
-
           this.spinner.hide();
           if (res.length != 0) {
             if (res[0] != undefined) {
@@ -3491,7 +3490,6 @@ export class CotizacionComponent implements OnInit {
           this.vigenciaCotizacion = res[0].Fecha;
           this.sucursal_ = JSON.parse(res[0].Corredor);
           this.listarCorredores(this.sucursal_);
-
         },
         err => {
           this.spinner.hide();

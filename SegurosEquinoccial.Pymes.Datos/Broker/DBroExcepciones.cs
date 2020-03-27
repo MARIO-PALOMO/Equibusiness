@@ -25,12 +25,14 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 cmd.Parameters.Add("@identificador", SqlDbType.Int, 1);
                 cmd.Parameters.Add("@broker", SqlDbType.Int);
                 cmd.Parameters.Add("@nombre", SqlDbType.NVarChar, 50);
+                cmd.Parameters.Add("@IdUsuario", SqlDbType.Int);
                 cmd.Parameters.Add("@valor", SqlDbType.NVarChar, -1).Direction = ParameterDirection.Output;
 
                 cmd.Parameters["@identificador"].Value = excepcion.Identificador;
                 cmd.Parameters["@broker"].Value = excepcion.IdBroker;
                 cmd.Parameters["@nombre"].Value = excepcion.Nombre;
-
+                cmd.Parameters["@IdUsuario"].Value = excepcion.IdUsuario; 
+                
                 cmd.ExecuteNonQuery();
 
                 resultado = Convert.ToInt32(cmd.Parameters["@valor"].Value);

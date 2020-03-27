@@ -10,7 +10,7 @@ namespace SegurosEquinoccial.Pymes.Controlador.Administracion
     public class CAdmUsuarios
     {
         //VERIFICACIÓN USUARIO
-        public static EAdmUsuarios AdmVerificacionUsuario(EAdmUsuarios usuario)
+        public static List<EAdmUsuarios> AdmVerificacionUsuario(EAdmUsuarios usuario)
         {
             return DAdmUsuarios.AdmVerificacionUsuario(usuario);
         }
@@ -33,6 +33,11 @@ namespace SegurosEquinoccial.Pymes.Controlador.Administracion
         public static List<EAdmUsuarios> BroListarUsuarios()
         {
             return DAdmUsuarios.BroListarUsuarios();
+        }
+
+        public static List<EAdmUsuarios> BroListarUsuariosBroker(string IdBroker)
+        {
+            return DAdmUsuarios.BroListarUsuariosBroker(IdBroker);
         }
     }
 }

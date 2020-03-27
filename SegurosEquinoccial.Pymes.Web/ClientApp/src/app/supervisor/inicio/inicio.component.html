@@ -39,28 +39,33 @@
         </div>
 
         <div class="row">
+
+          <!--PANEL 1-->
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
             <div class="card card-statistics">
               <div class="card-body">
                 <div class="clearfix">
                   <div class="float-left">
-                    <i class="mdi mdi-cube text-danger icon-lg"></i>
+                    <i class="mdi mdi-receipt text-warning icon-lg"></i>
                   </div>
                   <div class="float-right">
-                    <p class="mb-0 text-right">Ingresos<br>Cotizaciones</p>
+                    <p class="mb-0 text-right">Cotizaciones<br>Realizadas</p>
                     <div class="fluid-container">
                       <h3 class="font-weight-medium text-right mb-0">
-                        <small>$</small> {{ globales.formatearNumero(cotizacionesResumen.total, 2) }}
+                        <small>N°</small> {{ cotizacionesResumen.sinEmitir }}
                       </h3>
                     </div>
                   </div>
                 </div>
                 <p class="text-muted mt-3 mb-0">
-                  <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i>Cotizaciones Emitidas
+                  <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i>N° Cotizaciones
                 </p>
               </div>
             </div>
           </div>
+          <!--PANEL 1-->
+
+          <!--PANEL 2-->
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
             <div class="card card-statistics">
               <div class="card-body">
@@ -83,30 +88,36 @@
               </div>
             </div>
           </div>
+          <!--PANEL 2-->
 
+          
+
+          <!--PANEL 3-->
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
             <div class="card card-statistics">
               <div class="card-body">
                 <div class="clearfix">
                   <div class="float-left">
-                    <i class="mdi mdi-receipt text-warning icon-lg"></i>
+                    <i class="mdi mdi-cube text-danger icon-lg"></i>
                   </div>
                   <div class="float-right">
-                    <p class="mb-0 text-right">Cotizaciones<br>Sin Emitir</p>
+                    <p class="mb-0 text-right">Ingresos<br>Cotizaciones</p>
                     <div class="fluid-container">
                       <h3 class="font-weight-medium text-right mb-0">
-                        <small>N°</small> {{ cotizacionesResumen.sinEmitir }}
+                        <small>$</small> {{ globales.formatearNumero(cotizacionesResumen.total, 2) }}
                       </h3>
                     </div>
                   </div>
                 </div>
                 <p class="text-muted mt-3 mb-0">
-                  <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i>N° Cotizaciones
+                  <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i>Cotizaciones Emitidas
                 </p>
               </div>
             </div>
           </div>
+          <!--PANEL 3-->
 
+          
         </div>
 
         <div class="row">
@@ -129,7 +140,7 @@
                       <tr>
                         <th></th>
                         <th>Usuario</th>
-                        <th>N° Cotizaciones<br>Sin Emitir</th>
+                        <th>N° Cotizaciones<br>Realizadas</th>
                         <th>N° Cotizaciones<br>Emitidas</th>
                         <th>Ingresos Generados<br>Cotizaciones Emitidas</th>
                         <td></td>
@@ -159,12 +170,15 @@
             </div>
           </div>
         </div>
-        <div class="modal fade" id="CotizacionesUsuario">
-          <div class="modal-dialog modal-dialog-centered">
+
+
+
+        <div class="modal fade bd-example-modal-lg" id="CotizacionesUsuario">
+          <div class="modal-dialog modal-dialog-centered  modal-lg">
             <div class="modal-content">
 
               <div class="modal-header">
-                <h4 class="modal-title">Cotizaciones Usuario | Nombre</h4>
+                <h4 class="modal-title">Detalle Cotizacion</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
               </div>
 
@@ -173,8 +187,7 @@
                 <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
                   [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)" style="border: none">
 
-                  <kendo-grid-column title="COTIZACIÓN" [filterable]="true"
-                    [headerStyle]="{'background-color': '#303030','color': '#fff'}">
+                  <kendo-grid-column>
                     <ng-template kendoGridCellTemplate let-dataItem>
                       <table>
                         <tbody>
@@ -215,21 +228,21 @@
                             </td>
                           </tr>
                           <tr>
-                            <td colspan="2">
+                            <td colspan="2" style="text-align: center !important; ">
                               <div *ngIf="dataItem.Estado == 1">
-                                <img src="../../../assets/images/pasos/paso1.png" alt="" style="width: 100%">
+                                <img src="../../../assets/images/pasos/paso1.png" alt="" style="width: 50%">
                               </div>
                               <div *ngIf="dataItem.Estado == 2">
-                                <img src="../../../assets/images/pasos/paso2.png" alt="" style="width: 100%">
+                                <img src="../../../assets/images/pasos/paso2.png" alt="" style="width: 50%">
                               </div>
                               <div *ngIf="dataItem.Estado == 3">
-                                <img src="../../../assets/images/pasos/paso3.png" alt="" style="width: 100%">
+                                <img src="../../../assets/images/pasos/paso3.png" alt="" style="width: 50%">
                               </div>
                               <div *ngIf="dataItem.Estado == 4">
-                                <img src="../../../assets/images/pasos/paso4.png" alt="" style="width: 100%">
+                                <img src="../../../assets/images/pasos/paso4.png" alt="" style="width: 50%">
                               </div>
                               <div *ngIf="dataItem.Estado == 5">
-                                <img src="../../../assets/images/pasos/paso5.png" alt="" style="width: 100%">
+                                <img src="../../../assets/images/pasos/paso5.png" alt="" style="width: 50%">
                               </div>
                             </td>
                           </tr>

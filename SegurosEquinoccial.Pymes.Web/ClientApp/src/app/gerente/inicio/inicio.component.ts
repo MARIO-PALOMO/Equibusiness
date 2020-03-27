@@ -3,7 +3,7 @@ import { GlobalesPipe } from '../../metodos/globales/globales.pipe';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { SesionService } from '../../servicios/sesion/sesion.service';
 import { ApiService } from '../../servicios/api/api.service';
-import { Chart } from 'chart.js';
+import * as Chart from 'chart.js';
 
 @Component({
   selector: 'app-inicio',
@@ -187,7 +187,7 @@ export class InicioGerenciaComponent implements OnInit {
           }, {});
         }
 
-        this.lstCotizacionesSupervisoresResumen = Object.values(gestionResumenSupervisores(this.lstCotizacionesOperadoresResumen, 'IdPadre'));
+        this.lstCotizacionesSupervisoresResumen = Object["values"](gestionResumenSupervisores(this.lstCotizacionesOperadoresResumen, 'IdPadre'));
 
       },
       err => {
@@ -241,7 +241,7 @@ export class InicioGerenciaComponent implements OnInit {
       if (parseInt(cotizaciones.IdUsuario) === parseInt(id)) {
         if (parseInt(cotizaciones.Estado) === 5) {
           emitidas += 1;
-        } if (cotizaciones.Estado != 5) {
+        } if (cotizaciones.Estado == 5 || cotizaciones.Estado == 4 || cotizaciones.Estado == 3 || cotizaciones.Estado == 2 || cotizaciones.Estado == 1) {
           sinEmitir += 1;
         }
       }
@@ -289,8 +289,7 @@ export class InicioGerenciaComponent implements OnInit {
             label: leyenda,
             data: valores,
             borderColor: 'rgba(' + this.usuario.broker.Color + ', 0.8)',
-            backgroundColor: 'rgba(' + this.usuario.broker.Color + ', 0.2)',
-            border: 1
+            backgroundColor: 'rgba(' + this.usuario.broker.Color + ', 0.2)'
           }
         ]
       },
@@ -309,12 +308,7 @@ export class InicioGerenciaComponent implements OnInit {
           yAxes: [{
             display: true,
             ticks: {
-              beginAtZero: true,
-              userCallback: function (label, index, labels) {
-                if (Math.floor(label) === label) {
-                  return label;
-                }
-              },
+              beginAtZero: true
             }
           }],
         }

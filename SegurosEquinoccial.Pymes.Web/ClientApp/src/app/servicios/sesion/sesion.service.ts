@@ -61,11 +61,11 @@ export class SesionService {
       localStorage.setItem(this.timeCliente, fecha.getHours() + "");
       var rol = usuario.rol.Nombre;
 
-      if (rol == "COORDINADOR") {
+      if (rol == "ADMINISTRADOR") {
         this.router.navigate(['/gerencia/inicio']);
       } else if (rol == "SUPERVISOR") {
         this.router.navigate(['/supervisor/inicio']);
-      } else if (rol == "COMERCIAL") {
+      } else if (rol == "COTIZADOR") {
         this.router.navigate(['/cliente/cotizacion/giros']);
       }
 
@@ -80,11 +80,11 @@ export class SesionService {
     if (datos != null) {
       var bytes = CryptoJS.AES.decrypt(datos, this.keyEncriptacion);
       var datosPlanos = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      if (datosPlanos.rol.Nombre == "COORDINADOR") {
+      if (datosPlanos.rol.Nombre == "ADMINISTRADOR") {
         this.router.navigate(['/gerencia/inicio']);
       } else if (datosPlanos.rol.Nombre == "SUPERVISOR") {
         this.router.navigate(['/supervisor/inicio']);
-      } else if (datosPlanos.rol.Nombre == "COMERCIAL") {
+      } else if (datosPlanos.rol.Nombre == "COTIZADOR") {
         this.router.navigate(['/cliente/inicio']);
       }
     }

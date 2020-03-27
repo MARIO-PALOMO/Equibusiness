@@ -18,11 +18,9 @@
             <div class="collapse" id="collapseExample" class="card-body" style="color: black">
               <div class="row">
                 <div class="col-12 col-md-12">
-
                   <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
                     [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)"
                     style="border: none; font-size: 13px !important" scrollable="none" [resizable]="true">
-
                     <ng-template kendoGridToolbarTemplate>
                       <div style="float: right">
                         <button class="btn btn-dark" style="height: 38px !important;" (click)="agregarUsuarioVista()">
@@ -30,7 +28,6 @@
                         </button>
                       </div>
                     </ng-template>
-
                     <kendo-grid-column field="broker.RazonSocial" title="Versión de Uso" width="130"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                     </kendo-grid-column>
@@ -52,7 +49,6 @@
                     <kendo-grid-column field="Email" title="Email" [width]="180"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff' }">
                     </kendo-grid-column>
-
                     <kendo-grid-column field="Estado" title="Editar" width="70" [filterable]="false"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       <ng-template kendoGridCellTemplate let-dataItem>
@@ -62,16 +58,15 @@
                         </button>
                       </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column field="Estado" title="" width="70" [filterable]="false"
+                    <kendo-grid-column field="Estado" title="Más" width="70" [filterable]="false"
                       [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       <ng-template kendoGridCellTemplate let-dataItem>
                         <button itype="button" class="btn btn-icons btn-rounded btn-secondary"
                           (click)="cambiarContrasena(dataItem)">
-                          <i class="mdi mdi-key"></i>
+                          <i class="mdi mdi-dots-horizontal mdi-18px"></i>
                         </button>
                       </ng-template>
                     </kendo-grid-column>
-
                     <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar"
                       noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems"
                       pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
@@ -112,7 +107,7 @@
                 style="font-size: 13px !important; height: 38px !important;"
                 (keyup)="fmrUsuario.Usuario = validador.formatoCampo(fmrUsuario.Usuario, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)" />
             </div>
-          </div> 
+          </div>
           <div class="col-md-6">
             <div class="form-group">
               <label><b>Cédula</b></label>
@@ -225,28 +220,28 @@
             </div>
           </div>
           <!--<div class="col-md-12">
-            <div class="form-group">
-              <label><b>Comisión (%)</b></label>
-              <kendo-dropdownlist [data]="lstComisiones" [(ngModel)]="Comision" textField="text" valueField="value"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
+          <div class="form-group">
+          <label><b>Comisión (%)</b></label>
+          <kendo-dropdownlist [data]="lstComisiones" [(ngModel)]="Comision" textField="text" valueField="value"
+          style="font-size: 13px !important; height: 38px !important; width: 100%">
+          <ng-template kendoDropDownListItemTemplate let-dataItem>
+          <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
+          </ng-template>
+          </kendo-dropdownlist>
+          </div>
           </div>
           <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Mostrar Combo - Corredores</b></label>
-              <kendo-dropdownlist [data]="lstCorredores" [(ngModel)]="Corredores" textField="text" valueField="value"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
+          <div class="form-group">
+          <label><b>Mostrar Combo - Corredores</b></label>
+          <kendo-dropdownlist [data]="lstCorredores" [(ngModel)]="Corredores" textField="text" valueField="value"
+          style="font-size: 13px !important; height: 38px !important; width: 100%">
+          <ng-template kendoDropDownListItemTemplate let-dataItem>
+          <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
+          </ng-template>
+          </kendo-dropdownlist>
           </div>
-        -->
+          </div>
+          -->
         </div>
         <div class="row" style="padding-top: 20px !important; padding-bottom: 10px !important; ">
           <div class="col-md-4"></div>
@@ -271,37 +266,55 @@
   </div>
 </div>
 
-
-
-
-
-
-
-<div class="modal" id="modalContrasena">
-  <div class="modal-content" style="width: 550px !important;">
+<div id="modalContrasena" class="modal">
+  <div class="modal-content" style="width: 650px !important;">
     <div class="modal-header">
-      <h5 class="modal-title"><b>Gestión de Contraseña</b></h5>
+      <h5 class="modal-title"><b>Opciones Adicionales</b>
+      </h5>
       <button type="button" class="close" style="color: #8a0000 !important;" (click)="cerrarModalContrasena()">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
-        <div class="form-group row">
-          <div class="col-sm-12">
-            <span style="font-size: 13px;"><b>Nota: </b> Al restablecer la contraseña el usuario deberá ingresa
-              con: <br>
-              <b><u>Qw12345678</u></b> </span>
-          </div>
-        </div><br>
-        <div class="form-group row">
-          <div class="col-sm-2"></div>
+      <!-- INICIO DE GESTION DE CONTRASEÑA -->
+      <div class="form-group">
+        <h5><b>Restablecer Contraseña</b></h5><br>
+        <span style="font-size: 13px;"><b>Nota: </b> Al restablecer la contraseña el usuario deberá ingresa
+          con: <br>
+          <b><u>Qw12345678</u></b> </span><br><br>
 
-          <div class="col-sm-8">
-            <button type="submit" class="btn btn-primary btn-block" (click)="gestionContrasena()">Resetear
-              Contraseña</button>
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <button type="submit" class="btn btn-warning btn-block"
+              style="color: #ffffff !important; font-weight: bold !important;"
+              (click)="gestionContrasena()">
+              <i class="mdi mdi-key"></i> Resetear Contraseña</button>
           </div>
-          <div class="col-sm-2"></div>
+          <div class="col-md-2"></div>
         </div>
+      </div>
+      <!-- FIN DE GESTION DE CONTRASEÑA -->
+      <br><br><br>
+      <!-- INICIO GESTION PARA ELIMINAR USUARIO -->
+      <div class="form-group">
+        <h5><b>Eliminar Usuario</b></h5><br>
+        <span style="font-size: 13px;"><b>Nota: </b> Al eliminar el usuario deberá contactarse con el administrador del
+          sistema
+          para habilitarlo nuevamente.</span><br><br>
+
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <button type="submit" class="btn btn-block"
+              style="color: #ffffff !important; background-color: #8a0000 !important; font-weight: bold !important;"
+              (click)="eliminarUsuario()">
+              <i class="mdi mdi-account-remove"></i> Eliminar Usuario</button>
+          </div>
+          <div class="col-md-2"></div>
+        </div>
+      </div>
+      <!-- FIN GESTION PARA ELIMINAR USUARIO -->
     </div>
   </div>
 </div>

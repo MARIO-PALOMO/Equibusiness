@@ -41,20 +41,38 @@
                     <h5>Seleccione la Versión de Uso</h5>
                   </div>
                   <div class="col-md-6">
-                    <h5>Seleccione las validaciones a evadir</h5>
+                    <h5>Seleccione el Usuario</h5>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-md-6">
                     <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionado" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" style="width: 100%; font-size: 13px !important;"
+                      [valueField]="'IdBroker'" style="width: 100%; font-size: 13px !important;" (ngModelChange)="cargarUsuarios()"
                       [placeholder]="'Selecccione un Broker'">
                       <ng-template kendoComboBoxItemTemplate let-dataItem>
                         <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
                       </ng-template>
                     </kendo-combobox>
                   </div>
+                  <div class="col-md-6">
+                    <kendo-combobox [data]="lstUsuarioBroker" [(ngModel)]="usuarioSeleccionado" [textField]="'Usuario'"
+                      [valueField]="'IdUsuario'" style="width: 100%; font-size: 13px !important;"
+                      [placeholder]="'Selecccione un Usuario'">
+                      <ng-template kendoComboBoxItemTemplate let-dataItem>
+                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.Usuario }}</span>
+                      </ng-template>
+                    </kendo-combobox>
+                  </div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5>Seleccione las validaciones a evadir</h5>
+                  </div>
+                </div>
+
+                <div class="row">
                   <div class="col-md-6">
                     <kendo-combobox [data]="lstExcepciones" [(ngModel)]="Excepciones" [textField]="'text'"
                       [valueField]="'value'" [placeholder]="'Seleccionar la excepción'"
@@ -65,7 +83,8 @@
                     </kendo-combobox>
                   </div>
                 </div>
-                <br><br><br><br>
+
+                <br><br><br>
                 <div class="row" style="margin-top: 20px !important; margin-bottom: 20px !important;">
                   <div class="col-md-4">
                     <button class="btn-broker btn-effect-white btn btn-block"
