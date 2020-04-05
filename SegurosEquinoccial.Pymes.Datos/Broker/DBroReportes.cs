@@ -217,7 +217,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 + " INNER JOIN Usuario_Broker On Usuario_Broker.IdBroker = Broker.IdBroker "
                 + " INNER JOIN Usuario ON Usuario.IdUsuario = Usuario_Broker.IdUsuario "
                 + " WHERE Usuario.IdUsuario = Cotizacion.IdUsuario "
-                + " AND Cotizacion.Estado != 5 AND Broker.IdBroker = 2 "
+                + " AND Cotizacion.Estado != 5 AND Cotizacion.Estado != 1 AND Broker.IdBroker = @broker "
                 + " GROUP BY Usuario_Broker.Ciudad FOR JSON AUTO ", getCnn());
 
                 cmd.Parameters.AddWithValue("@broker", Convert.ToInt32(IdBroker));

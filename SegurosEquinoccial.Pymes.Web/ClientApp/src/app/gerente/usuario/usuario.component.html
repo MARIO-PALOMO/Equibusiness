@@ -1,320 +1,416 @@
 <app-top-bar-gerente></app-top-bar-gerente>
 <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..." type="ball-atom">
 </ngx-spinner>
-<div class="content-wrapper"
-  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
-  <div class="container">
-    <div class="contenedor">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false"
-              aria-controls="collapseExample" style="background-color: #333333">
-              <h5 class="mb-0" style="float: left">
-                Gestión Usuario
-              </h5>
-              <i style="float: right" class="mdi mdi-chevron-down"></i>
-            </div>
-            <div class="collapse" id="collapseExample" class="card-body" style="color: black">
-              <div class="row">
-                <div class="col-12 col-md-12">
-                  <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
-                    [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)"
-                    style="border: none; font-size: 13px !important" scrollable="none" [resizable]="true">
-                    <ng-template kendoGridToolbarTemplate>
-                      <div style="float: right">
-                        <button class="btn btn-dark" style="height: 38px !important;" (click)="agregarUsuarioVista()">
-                          <i class="mdi mdi-save"></i> Agregar
-                        </button>
-                      </div>
-                    </ng-template>
-                    <kendo-grid-column field="broker.RazonSocial" title="Versión de Uso" width="130"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
-                    </kendo-grid-column>
-                    <kendo-grid-column field="NombreCorredor" title="Corredor" width="130"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
-                      <ng-template kendoGridCellTemplate let-dataItem>
-                        {{this.globales.obtenerLetrasCadena(dataItem.NombreCorredor)}}
-                      </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column field="Usuario" title="Nombre" [width]="200"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
-                      <ng-template kendoGridCellTemplate let-dataItem>
-                        <div>
-                          <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
-                          <span>{{ dataItem.Usuario }}</span>
+<div class="content-wrapper" style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+    <div class="container">
+        <div class="contenedor">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="background-color: #333333">
+                            <h5 class="mb-0" style="float: left">
+                                Gestión Usuario
+                            </h5>
+                            <i style="float: right" class="mdi mdi-chevron-down"></i>
                         </div>
-                      </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column field="Email" title="Email" [width]="180"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff' }">
-                    </kendo-grid-column>
-                    <kendo-grid-column field="Estado" title="Editar" width="70" [filterable]="false"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
-                      <ng-template kendoGridCellTemplate let-dataItem>
-                        <button type="button" class="btn btn-icons btn-rounded btn-warning"
-                          (click)="mostrarDatos(dataItem)">
-                          <i class="mdi mdi-pencil"></i>
-                        </button>
-                      </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column field="Estado" title="Más" width="70" [filterable]="false"
-                      [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
-                      <ng-template kendoGridCellTemplate let-dataItem>
-                        <button itype="button" class="btn btn-icons btn-rounded btn-secondary"
-                          (click)="cambiarContrasena(dataItem)">
-                          <i class="mdi mdi-dots-horizontal mdi-18px"></i>
-                        </button>
-                      </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar"
-                      noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems"
-                      pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
-                      filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a"
-                      filterNotEqOperator="No es igual a" filterContainsOperator="Contiene"
-                      filterNotContainsOperator="No contiene" filterStartsWithOperator="Comienza con"
-                      filterEndsWithOperator="Termina con" filterIsNullOperator="Es nulo (null)"
-                      filterIsNotNullOperator="No es nulo (null)" filterIsEmptyOperator="Esta vacio"
-                      filterIsNotEmptyOperator="No está vacío" filterAfterOperator="Es posterior a"
-                      filterAfterOrEqualOperator="Es posterior o igual a"
-                      filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
-                    </kendo-grid-messages>
-                  </kendo-grid>
+                        <div class="collapse" id="collapseExample" class="card-body" style="color: black">
+                            <div class="row">
+                                <div class="col-12 col-md-12">
+                                    <ul class="nav justify-content-end nav-pills" style="border-bottom: solid 1px !important;" id="myTab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" style="text-decoration: none !important; font-size: 13px !important; font-weight: bold !important; padding: 15px !important;">Listado
+                                                de Usuarios Activos</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" style="text-decoration: none !important; font-size: 13px !important; font-weight: bold !important; padding: 15px !important;">Listado
+                                                de Usuarios Deshabilitados</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-12 col-md-12">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                            <kendo-grid [data]="gridDataActivos" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort" [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)" style="border: none; font-size: 13px !important" scrollable="none"
+                                                [resizable]="true">
+                                                <ng-template kendoGridToolbarTemplate>
+                                                    <div style="float: left !important; margin-top: 15px !important;">
+                                                        <button class="btn btn-dark" style="height: 35px !important;" (click)="agregarUsuario()">
+                                                            <i class="mdi mdi-account-plus"></i> Crear Nuevo Usuario
+                                                        </button>
+                                                    </div>
+                                                </ng-template>
+                                                <kendo-grid-column title="Foto" width="50" [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                                        <div style="text-align: center !important;">
+                                                            <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
+                                                        </div>
+                                                    </ng-template>
+                                                </kendo-grid-column>
+                                                <kendo-grid-column field="Usuario" title="Nombre" [width]="200" [filterable]="true" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                </kendo-grid-column>
+                                                <kendo-grid-column field="Email" title="Email" [width]="180" [filterable]="true" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff' }">
+                                                </kendo-grid-column>
+                                                <kendo-grid-column title="Estado" width="80" [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                                        <div style="text-align: center !important;">
+                                                            <span style="color: darkgreen !important; font-weight: bold !important;">ACTIVO</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </kendo-grid-column>
+                                                <kendo-grid-column field="Estado" title="Opciones" width="55" [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                                        <div style="text-align: center !important;">
+                                                            <button type="button" class="btn btn-icons btn-rounded" [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': '#fff'}" (click)="obtenerListadoUsuarios(dataItem)">
+                                                                <i class="mdi mdi-dots-horizontal mdi-18px"></i>
+                                                            </button>
+                                                        </div>
+                                                    </ng-template>
+                                                </kendo-grid-column>
+                                                <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar" noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems" pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
+                                                    filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a" filterNotEqOperator="No es igual a" filterContainsOperator="Contiene" filterNotContainsOperator="No contiene" filterStartsWithOperator="Comienza con"
+                                                    filterEndsWithOperator="Termina con" filterIsNullOperator="Es nulo (null)" filterIsNotNullOperator="No es nulo (null)" filterIsEmptyOperator="Esta vacio" filterIsNotEmptyOperator="No está vacío" filterAfterOperator="Es posterior a"
+                                                    filterAfterOrEqualOperator="Es posterior o igual a" filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
+                                                </kendo-grid-messages>
+                                            </kendo-grid>
+                                        </div>
+                                        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+                                            <h5><b>Listado de Usuarios Inactivos</b></h5><br><br>
+                                            <kendo-grid [data]="gridDataInactivos" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort" [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)" style="border: none; font-size: 13px !important" scrollable="none"
+                                                [resizable]="true">
+
+                                                <kendo-grid-column title="Foto" width="50" [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                                        <div style="text-align: center !important;">
+                                                            <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
+                                                        </div>
+                                                    </ng-template>
+                                                </kendo-grid-column>
+                                                <kendo-grid-column field="Usuario" title="Nombre" [width]="200" [filterable]="true" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                </kendo-grid-column>
+                                                <kendo-grid-column field="Email" title="Email" [width]="180" [filterable]="true" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff' }">
+                                                </kendo-grid-column>
+                                                <kendo-grid-column title="Estado" width="80" [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                                        <div style="text-align: center !important;">
+                                                            <span style="color: rgb(117, 17, 4) !important; font-weight: bold !important;">INACTIVO</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </kendo-grid-column>
+                                                <kendo-grid-column field="Estado" title="Activar" width="55" [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                                        <div style="text-align: center !important;">
+                                                            <button type="button" class="btn btn-icons btn-rounded btn-success" (click)="activarUsuario(dataItem)">
+                                                                <i class="mdi mdi-check"
+                                                                    style="font-size: 15px !important; font-weight: bold !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </ng-template>
+                                                </kendo-grid-column>
+                                                <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar" noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems" pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
+                                                    filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a" filterNotEqOperator="No es igual a" filterContainsOperator="Contiene" filterNotContainsOperator="No contiene" filterStartsWithOperator="Comienza con"
+                                                    filterEndsWithOperator="Termina con" filterIsNullOperator="Es nulo (null)" filterIsNotNullOperator="No es nulo (null)" filterIsEmptyOperator="Esta vacio" filterIsNotEmptyOperator="No está vacío" filterAfterOperator="Es posterior a"
+                                                    filterAfterOrEqualOperator="Es posterior o igual a" filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
+                                                </kendo-grid-messages>
+                                            </kendo-grid>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 
 <div id="modalUsuario" class="modal">
-  <div class="modal-content" style="width: 750px !important;">
-    <div style="width: 100%; border-bottom: 1px solid #000">
-      <h5>Gestión Datos Usuario</h5>
+    <div class="modal-content" style="width: 1100px !important;">
+        <div class="modal-header" style="border-bottom: solid 1px !important; margin-top: 0px !important; padding-top: 0px !important; padding-bottom: 5px !important;">
+            <h5 class="modal-title"><b>Gestión Datos Usuario</b></h5>
+            <button type="button" class="close" style="color: #8a0000 !important;" (click)="cerrarModalUsuario()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-3">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" style="font-size: 13px !important;">Información
+                            Personal</a>
+                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false" style="font-size: 13px !important;">Gestión
+                            Perfiles</a>
+                        <a *ngIf="tabContrasenaModificar" class="nav-link" id="v-pills-password-tab" data-toggle="pill" href="#v-pills-password" role="tab" aria-controls="v-pills-password" aria-selected="false" style="font-size: 13px !important;">Gestión
+                            Contraseña</a>
+                        <a *ngIf="tabEliminarModificar" class="nav-link" id="v-pills-delete-tab" data-toggle="pill" href="#v-pills-delete" role="tab" aria-controls="v-pills-delete" aria-selected="false" style="font-size: 13px !important;">Eliminar
+                            Usuario</a>
+                        <a *ngIf="tabContrasenaAgregar" class="nav-link disabled" id="v-pills-password-tab" data-toggle="pill" href="#v-pills-password" role="tab" aria-controls="v-pills-password" aria-selected="false" style="font-size: 13px !important;">Gestión
+                            Contraseña</a>
+                        <a *ngIf="tabEliminarAgregar" class="nav-link disabled" id="v-pills-delete-tab" data-toggle="pill" href="#v-pills-delete" role="tab" aria-controls="v-pills-delete" aria-selected="false" style="font-size: 13px !important;">Eliminar
+                            Usuario</a>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                            <h5 style="padding-top: 20px !important;"><b>Datos del Usuario</b></h5><br>
+                            <div class="row" style="padding-bottom: 25px !important;">
+                                <div class="col-md-9">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-8">
+                                            <label><b>Nombre</b></label>
+                                            <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Usuario" style="font-size: 13px !important; height: 38px !important;" (keyup)="fmrUsuario.Usuario = validador.formatoCampo(fmrUsuario.Usuario, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)"
+                                            />
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label><b>Cédula</b></label>
+                                            <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Cedula" style="font-size: 13px !important; height: 38px !important;" (keyup)="fmrUsuario.Cedula = validador.formatoCampo(fmrUsuario.Cedula, '1234567890', 10, 2)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Correo Electrónico</b></label>
+                                        <input kendoTextBox type="email" [(ngModel)]="fmrUsuario.Email" style="font-size: 13px !important; height: 38px !important;" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label><b>Contraseña</b></label>
+                                        <input *ngIf="contrasenaGuardar" kendoTextBox type="password" [(ngModel)]="fmrUsuario.Contrasena" style="font-size: 13px !important; height: 38px !important;" />
+                                        <input *ngIf="contrasenaModificar" kendoTextBox type="password" [(ngModel)]="fmrUsuario.Contrasena" style="font-size: 13px !important; height: 38px !important;" disabled />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><b>Foto</b></label>
+                                        <img *ngIf="fotoUsuarioAgregar" class="rounded mx-auto d-block img-thumbnail" src="../../../assets/images/usuarios/userDefault.png" alt="perfil" style="margin-top: 15px !important; width: 150px !important; height: 150px !important; border: rgb(168, 168, 168) solid 1.5px !important;">
+                                        <img *ngIf="fotoUsuarioModificar" class="rounded mx-auto d-block img-thumbnail" src="{{ fmrUsuario.Foto }}" alt="perfil" style="margin-top: 15px !important; width: 150px !important; height: 150px !important; border: rgb(168, 168, 168) solid 1.5px !important;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                            <h5 style="padding-top: 20px !important;"><b>Añadir/Eliminar Roles</b></h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-block" [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': '#fff'}" (click)="agregarUsuarioVista()">
+                                        <i class="mdi mdi-plus-box"
+                                            style="color: #fff !important; font-weight: bold !important;"></i>
+                                        <b>Agregar Rol</b>
+                                    </button>
+                                </div>
+                            </div><br>
+                            <div class="row" style="padding-bottom: 25px !important;">
+                                <div class="col-md-12">
+                                    <kendo-grid [data]="gridData" [pageSize]="state2.take" [skip]="state2.skip" [sort]="state2.sort" [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChangePerfiles($event)" style="border: none; font-size: 13px !important"
+                                        scrollable="none" [resizable]="true">
+                                        <kendo-grid-column field="broker.RazonSocial" title="Versión Uso" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                        </kendo-grid-column>
+                                        <kendo-grid-column field="rol.Nombre" title="Rol" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff' }">
+                                        </kendo-grid-column>
+                                        <kendo-grid-column field="CodigoAgente" title="Código Agente" [width]="160" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                        </kendo-grid-column>
+                                        <kendo-grid-column field="Estado" title="Ver" [filterable]="false" [width]="90" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                            <ng-template kendoGridCellTemplate let-dataItem>
+                                                <div style="text-align: center !important;">
+                                                    <button type="button" class="btn btn-icons btn-rounded btn-primary" (click)="cargarModalPerfiles(dataItem)">
+                                                        <i class="mdi mdi-eye"
+                                                            style="color: #fff !important; font-weight: bold !important;"></i>
+                                                    </button>
+                                                </div>
+                                            </ng-template>
+                                        </kendo-grid-column>
+                                        <kendo-grid-column field="Estado" title="Eliminar" [filterable]="false" [width]="90" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
+                                            <ng-template kendoGridCellTemplate let-dataItem>
+                                                <div style="text-align: center !important;">
+                                                    <button type="button" class="btn btn-icons btn-rounded" (click)="eliminarPerfil(dataItem)" style="background-color: #8a0000 !important;">
+                                                        <i class="mdi mdi-close"
+                                                            style="color: #fff !important; font-weight: bold !important;"></i>
+                                                    </button>
+                                                </div>
+                                            </ng-template>
+                                        </kendo-grid-column>
+                                        <kendo-grid-messages groupPanelEmpty="Arrastra aquí para agrupar" noRecords="No hay elementos que mostrar." pagerPage="Página" pagerOf="de" pagerItems="ítems" pagerItemsPerPage="ítems por página" filterClearButton="Limpiar" filterFilterButton="Buscar"
+                                            filterAndLogic="Y" filterOrLogic="O" filterEqOperator="Es igual a" filterNotEqOperator="No es igual a" filterContainsOperator="Contiene" filterNotContainsOperator="No contiene" filterStartsWithOperator="Comienza con"
+                                            filterEndsWithOperator="Termina con" filterIsNullOperator="Es nulo (null)" filterIsNotNullOperator="No es nulo (null)" filterIsEmptyOperator="Esta vacio" filterIsNotEmptyOperator="No está vacío" filterAfterOperator="Es posterior a"
+                                            filterAfterOrEqualOperator="Es posterior o igual a" filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
+                                        </kendo-grid-messages>
+                                    </kendo-grid>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-password" role="tabpanel" aria-labelledby="v-pills-password-tab">
+                            <h5 style="padding-top: 20px !important;"><b>Restablecer la Contraseña</b></h5><br>
+                            <div class="row" style="padding-bottom: 25px !important;">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10">
+                                    <span style="font-size: 13px;">
+                                        <b>Nota: </b> Al restablecer la contraseña el usuario deberá ingresa con:<br>
+                                        <b><u>Qw12345678</u></b>
+                                    </span><br>
+                                    <button type="submit" class="btn btn-warning btn-block" style="color: #ffffff !important; font-weight: bold !important; margin-top: 50px !important; margin-bottom: 50px !important;" (click)="resetearContrasena()">
+                                        <i class="mdi mdi-key"></i> Resetear Contraseña
+                                    </button>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-delete" role="tabpanel" aria-labelledby="v-pills-delete-tab">
+                            <h5 style="padding-top: 20px !important;"><b>Deshabilitar Usuario</b></h5><br>
+                            <div class="row" style="padding-bottom: 25px !important;">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10">
+                                    <span style="font-size: 13px;">
+                                        <b>Nota: </b>
+                                        Al deshabilitar el usuario deberá contactarse con el administrador del sistema
+                                        para habilitarlo
+                                        nuevamente.
+                                    </span><br>
+                                    <button type="submit" class="btn btn-block" style="color: #ffffff !important; background-color: #8a0000 !important; font-weight: bold !important; margin-top: 50px !important; margin-bottom: 50px !important;" (click)="cambiarEstadoUsuario()">
+                                        <i class="mdi mdi-account-remove"></i> Eliminar Usuario</button>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="border-top: solid 1px !important;"></div>
     </div>
-    <br>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label><b>Nombre</b></label>
-              <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Usuario"
-                style="font-size: 13px !important; height: 38px !important;"
-                (keyup)="fmrUsuario.Usuario = validador.formatoCampo(fmrUsuario.Usuario, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)" />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label><b>Cédula</b></label>
-              <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Cedula"
-                style="font-size: 13px !important; height: 38px !important;"
-                (keyup)="fmrUsuario.Cedula = validador.formatoCampo(fmrUsuario.Cedula, '1234567890', 10, 2)" />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label><b>Correo Electrónico</b></label>
-              <input kendoTextBox type="email" [(ngModel)]="fmrUsuario.Email"
-                style="font-size: 13px !important; height: 38px !important;" />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label><b>Contraseña</b></label>
-              <input *ngIf="contrasenaGuardar" kendoTextBox type="password" [(ngModel)]="fmrUsuario.Contrasena"
-                style="font-size: 13px !important; height: 38px !important;" />
-
-              <input *ngIf="contrasenaModificar" kendoTextBox type="password" [(ngModel)]="fmrUsuario.Contrasena"
-                style="font-size: 13px !important; height: 38px !important;" disabled />
-            </div>
-          </div>
-        </div>
-        <br>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Versión de Uso</b></label>
-              <kendo-dropdownlist [data]="dataBroker" [(ngModel)]="IdBroker" [filterable]="true" textField="RazonSocial"
-                valueField="IdBroker" (ngModelChange)="filtarRoles()" (filterChange)="filtrarBroker($event)"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.RazonSocial }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Rol</b></label>
-              <kendo-dropdownlist [data]="lstRol" [(ngModel)]="IdRol" (ngModelChange)="filtarRoles()" textField="text"
-                valueField="value" style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Ciudad</b></label>
-              <kendo-dropdownlist [data]="dataCiudad" [(ngModel)]="Ciudad" [filterable]="true" textField="Nombre"
-                valueField="Nombre" (filterChange)="filtrarCiudad($event)"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Supervisor del Usuario</b></label>
-              <kendo-dropdownlist [data]="dataPadre" [(ngModel)]="IdPadre" [filterable]="true" textField="Usuario"
-                valueField="IdUsuario" (filterChange)="filtrarPadre($event)"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Usuario }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Tipo Agente</b></label>
-              <kendo-dropdownlist [data]="lstTipoAgente" [(ngModel)]="CodigoTipoAgente" textField="text"
-                valueField="value" (ngModelChange)="listarAgentes()"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Agente</b></label>
-              <kendo-dropdownlist [data]="dataAgente" [(ngModel)]="CodigoAgente" [filterable]="true"
-                textField="nombreAgente" valueField="codigoAgente" (filterChange)="filtrarAgente($event)"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.nombreAgente }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label><b>Punto de Venta - Sucursal</b></label>
-              <kendo-dropdownlist [data]="lstSucursal" [(ngModel)]="Sucursal" textField="Nombre" valueField="Union"
-                style="font-size: 13px !important; height: 38px !important; width: 100%">
-                <ng-template kendoDropDownListItemTemplate let-dataItem>
-                  <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
-                </ng-template>
-              </kendo-dropdownlist>
-            </div>
-          </div>
-          <!--<div class="col-md-12">
-          <div class="form-group">
-          <label><b>Comisión (%)</b></label>
-          <kendo-dropdownlist [data]="lstComisiones" [(ngModel)]="Comision" textField="text" valueField="value"
-          style="font-size: 13px !important; height: 38px !important; width: 100%">
-          <ng-template kendoDropDownListItemTemplate let-dataItem>
-          <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
-          </ng-template>
-          </kendo-dropdownlist>
-          </div>
-          </div>
-          <div class="col-md-12">
-          <div class="form-group">
-          <label><b>Mostrar Combo - Corredores</b></label>
-          <kendo-dropdownlist [data]="lstCorredores" [(ngModel)]="Corredores" textField="text" valueField="value"
-          style="font-size: 13px !important; height: 38px !important; width: 100%">
-          <ng-template kendoDropDownListItemTemplate let-dataItem>
-          <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
-          </ng-template>
-          </kendo-dropdownlist>
-          </div>
-          </div>
-          -->
-        </div>
-        <div class="row" style="padding-top: 20px !important; padding-bottom: 10px !important; ">
-          <div class="col-md-4"></div>
-          <div class="col-md-4">
-            <button class="btn btn-block btn-secondary" style="height: 38px !important;" (click)="cerrarModal()">
-              <i class="mdi mdi-close"></i> Cerrar
-            </button>
-          </div>
-          <div class="col-md-4">
-            <button *ngIf="botonGuardar" class="btn btn-dark btn-block" style="height: 38px !important;"
-              (click)="gestionUsuario()">
-              <i class="mdi mdi-content-save"></i> Guardar
-            </button>
-            <button *ngIf="botonModificar" class="btn btn-block btn-warning" style="height: 38px !important;"
-              (click)="gestionUsuario()">
-              <i class="mdi mdi-pencil"></i> Modificar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
-
-<div id="modalContrasena" class="modal">
-  <div class="modal-content" style="width: 650px !important;">
-    <div class="modal-header">
-      <h5 class="modal-title"><b>Opciones Adicionales</b>
-      </h5>
-      <button type="button" class="close" style="color: #8a0000 !important;" (click)="cerrarModalContrasena()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <!-- INICIO DE GESTION DE CONTRASEÑA -->
-      <div class="form-group">
-        <h5><b>Restablecer Contraseña</b></h5><br>
-        <span style="font-size: 13px;"><b>Nota: </b> Al restablecer la contraseña el usuario deberá ingresa
-          con: <br>
-          <b><u>Qw12345678</u></b> </span><br><br>
-
-        <div class="row">
-          <div class="col-md-2"></div>
-          <div class="col-md-8">
-            <button type="submit" class="btn btn-warning btn-block"
-              style="color: #ffffff !important; font-weight: bold !important;"
-              (click)="gestionContrasena()">
-              <i class="mdi mdi-key"></i> Resetear Contraseña</button>
-          </div>
-          <div class="col-md-2"></div>
+<div id="modalPerfiles" class="modal">
+    <div class="modal-content" style="width: 650px !important;">
+        <div class="modal-header" style="border-bottom: solid 1px !important; margin-top: 0px !important; padding-top: 0px !important; padding-bottom: 5px !important;">
+            <h5 class="modal-title"><b>Opciones Adicionales</b></h5>
+            <button type="button" class="close" style="color: #8a0000 !important;" (click)="cerrarModalPerfiles()">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-      </div>
-      <!-- FIN DE GESTION DE CONTRASEÑA -->
-      <br><br><br>
-      <!-- INICIO GESTION PARA ELIMINAR USUARIO -->
-      <div class="form-group">
-        <h5><b>Eliminar Usuario</b></h5><br>
-        <span style="font-size: 13px;"><b>Nota: </b> Al eliminar el usuario deberá contactarse con el administrador del
-          sistema
-          para habilitarlo nuevamente.</span><br><br>
-
-        <div class="row">
-          <div class="col-md-2"></div>
-          <div class="col-md-8">
-            <button type="submit" class="btn btn-block"
-              style="color: #ffffff !important; background-color: #8a0000 !important; font-weight: bold !important;"
-              (click)="eliminarUsuario()">
-              <i class="mdi mdi-account-remove"></i> Eliminar Usuario</button>
-          </div>
-          <div class="col-md-2"></div>
+        <div class="modal-body">
+            <div class="row">
+                <!-- <div class="col-md-6">
+                <div class="form-group">
+                <label><b>Nombre</b></label>
+                <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Usuario"
+                style="font-size: 13px !important; height: 38px !important;"
+                (keyup)="fmrUsuario.Usuario = validador.formatoCampo(fmrUsuario.Usuario, 'abcdefghijklmnñopqrstuvwxyzáéíóúÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ ', 100, 1)"
+                disabled />
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label><b>Cédula</b></label>
+                <input kendoTextBox type="text" [(ngModel)]="fmrUsuario.Cedula"
+                style="font-size: 13px !important; height: 38px !important;"
+                (keyup)="fmrUsuario.Cedula = validador.formatoCampo(fmrUsuario.Cedula, '1234567890', 10, 2)" disabled />
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label><b>Correo Electrónico</b></label>
+                <input kendoTextBox type="email" [(ngModel)]="fmrUsuario.Email"
+                style="font-size: 13px !important; height: 38px !important;" />
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label><b>Contraseña</b></label>
+                <input *ngIf="contrasenaGuardar" kendoTextBox type="password" [(ngModel)]="fmrUsuario.Contrasena"
+                style="font-size: 13px !important; height: 38px !important;" disabled />
+                <input *ngIf="contrasenaModificar" kendoTextBox type="password" [(ngModel)]="fmrUsuario.Contrasena"
+                style="font-size: 13px !important; height: 38px !important;" disabled />
+                </div>
+                </div> -->
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label><b>Versión de Uso</b></label>
+                        <kendo-dropdownlist [data]="dataBroker" [(ngModel)]="IdBroker" [filterable]="true" textField="RazonSocial" valueField="IdBroker" (ngModelChange)="obtenerUsuarioPadre(IdBroker)" (filterChange)="filtrarBroker($event)" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.RazonSocial }}</span>
+                            </ng-template>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label><b>Rol</b></label>
+                        <kendo-dropdownlist [data]="lstRol" [(ngModel)]="IdRol" textField="text" valueField="value" (ngModelChange)="filtarRoles()" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
+                            </ng-template>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label><b>Supervisor del Usuario</b></label>
+                        <kendo-dropdownlist [data]="dataPadre" [(ngModel)]="IdPadre" [filterable]="true" textField="Usuario" valueField="IdUsuario" (filterChange)="filtrarPadre($event)" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                <img class="img-xs rounded-circle" src="{{dataItem.Foto}}" alt="IMG">
+                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Usuario }}</span>
+                            </ng-template>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label><b>Tipo Agente</b></label>
+                        <kendo-dropdownlist [data]="lstTipoAgente" [(ngModel)]="CodigoTipoAgente" textField="text" valueField="value" (ngModelChange)="listarAgentes()" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
+                            </ng-template>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label><b>Agente</b></label>
+                        <kendo-dropdownlist [data]="dataAgente" [(ngModel)]="CodigoAgente" [filterable]="true" textField="nombreAgente" valueField="codigoAgente" (filterChange)="filtrarAgente($event)" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.nombreAgente }}</span>
+                            </ng-template>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label><b>Ciudad</b></label>
+                        <kendo-dropdownlist [data]="dataCiudad" [(ngModel)]="Ciudad" [filterable]="true" textField="Nombre" valueField="Nombre" (filterChange)="filtrarCiudad($event)" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
+                            </ng-template>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label><b>Punto de Venta - Sucursal</b></label>
+                        <kendo-dropdownlist [data]="lstSucursal" [(ngModel)]="Sucursal" textField="Nombre" valueField="Union" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Nombre }}</span>
+                            </ng-template>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <!-- FIN GESTION PARA ELIMINAR USUARIO -->
+        <div class="modal-footer" style="border-top: solid 1px !important;">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <button class="btn btn-block btn-secondary" style="height: 38px !important;" (click)="cerrarModalPerfiles()">
+                    <i class="mdi mdi-close"></i> Cerrar
+                </button>
+            </div>
+            <div class="col-md-4">
+                <button *ngIf="botonGuardar" class="btn btn-dark btn-block" style="height: 38px !important;" (click)="gestionUsuario()">
+                    <i class="mdi mdi-content-save"></i> Guardar
+                </button>
+                <button *ngIf="botonModificar" class="btn btn-block btn-warning" style="height: 38px !important;" (click)="gestionUsuario()">
+                    <i class="mdi mdi-pencil"></i> Modificar
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

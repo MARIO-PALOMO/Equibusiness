@@ -57,6 +57,19 @@ export class GlobalesPipe implements PipeTransform {
     })
   }
 
+  public mostarAlertaEstatica(titulo, texto, tipo) {
+    Swal.fire({
+      title: titulo,
+      html: texto,
+      type: tipo,
+      confirmButtonText: 'Aceptar',
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.timer) {
+
+      }
+    })
+  }
+
   public mostarAlerta(titulo, texto, tipo) {
     Swal.fire({
       title: titulo,

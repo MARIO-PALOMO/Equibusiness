@@ -115,16 +115,20 @@ export class InicioSupervisionComponent implements OnInit {
     this.spinner.show();
     this.usuariosDependientes = "";
     this.cotizacionesResumen.usuarios = 0;
-    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes/' + this.usuario.IdUsuario, this.usuario.Uid).subscribe(
+    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes?idPadre=' + this.usuario.IdUsuario + '&IdBroker='+ this.usuario.broker.IdBroker + '&IdRol=3', this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
 
-        for (let resultado of res) {
-          this.usuariosDependientes += ('IdUsuario = ' + resultado.IdUsuario + ' OR ');
-        }
         this.cotizacionesResumen.usuarios = res.length;
         this.lstUsuarios = res;
-        this.consultarResumenCotizaciones();
+        if(this.cotizacionesResumen.usuarios != 0){
+          for (let resultado of res) {
+            this.usuariosDependientes += ('IdUsuario = ' + resultado.IdUsuario + ' OR ');
+          }
+          this.consultarResumenCotizaciones();
+        } else {
+          this.globales.mostarAlertaEstatica("Información", "Este Supervisor, no cuentas con cotizadores asignados.", "info");
+        }
       },
       err => {
         this.spinner.hide();
@@ -147,7 +151,7 @@ export class InicioSupervisionComponent implements OnInit {
       sinEmitir: []
     };
 
-
+    console.log(parametros);
     this.spinner.show();
     this.conexion.post('Broker/SBroker.svc/resumen/global/consultar/cotizaciones', parametros, this.usuario.Uid).subscribe(
       (res: any) => {

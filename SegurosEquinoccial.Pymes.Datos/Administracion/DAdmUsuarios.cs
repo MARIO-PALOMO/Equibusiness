@@ -38,6 +38,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                 cmd.Parameters.Add("@comision", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@corredores", SqlDbType.NVarChar);
                 cmd.Parameters.Add("@cedula", SqlDbType.NVarChar);
+                cmd.Parameters.Add("@idUsuarioBroker", SqlDbType.Int);
 
 
                 cmd.Parameters.Add("@valor", SqlDbType.NVarChar, -1).Direction = ParameterDirection.Output;
@@ -61,7 +62,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                 cmd.Parameters["@comision"].Value = pusuario.Comision;
                 cmd.Parameters["@corredores"].Value = pusuario.Corredores;
                 cmd.Parameters["@cedula"].Value = pusuario.Cedula;
-
+                cmd.Parameters["@idUsuarioBroker"].Value = pusuario.IdUsuarioBroker;
 
                 cmd.ExecuteNonQuery();
 
@@ -125,6 +126,9 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                     rsUsuario.Foto = rdr["FotoUsuario"].ToString();
                     rsUsuario.Cedula = rdr["Cedula"].ToString();
                     rsUsuario.NombreCorredor = rdr["NombreCorredor"].ToString();
+                    rsUsuario.IdUsuarioBroker = Convert.ToInt32(rdr["IdUsuario_Broker"]);
+                    rsUsuario.IdUsuarioRol = Convert.ToInt32(rdr["IdUsuario_Rol"]);
+
 
                     rsBroker.IdBroker = Convert.ToInt32(rdr["IdBroker"]);
                     rsBroker.Foto = rdr["FotoBroker"].ToString();
@@ -159,7 +163,45 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
             }
         }
 
-        public static List<EAdmUsuarios> BroListarUsuarios()
+        public static List<EAdmUsuarios> ConsultaUsuarios() 
+        {
+            List<EAdmUsuarios> lstUsuarios = new List<EAdmUsuarios>();
+            EAdmUsuarios rsUsuarios;
+            try
+            {
+                Conectar();
+
+                SqlCommand cmd = new SqlCommand("SELECT IdUsuario, UPPER(LTRIM(RTRIM(Usuario))) AS 'Usuario', LTRIM(RTRIM(Email)) AS 'Email'," 
+                    + " Contrasena, Estado, Foto, Cedula FROM Usuario ORDER BY IdUsuario DESC", getCnn());
+
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    rsUsuarios = new EAdmUsuarios();
+
+                    rsUsuarios.IdUsuario = Convert.ToInt32(rdr["IdUsuario"]);
+                    rsUsuarios.Usuario = rdr["Usuario"].ToString();
+                    rsUsuarios.Email = rdr["Email"].ToString();
+                    rsUsuarios.Contrasena = rdr["Contrasena"].ToString();
+                    rsUsuarios.Estado = Convert.ToInt32(rdr["Estado"].ToString());
+                    rsUsuarios.Foto = rdr["Foto"].ToString();
+                    rsUsuarios.Cedula = rdr["Cedula"].ToString();
+                    lstUsuarios.Add(rsUsuarios);
+                }
+                rdr.Close();
+                return lstUsuarios;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            finally
+            {
+                Cerrar();
+            }
+        }
+
+        public static List<EAdmUsuarios> BroListarUsuarios(string IdUsuario)
         {
             List<EAdmUsuarios> lstUsuarios = new List<EAdmUsuarios>();
             EAdmUsuarios rsUsuarios;
@@ -169,8 +211,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosCompleto ORDER BY IdUsuario DESC", getCnn());
-
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosCompleto WHERE IdUsuario = @IdUsuario", getCnn());
+                cmd.Parameters.AddWithValue("@IdUsuario", Convert.ToInt32(IdUsuario));
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
@@ -195,6 +237,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
                     rsUsuarios.Corredores = rdr["Corredores"].ToString();
                     rsUsuarios.NombreCorredor = rdr["NombreCorredor"].ToString();
                     rsUsuarios.Cedula = rdr["Cedula"].ToString();
+                    rsUsuarios.IdUsuarioBroker = Convert.ToInt32(rdr["IdUsuario_Broker"]);
+                    rsUsuarios.IdUsuarioRol = Convert.ToInt32(rdr["IdUsuario_Rol"]);
 
                     rsRol.IdRol = Convert.ToInt32(rdr["IdRol"].ToString());
                     rsRol.Nombre = rdr["Nombre"].ToString();
@@ -228,17 +272,50 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
         {
             List<EAdmUsuarios> lstUsuarios = new List<EAdmUsuarios>();
             EAdmUsuarios rsUsuarios;
+            EAdmBroker rsBroker;
+            EAdmRol rsRol;
             try
             {
                 Conectar();
-                SqlCommand cmd = new SqlCommand("SELECT IdUsuario, UPPER(Usuario) AS 'Usuario' FROM ConsultaUsuariosCompleto WHERE IdBroker = @IdBroker", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosCompleto WHERE IdBroker = @IdBroker", getCnn());
                 cmd.Parameters.AddWithValue("@IdBroker", Convert.ToInt32(IdBroker));
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
                     rsUsuarios = new EAdmUsuarios();
+                    rsBroker = new EAdmBroker();
+                    rsRol = new EAdmRol();
+
                     rsUsuarios.IdUsuario = Convert.ToInt32(rdr["IdUsuario"]);
-                    rsUsuarios.Usuario = rdr["Usuario"].ToString();                   
+                    rsUsuarios.Usuario = rdr["Usuario"].ToString();
+                    rsUsuarios.Email = rdr["Email"].ToString();
+                    rsUsuarios.Contrasena = rdr["Contrasena"].ToString();
+                    rsUsuarios.Estado = Convert.ToInt32(rdr["Estado"].ToString());
+                    rsUsuarios.Foto = rdr["FotoUsuario"].ToString();
+                    rsUsuarios.IdPadre = Convert.ToInt32(rdr["IdPadre"]);
+                    rsUsuarios.Ciudad = rdr["Ciudad"].ToString();
+                    rsUsuarios.EstadoSesion = Convert.ToInt32(rdr["EstadoSesion"].ToString());
+                    rsUsuarios.CodigoTipoAgente = rdr["CodigoTipoAgente"].ToString();
+                    rsUsuarios.CodigoAgente = rdr["CodigoAgente"].ToString();
+                    rsUsuarios.CodigoSucursal = rdr["CodigoSucursal"].ToString();
+                    rsUsuarios.CodigoPuntoVenta = rdr["CodigoPuntoVenta"].ToString();
+                    rsUsuarios.Comision = rdr["Comision"].ToString();
+                    rsUsuarios.Corredores = rdr["Corredores"].ToString();
+                    rsUsuarios.NombreCorredor = rdr["NombreCorredor"].ToString();
+                    rsUsuarios.Cedula = rdr["Cedula"].ToString();
+                    rsUsuarios.IdUsuarioBroker = Convert.ToInt32(rdr["IdUsuario_Broker"]);
+                    rsUsuarios.IdUsuarioRol = Convert.ToInt32(rdr["IdUsuario_Rol"]);
+
+                    rsRol.IdRol = Convert.ToInt32(rdr["IdRol"].ToString());
+                    rsRol.Nombre = rdr["Nombre"].ToString();
+
+                    rsBroker.IdBroker = Convert.ToInt32(rdr["IdBroker"].ToString());
+                    rsBroker.RazonSocial = rdr["RazonSocial"].ToString();
+                    rsBroker.Foto = rdr["FotoBroker"].ToString();
+                    rsBroker.Color = rdr["Color"].ToString();
+
+                    rsUsuarios.broker = rsBroker;
+                    rsUsuarios.rol = rsRol;
                     lstUsuarios.Add(rsUsuarios);
                 }
                 rdr.Close();
@@ -254,7 +331,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
             }
         }
 
-        public static List<EAdmUsuarios> BroConsultarUsuariosDependientes(int idPadre)
+        public static List<EAdmUsuarios> BroConsultarUsuariosDependientes(int idPadre, int IdBroker, int IdRol)
         {
 
             List<EAdmUsuarios> lstUsuarios = new List<EAdmUsuarios>();
@@ -263,10 +340,12 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT Usuario.IdUsuario, Usuario.Usuario, Usuario.Foto, Usuario_Broker.Ciudad " 
-                    + " FROM Usuario INNER JOIN Usuario_Broker ON Usuario_Broker.IdUsuario = Usuario.IdUsuario" 
-                    + " WHERE Usuario.IdPadre = @idPadre", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosDependientesBroker " 
+                    + " WHERE IdPadre = @idPadre AND IdBroker = @broker AND IdRol = @rol ORDER BY IdBroker, IdRol", getCnn());
+                
                 cmd.Parameters.AddWithValue("@idPadre", idPadre);
+                cmd.Parameters.AddWithValue("@broker", IdBroker);
+                cmd.Parameters.AddWithValue("@rol", IdRol);
 
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
@@ -300,9 +379,13 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT Usuario.IdUsuario, Usuario.Usuario, Usuario.Foto, Usuario_Broker.Ciudad, Usuario.IdPadre FROM Usuario " 
-                    + " INNER JOIN Usuario_Broker ON Usuario_Broker.IdUsuario = Usuario.IdUsuario" 
-                    + " WHERE(" + pResumen.Cadena + ")", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosDependientesBroker "
+                    + " WHERE(" + pResumen.Cadena + ") " 
+                    + " AND IdBroker = @broker AND IdRol = @rol ", getCnn());
+
+                cmd.Parameters.AddWithValue("@broker", pResumen.IdBroker);
+                cmd.Parameters.AddWithValue("@rol", pResumen.IdRol);
+
 
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())

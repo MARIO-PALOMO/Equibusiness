@@ -182,7 +182,8 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosTotalCiudad WHERE (" + pResumen.Cadena + ")" , getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosTotalCiudad WHERE (" + pResumen.Cadena + ") AND IdBroker = @broker" , getCnn());
+                cmd.Parameters.AddWithValue("@broker", pResumen.IdBroker);
 
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())

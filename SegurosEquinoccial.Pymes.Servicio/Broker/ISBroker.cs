@@ -317,8 +317,8 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         //LISTAR USUARIOS DEPENDIENTES PARA SUPERVISORES
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
-        UriTemplate = "usuarios/consultar/dependientes/{idPadre}")]
-        List<EAdmUsuarios> BroConsultarUsuariosDependientes(string idPadre);
+        UriTemplate = "usuarios/consultar/dependientes?idPadre={idPadre}&IdBroker={IdBroker}&IdRol={IdRol}")]
+        List<EAdmUsuarios> BroConsultarUsuariosDependientes(string idPadre, string IdBroker, string IdRol);
 
         //LISTAR USUARIOS DEPENDIENTES PARA GERENTES
         [OperationContract]
@@ -461,7 +461,7 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         UriTemplate = "reporte/listar/emisiones?IdBroker={IdBroker}&estado={estado}")]
         List<EBroReporteEmisiones> ReporteListarEmisionesBroker(string IdBroker, string estado);
 
-        
+
         //LISTAR CIUDADES DE TODOS LOS USUARIOS PARA EL REPORTE
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
@@ -497,7 +497,7 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "reporte/datalle/valores/cotizaciones")]
-        string DetalleValoresCotizacionesBrokerCiudad(EBroReporteDetalleValoresBroker datos); 
+        string DetalleValoresCotizacionesBrokerCiudad(EBroReporteDetalleValoresBroker datos);
 
         //LISTAR DETALLE DE VALORES EN EMISIONES POR CIUDAD Y BROKER PARA EL REPORTE
         [OperationContract]
@@ -540,8 +540,14 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
-        UriTemplate = "consultar/usuarios")]
-        List<EAdmUsuarios> BroListarUsuarios();
+        UriTemplate = "listar/usuarios")]
+        List<EAdmUsuarios> ConsultaUsuarios();
+
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "consultar/usuarios/{IdUsuario}")]
+        List<EAdmUsuarios> BroListarUsuarios(string IdUsuario);
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
@@ -551,7 +557,7 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "consultar/brokers")]
-        List<EAdmBroker> BroListarBrokers();        
+        List<EAdmBroker> BroListarBrokers();
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
@@ -631,7 +637,7 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "gestion/excepciones/crear")]
         int BroGestionExcepciones(EBroExcepciones excepcion);
-    
+
     }
 
 }

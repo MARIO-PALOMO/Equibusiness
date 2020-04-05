@@ -71,7 +71,7 @@ export class ResumenSupervisionComponent implements OnInit {
   public listarUsuariosDependientes() {
     this.spinner.show();
     this.lstUsuarios = [];
-    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes/' + this.usuario.IdUsuario, this.usuario.Uid).subscribe(
+    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes?idPadre=' + this.usuario.IdUsuario + '&IdBroker='+ this.usuario.broker.IdBroker + '&IdRol=3', this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
         for (let resultado of res) {

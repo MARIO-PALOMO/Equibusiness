@@ -105,7 +105,7 @@
                             <dt>Supervisor</dt>
                             <dd>{{ dataItem.UsuarioPadre }}</dd>
 
-                            <dt>N° Cotizaciones Sin Emitir</dt>
+                            <dt>N° Cotizaciones Realizadas</dt>
                             <dd>{{ dataItem.SinEmitir }}</dd>
 
                             <dt>N° Cotizaciones Emitidas</dt>
@@ -124,7 +124,7 @@
                       <kendo-grid-column media="(min-width: 800px)" field="UsuarioPadre" title="Supervisor" width="150"
                         [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       </kendo-grid-column>
-                      <kendo-grid-column media="(min-width: 800px)" field="SinEmitir" title="N° Cotizaciones Sin Emitir"
+                      <kendo-grid-column media="(min-width: 800px)" field="SinEmitir" title="N° Cotizaciones Realizadas"
                         width="150" [filterable]="false"
                         [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       </kendo-grid-column>
@@ -158,7 +158,7 @@
                         </kendo-excelexport-column>
                         <kendo-excelexport-column field="UsuarioPadre" title="Supervisor">
                         </kendo-excelexport-column>
-                        <kendo-excelexport-column field="SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        <kendo-excelexport-column field="SinEmitir" title="N° Cotizaciones Realizadas">
                         </kendo-excelexport-column>
                         <kendo-excelexport-column field="Emitidas" title="N° Cotizaciones Emitidas">
                         </kendo-excelexport-column>
@@ -173,7 +173,7 @@
                         </kendo-grid-column>
                         <kendo-grid-column field="UsuarioPadre" title="Supervisor">
                         </kendo-grid-column>
-                        <kendo-grid-column field="SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        <kendo-grid-column field="SinEmitir" title="N° Cotizaciones Realizadas">
                         </kendo-grid-column>
                         <kendo-grid-column field="Emitidas" title="N° Cotizaciones Emitidas">
                         </kendo-grid-column>
@@ -221,7 +221,7 @@
                             <dt>Operador</dt>
                             <dd>{{ dataItem.Usuario }}</dd>
 
-                            <dt>N° Cotizaciones Sin Emitir</dt>
+                            <dt>N° Cotizaciones Realizadas</dt>
                             <dd>{{ dataItem.Estado.SinEmitir }}</dd>
 
                             <dt>N° Cotizaciones Emitidas</dt>
@@ -237,7 +237,7 @@
                       <kendo-grid-column media="(min-width: 800px)" field="Usuario" title="Operador" width="150"
                         [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                       </kendo-grid-column>
-                      <kendo-grid-column media="(min-width: 800px)" field="Estado" title="N° Cotizaciones Sin Emitir"
+                      <kendo-grid-column media="(min-width: 800px)" field="Estado" title="N° Cotizaciones Realizadas"
                         width="150" [filterable]="false"
                         [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                         <ng-template kendoGridCellTemplate let-dataItem>
@@ -276,7 +276,7 @@
 
                         <kendo-excelexport-column field="Usuario" title="Operador">
                         </kendo-excelexport-column>
-                        <kendo-excelexport-column field="Estado.SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        <kendo-excelexport-column field="Estado.SinEmitir" title="N° Cotizaciones Realizadas">
                         </kendo-excelexport-column>
                         <kendo-excelexport-column field="Estado.Emitidas" title="N° Cotizaciones Emitidas">
                         </kendo-excelexport-column>
@@ -289,7 +289,7 @@
                         [repeatHeaders]="true" [landscape]="true">
                         <kendo-grid-column field="Usuario" title="Operador">
                         </kendo-grid-column>
-                        <kendo-grid-column field="Estado.SinEmitir" title="N° Cotizaciones Sin Emitir">
+                        <kendo-grid-column field="Estado.SinEmitir" title="N° Cotizaciones Realizadas">
                         </kendo-grid-column>
                         <kendo-grid-column field="Estado.Emitidas" title="N° Cotizaciones Emitidas">
                         </kendo-grid-column>

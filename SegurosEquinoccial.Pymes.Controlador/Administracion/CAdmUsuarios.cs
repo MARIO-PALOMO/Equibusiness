@@ -20,9 +20,9 @@ namespace SegurosEquinoccial.Pymes.Controlador.Administracion
             return DAdmUsuarios.BroGestionUsuario(pusuario);
         }
 
-        public static List<EAdmUsuarios> BroConsultarUsuariosDependientes(int idPadre)
+        public static List<EAdmUsuarios> BroConsultarUsuariosDependientes(int idPadre, int IdBroker, int IdRol)
         {
-            return DAdmUsuarios.BroConsultarUsuariosDependientes(idPadre);
+            return DAdmUsuarios.BroConsultarUsuariosDependientes(idPadre, IdBroker, IdRol);
         }
 
         public static List<EAdmUsuarios> BroConsultarUsuariosDependientesOperadores(EBroResumen pResumen)
@@ -30,9 +30,14 @@ namespace SegurosEquinoccial.Pymes.Controlador.Administracion
             return DAdmUsuarios.BroConsultarUsuariosDependientesOperadores(pResumen);
         }
 
-        public static List<EAdmUsuarios> BroListarUsuarios()
+        public static List<EAdmUsuarios> ConsultaUsuarios()
         {
-            return DAdmUsuarios.BroListarUsuarios();
+            return DAdmUsuarios.ConsultaUsuarios();
+        }
+
+        public static List<EAdmUsuarios> BroListarUsuarios(string IdUsuario)
+        {
+            return DAdmUsuarios.BroListarUsuarios(IdUsuario);
         }
 
         public static List<EAdmUsuarios> BroListarUsuariosBroker(string IdBroker)

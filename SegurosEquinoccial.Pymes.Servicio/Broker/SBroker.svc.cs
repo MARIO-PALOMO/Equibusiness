@@ -293,9 +293,9 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return CBroFormaPago.BroConsultarFormaPago(Convert.ToInt32(idFormaPago));
         }
 
-        public List<EAdmUsuarios> BroConsultarUsuariosDependientes(string idPadre)
+        public List<EAdmUsuarios> BroConsultarUsuariosDependientes(string idPadre, string IdBroker, string IdRol)
         {
-            return CAdmUsuarios.BroConsultarUsuariosDependientes(Convert.ToInt32(idPadre));
+            return CAdmUsuarios.BroConsultarUsuariosDependientes(Convert.ToInt32(idPadre), Convert.ToInt32(IdBroker), Convert.ToInt32(IdRol));
         }
 
         public List<EAdmUsuarios> BroConsultarUsuariosDependientesOperadores(EBroResumen pResumen)
@@ -443,9 +443,14 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return CBroCotizacion.BroEliminacionDatosCotizacion(auxiliares);
         }
 
-        public List<EAdmUsuarios> BroListarUsuarios()
+        public List<EAdmUsuarios> ConsultaUsuarios()
         {
-            return CAdmUsuarios.BroListarUsuarios();
+            return CAdmUsuarios.ConsultaUsuarios();
+        }
+
+        public List<EAdmUsuarios> BroListarUsuarios(string IdUsuario)
+        {
+            return CAdmUsuarios.BroListarUsuarios(IdUsuario);
         }
 
         public List<EAdmUsuarios> BroListarUsuariosBroker(string IdBroker)

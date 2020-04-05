@@ -98,5 +98,10 @@ namespace SegurosEquinoccial.Pymes.Entidad.Administracion
         [DataMember]
         public string Cedula { get; set; }
 
+        [DataMember]
+        public int IdUsuarioBroker { get; set; }
+
+        [DataMember]
+        public int IdUsuarioRol { get; set; } 
     }
 }

@@ -87,8 +87,9 @@ export class ResumenGerenteComponent implements OnInit {
 
     this.lstSupervisores = [];
 
-    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes/' + this.usuario.IdUsuario, this.usuario.Uid).subscribe(
+    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes?idPadre=' + this.usuario.IdUsuario + '&IdBroker='+ this.usuario.broker.IdBroker + '&IdRol=4', this.usuario.Uid).subscribe(
       (res: any) => {
+        console.log(res);
         this.spinner.hide();
         this.lstSupervisores = res;
         this.lstUsuariosSupervisores = "";
@@ -112,6 +113,7 @@ export class ResumenGerenteComponent implements OnInit {
 
     var parametros = {
       Cadena: this.lstUsuariosSupervisores.substr(0, (this.lstUsuariosSupervisores.length - 4)),
+      IdBroker: this.usuario.broker.IdBroker
     };
     this.lstResumenSupervisores = [];
     this.conexion.post('Broker/SBroker.svc/usuarios/consultar/dependientes/supervisor', parametros, this.usuario.Uid).subscribe(
@@ -132,6 +134,8 @@ export class ResumenGerenteComponent implements OnInit {
     this.spinner.show();
     var parametros = {
       Cadena: this.lstUsuariosSupervisores.substr(0, (this.lstUsuariosSupervisores.length - 4)),
+      IdBroker: this.usuario.broker.IdBroker,
+      IdRol: 3
     };
     this.lstOperadores = [];
     this.conexion.post('Broker/SBroker.svc/usuarios/consultar/dependientes/operadores', parametros, this.usuario.Uid).subscribe(
@@ -267,7 +271,7 @@ export class ResumenGerenteComponent implements OnInit {
       if (parseInt(cotizaciones.IdUsuario) === parseInt(id)) {
         if (parseInt(cotizaciones.Estado) === 5) {
           emitidas += 1;
-        } if (cotizaciones.Estado != 5) {
+        } if (cotizaciones.Estado == 5 || cotizaciones.Estado == 4 || cotizaciones.Estado == 3 || cotizaciones.Estado == 2 || cotizaciones.Estado == 1) {
           sinEmitir += 1;
         }
       }

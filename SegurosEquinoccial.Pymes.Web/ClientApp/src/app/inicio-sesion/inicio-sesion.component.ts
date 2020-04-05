@@ -51,8 +51,6 @@ export class InicioSesionComponent implements OnInit {
       this.opcionesRol = [];
       this.conexion.post("Gestion/SGesConsultas.svc/usuario/verificar", fmrValores, "").subscribe(
         (res: any) => {
-          console.log(fmrValores);
-          console.log(res);
           this.spinner.hide();
           if (res != "") {
             this.usuario = res;
@@ -137,6 +135,7 @@ export class InicioSesionComponent implements OnInit {
       Comision: 0,
       Corredores: "0",
       Cedula: "",
+      IdUsuarioBroker:0,
       rol: {
         IdRol: 0
       },
@@ -148,7 +147,6 @@ export class InicioSesionComponent implements OnInit {
     this.spinner.show();
     this.conexion.post("Gestion/SGesTransacciones.svc/usuario/gestion", datos, "").subscribe(
       (res: any) => {
-        console.log(res);
         this.spinner.hide();
         this.sesion.iniciarSesion(IdUsuario, Usuario);
       },

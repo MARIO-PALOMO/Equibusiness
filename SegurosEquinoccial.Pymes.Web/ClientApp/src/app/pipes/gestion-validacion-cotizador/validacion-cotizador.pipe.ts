@@ -325,9 +325,6 @@ export class ValidacionCotizadorPipe implements PipeTransform {
     } else if (fmrUsuario.Contrasena == "") {
       validacion = false;
       this.mostrarAlerta("Llene el campo Contraseña.", color);
-    } else if (fmrUsuario.Contrasena.length < 8) {
-      validacion = false;
-      this.mostrarAlerta("La contraseña debe tener un mínimo de 8 caráteres.", color);
     } else if (fmrUsuario.rol.IdRol == undefined) {
       validacion = false;
       this.mostrarAlerta("LLene el campo Rol.", color);

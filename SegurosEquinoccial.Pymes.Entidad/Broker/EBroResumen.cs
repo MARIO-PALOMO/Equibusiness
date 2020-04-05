@@ -46,5 +46,8 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
 
         [DataMember]
         public string FechaFin { get; set; }
+
+        [DataMember]
+        public int IdRol { get; set; }
     }
 }

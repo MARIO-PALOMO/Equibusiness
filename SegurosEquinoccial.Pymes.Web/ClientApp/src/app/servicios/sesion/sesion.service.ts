@@ -31,6 +31,7 @@ export class SesionService {
       "Comision": 0,
       "Corredores" : "0",
       "Cedula" : "",
+      "IdUsuarioBroker":0,
       rol: {
         IdRol: 0
       },

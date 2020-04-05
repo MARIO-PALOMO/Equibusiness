@@ -22,7 +22,7 @@ export class ReporteComponent implements OnInit {
   usuario: any = [];
   public chartReporteBarCotizaciones: Chart;
   public chartReporteBarEmisiones: Chart;
-  public chartReportePieEmisiones: any;
+  public chartReportePieEmisiones: Chart;
   public chartReportePieCotizaciones: Chart;
 
 
@@ -332,7 +332,7 @@ export class ReporteComponent implements OnInit {
           }
         }
         this.generarGraficoBarEmisiones(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'bar', 'Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad Barras');
-        this.generarGraficoPie(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'pie', 'Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad Pastel');
+        this.generarGraficoPieEmisiones(datasetCotizaciones.x, datasetCotizaciones.y, datasetCotizaciones.z, 'pie', 'Emisiones Por Ciudad', 'Gráfico de Emisiones por Ciudad Pastel');
 
       },
       err => {
@@ -343,7 +343,7 @@ export class ReporteComponent implements OnInit {
     );
   }
 
-  public graficarReporteUsuariosBrokerCiudad(broker: any) {
+  /* public graficarReporteUsuariosBrokerCiudad(broker: any) {
     if (broker == undefined) {
       this.mensaje.mostrarAlerta('Seleccione un Broker para habilitar esta función.', this.usuario.broker.Color);
     } else {
@@ -372,14 +372,15 @@ export class ReporteComponent implements OnInit {
         }
       );
     }
-  }
+  } */
 
   // FUNCIONES DE LOS GRAFICOS
   public generarGraficoBar(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
-    if (this.chartReporteBarCotizaciones || this.lstReporteCiudadBrokerC == "") {
-      this.chartReporteBarCotizaciones.destroy();
-    }
-    this.chartReporteBarCotizaciones = new Chart('canvasCotizaciones', {
+    if (this.chartReporteBarCotizaciones || this.lstReporteCiudadBrokerC == "") {this.chartReporteBarCotizaciones.destroy();}
+
+    var canvas = <HTMLCanvasElement> document.getElementById('canvasCotizaciones');
+    var ctx = canvas.getContext('2d');
+    this.chartReporteBarCotizaciones = new Chart(ctx, {
       type: '' + tipo + '',
       data: {
         labels: textos,
@@ -393,6 +394,7 @@ export class ReporteComponent implements OnInit {
         ]
       },
       options: {
+        plugins: [ChartDataLabels],
         legend: {
           display: false
         },
@@ -406,8 +408,14 @@ export class ReporteComponent implements OnInit {
           }],
           yAxes: [{
             display: true,
+            scaleLabel: {
+              display: true,
+              labelString: "Cantidad de Cotizaciones",
+              fontColor: "green"
+            },
             ticks: {
               beginAtZero: true,
+              callback: function(value) {if (value % 1 === 0) {return value;}}
             }
           }],
         }
@@ -433,6 +441,7 @@ export class ReporteComponent implements OnInit {
         ]
       },
       options: {
+        plugins: [ChartDataLabels],
         legend: {
           display: false
         },
@@ -446,8 +455,14 @@ export class ReporteComponent implements OnInit {
           }],
           yAxes: [{
             display: true,
+            scaleLabel: {
+              display: true,
+              labelString: "Cantidad de Emisiones",
+              fontColor: "green"
+            },
             ticks: {
               beginAtZero: true,
+              callback: function(value) {if (value % 1 === 0) {return value;}}
             }
           }],
         },
@@ -455,12 +470,9 @@ export class ReporteComponent implements OnInit {
     });
   }
 
-  public generarGraficoPie(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
-
-    if (this.chartReportePieEmisiones) this.chartReportePieEmisiones.destroy();
-    this.chartReportePieEmisiones = document.getElementById('canvasEmisionesPastel');
-    var ctx = this.chartReportePieEmisiones.getContext('2d');
-    this.chartReportePieEmisiones = new Chart(ctx, {
+  public generarGraficoPieCotizaciones(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
+    if (this.chartReportePieCotizaciones || this.lstReporteCiudadBrokerC == "") this.chartReportePieCotizaciones.destroy();
+    this.chartReportePieCotizaciones = new Chart('canvasCotizacionesPastel', {
       type: '' + tipo + '',
       data: {
         labels: textos,
@@ -473,8 +485,8 @@ export class ReporteComponent implements OnInit {
           }
         ]
       },
-      plugins: [ChartDataLabels],
       options: {
+        plugins: [ChartDataLabels],
         title: {
           display: true,
           text: titulo
@@ -483,9 +495,10 @@ export class ReporteComponent implements OnInit {
     });
   }
 
-  public generarGraficoPieCotizaciones(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
-    if (this.chartReportePieCotizaciones) this.chartReportePieCotizaciones.destroy();
-    this.chartReportePieCotizaciones = new Chart('canvasCotizacionesPastel', {
+  public generarGraficoPieEmisiones(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
+
+    if (this.chartReportePieEmisiones || this.lstReporteCiudadBrokerE == "") this.chartReportePieEmisiones.destroy();
+    this.chartReportePieEmisiones = new Chart('canvasEmisionesPastel', {
       type: '' + tipo + '',
       data: {
         labels: textos,
@@ -499,6 +512,7 @@ export class ReporteComponent implements OnInit {
         ]
       },
       options: {
+        plugins: [ChartDataLabels],
         title: {
           display: true,
           text: titulo
@@ -506,8 +520,6 @@ export class ReporteComponent implements OnInit {
       }
     });
   }
-
-
 
   // LISTAR DATOS DE LA BASE PARA EXPORTAR A EXCEL 
   public listarReporteCotizacionesBroker(broker: any) {

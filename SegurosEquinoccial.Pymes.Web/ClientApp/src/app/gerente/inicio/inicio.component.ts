@@ -49,11 +49,10 @@ export class InicioGerenciaComponent implements OnInit {
     this.lstUsuarioDependientesSupervisores = [];
     this.idUsuariosDependientesSupervisores = [];
 
-    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes/' + this.usuario.IdUsuario, this.usuario.Uid).subscribe(
+    this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes?idPadre=' + this.usuario.IdUsuario + '&IdBroker='+ this.usuario.broker.IdBroker + '&IdRol=4', this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
         this.lstUsuarioDependientesSupervisores = res;
-
         this.usuariosSupervisores = "";
         for (let usuario of this.lstUsuarioDependientesSupervisores) {
           this.usuariosSupervisores += ('IdPadre = ' + usuario.IdUsuario + ' OR ');
@@ -75,21 +74,25 @@ export class InicioGerenciaComponent implements OnInit {
 
     var parametros = {
       Cadena: cadena.substr(0, (cadena.length - 4)),
+      IdBroker: this.usuario.broker.IdBroker
     };
     this.conexion.post('Broker/SBroker.svc/usuarios/consultar/dependientes/supervisor', parametros, this.usuario.Uid).subscribe(
       (res: any) => {
+        console.log(res);
         this.spinner.hide();
         this.lstUsuariosDependientesSupervisoresResumen = res;
         var dataset = {
           x: [],
-          y: []
+          y: [],
+          z: []
         };
         for (let usuarios of this.lstUsuariosDependientesSupervisoresResumen) {
           dataset.x.push(usuarios.Ciudad);
           dataset.y.push(usuarios.Total);
+          dataset.z.push(this.colorAleatorio());
         }
 
-        this.generarGraficoResumenSupervision(dataset.x, dataset.y, 'bar', 'N° de Operadores por Sucursal', 'Gráfico Operadores por Sucursal/Supervisor');
+        this.generarGraficoResumenSupervision(dataset.x, dataset.y, dataset.z, 'bar', 'N° de Operadores por Sucursal', 'Gráfico Operadores por Sucursal/Supervisor');
         this.listarUsuariosDependientesOperadores(cadena);
 
       },
@@ -105,19 +108,30 @@ export class InicioGerenciaComponent implements OnInit {
     this.spinner.show();
     var parametros = {
       Cadena: cadena.substr(0, (cadena.length - 4)),
+      IdBroker: this.usuario.broker.IdBroker,
+      IdRol: 3
     };
+    console.log(parametros);
     this.conexion.post('Broker/SBroker.svc/usuarios/consultar/dependientes/operadores', parametros, this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
+        
         this.lstUsuarioDependientesOperadores = [];
         this.lstUsuarioDependientesOperadores = res;
-
         this.usuariosOperadores = "";
-        for (let resultado of res) {
-          this.usuariosOperadores += ('IdUsuario = ' + resultado.IdUsuario + ' OR ');
-        }
 
-        this.consultarResumenCotizaciones();
+        if(res.length != 0){
+          
+          for (let resultado of res) {
+            this.usuariosOperadores += ('IdUsuario = ' + resultado.IdUsuario + ' OR ');
+          }
+          this.consultarResumenCotizaciones();
+
+        }else{
+          this.globales.mostarAlertaEstatica("Información", "Este Administrador, no cuentas con supervicores asignados.", "info");
+        }
+        
+
       },
       err => {
         this.spinner.hide();
@@ -201,33 +215,41 @@ export class InicioGerenciaComponent implements OnInit {
   public mostrarGrafico(identificador) {
     var dataset = {
       x: [],
-      y: []
+      y: [],
+      z: []
     };
 
     if (identificador == 1) {
       for (let usuarios of this.lstUsuariosDependientesSupervisoresResumen) {
         dataset.x.push(usuarios.Ciudad);
         dataset.y.push(usuarios.Total);
+        dataset.z.push(this.colorAleatorio());
       }
-      this.generarGraficoResumenSupervision(dataset.x, dataset.y, 'bar', 'N° de Operadores por Sucursal', 'Gráfico Operadores por Sucursal/Supervisor');
+      this.generarGraficoResumenSupervision(dataset.x, dataset.y, dataset.z, 'bar', 'N° de Operadores por Sucursal', 'Gráfico Operadores por Sucursal/Supervisor');
     } else if (identificador == 2) {
       for (let usuarios of this.lstCotizacionesSupervisoresResumen) {
         dataset.x.push(usuarios.Ciudad);
         dataset.y.push(usuarios.Total);
+        dataset.z.push(this.colorAleatorio());
       }
-      this.generarGraficoResumenSupervision(dataset.x, dataset.y, 'line', 'Total Generado por Sucursal', 'Gráfico Total Generado por Sucursal/Supervisor');
+      console.log(dataset);
+      this.generarGraficoResumenSupervision(dataset.x, dataset.y, dataset.z, 'bar', 'Total Generado por Sucursal', 'Gráfico Total Generado por Sucursal/Supervisor');
     } else if (identificador == 3) {
       for (let usuarios of this.lstCotizacionesSupervisoresResumen) {
         dataset.x.push(usuarios.Ciudad);
         dataset.y.push(usuarios.Emitidas);
+        dataset.z.push(this.colorAleatorio());
       }
-      this.generarGraficoResumenSupervision(dataset.x, dataset.y, 'line', 'N° Cotizaciones Emitidas por Sucursal', 'Gráfico Cotizaciones Emitidas por Sucursal/Supervisor');
+      console.log(dataset);
+      this.generarGraficoResumenSupervision(dataset.x, dataset.y, dataset.z, 'bar', 'N° Cotizaciones Emitidas por Sucursal', 'Gráfico Cotizaciones Emitidas por Sucursal/Supervisor');
     } else if (identificador == 4) {
       for (let usuarios of this.lstCotizacionesSupervisoresResumen) {
         dataset.x.push(usuarios.Ciudad);
         dataset.y.push(usuarios.SinEmitir);
+        dataset.z.push(this.colorAleatorio());
       }
-      this.generarGraficoResumenSupervision(dataset.x, dataset.y, 'line', 'N° Cotizaciones Sin Emitir por Sucursal', 'Gráfico Cotizaciones Sin Emitir por Sucursal/Supervisor');
+      console.log(dataset);
+      this.generarGraficoResumenSupervision(dataset.x, dataset.y, dataset.z, 'bar', 'N° Cotizaciones Realizadas por Sucursal', 'Gráfico Cotizaciones Realizadas por Sucursal/Supervisor');
     }
 
   }
@@ -277,7 +299,7 @@ export class InicioGerenciaComponent implements OnInit {
   }
 
 
-  public generarGraficoResumenSupervision(textos, valores, tipo, leyenda, titulo) {
+  public generarGraficoResumenSupervision(textos: any, valores: any, colores: any, tipo: any, leyenda: any, titulo: any) {
     if (this.chartResumenSupervision) this.chartResumenSupervision.destroy();
 
     this.chartResumenSupervision = new Chart('canvas', {
@@ -288,14 +310,14 @@ export class InicioGerenciaComponent implements OnInit {
           {
             label: leyenda,
             data: valores,
-            borderColor: 'rgba(' + this.usuario.broker.Color + ', 0.8)',
-            backgroundColor: 'rgba(' + this.usuario.broker.Color + ', 0.2)'
+            borderColor: colores,
+            backgroundColor:colores
           }
         ]
       },
       options: {
         legend: {
-          display: true
+          display: false
         },
         title: {
           display: true,
@@ -307,8 +329,14 @@ export class InicioGerenciaComponent implements OnInit {
           }],
           yAxes: [{
             display: true,
+            scaleLabel: {
+              display: true,
+              labelString: "Cantidad",
+              fontColor: "green"
+            },
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              callback: function(value) {if (value % 1 === 0) {return value;}}
             }
           }],
         }
@@ -339,6 +367,12 @@ export class InicioGerenciaComponent implements OnInit {
     var str = texto;
     var res = str.split(" ");
     return res[0]
+  }
+
+  // GENERAR COLORES ALEATORIOS
+  public colorAleatorio() {
+    var color = "rgba(" + (Math.floor(Math.random() * (255 - 1)) + 1) + "," + (Math.floor(Math.random() * (255 - 1)) + 1) + "," + (Math.floor(Math.random() * (255 - 1)) + 1) + ",0.5)";
+    return color;
   }
 
 }
