@@ -28,6 +28,11 @@ namespace SegurosEquinoccial.Pymes.Controlador.Broker
             return DBroEmpresa.BroValidarEmpresaCotizacion(ruc);
         }
 
+        public static List<EBroCotizacion> BroReValidarEmpresaCotizacion(string ruc)
+        {
+            return DBroEmpresa.BroReValidarEmpresaCotizacion(ruc);
+        }
+
         public static string BroConsultaEmpresaServicio(string ruc)
         {
             return DBroEmpresa.BroConsultaEmpresaServicio(ruc);

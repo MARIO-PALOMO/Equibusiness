@@ -84,6 +84,7 @@ import { MultiViewCalendarModule } from '@progress/kendo-angular-dateinputs';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { ValidacionComponent } from './gerente/validacion/validacion.component';
 import { UploadModule } from '@progress/kendo-angular-upload';
+import { PaginacionComponent } from './cliente/complementos/paginacion/paginacion.component';
 
 @NgModule({
   declarations: [
@@ -133,7 +134,8 @@ import { UploadModule } from '@progress/kendo-angular-upload';
     CotizacionReporteEmailComponent,
     UsuarioComponent,
     ReporteComponent,
-    ValidacionComponent
+    ValidacionComponent,
+    PaginacionComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

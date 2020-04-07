@@ -26,7 +26,46 @@ export class PolizaMultiriesgoService {
     this.usuario = this.sesion.obtenerDatos();
   }
 
-  public verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo) {
+  public excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo) {
+
+    if (DatosEmpresa.DocumentoCliente == DatosPagador.DocumentoCliente) {
+      this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, DatosEmpresa.DocumentoCliente + "-FORMULARIO").then(regla => {
+
+        if (regla.Nombre == null) {
+          this.verificarFormularios(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo);
+        } else {
+          this.buscarCotizacion(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo);
+        }
+
+      }).catch(err => {
+        this.spinner.hide();
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error en la exepción del formulario", "error", "#E74C3C");
+      });
+    } else {
+      this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, DatosEmpresa.DocumentoCliente + "-FORMULARIO").then(reglaEmpresa => {
+
+        this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, DatosPagador.DocumentoCliente + "-FORMULARIO").then(reglaPagador => {
+
+          if (reglaEmpresa.Nombre == null || reglaPagador.Nombre == null) {
+            this.verificarFormularios(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo);
+          } else {
+            this.buscarCotizacion(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo);
+          }
+
+        }).catch(err => {
+          this.spinner.hide();
+          this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error en la exepción del formulario", "error", "#E74C3C");
+        });
+
+      }).catch(err => {
+        this.spinner.hide();
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error en la exepción del formulario", "error", "#E74C3C");
+      });
+    }
+
+  }
+
+  public verificarFormularios(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo) {
 
     var formularioContratante = "false";
     var formularioPagador = "false";
@@ -240,7 +279,7 @@ export class PolizaMultiriesgoService {
   public enviarTextoInsisos(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, Direcciones, RamoValidacion, Riesgo, Incisos, Aclaratorios) {
 
 
-    var inicio = "LA RESPONSABILIDAD MAXIMA DE LA COMPANIA EN CASO DE SINIESTRO, SERA EL VALOR ASEGURADO DE LA POLIZA. POR LO TANTO EN CASO DE UN SINIESTRO QUE LLEGUE A ESTE VALOR, EL DEDUCIBLE SE DESCONTARA DE ESTE MONTO";
+    var inicio = "LA RESPONSABILIDAD MAXIMA DE LA COMPANIA EN CASO DE SINIESTRO, SERA EL VALOR ASEGURADO DE LA POLIZA. POR LO TANTO EN CASO DE UN SINIESTRO QUE LLEGUE A ESTE VALOR, EL DEDUCIBLE SE DESCONTARA DE ESTE MONTO\n\nLa presente póliza cubre los daños físicos directos, producto de un hecho accidental, súbito e imprevisto.\n\n";
 
     if (Direcciones[0] != undefined) {
       this.spinner.show();

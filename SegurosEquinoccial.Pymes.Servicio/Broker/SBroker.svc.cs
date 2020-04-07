@@ -213,9 +213,9 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         }
 
         //CONSULTA LAS COTIZACIONES GENERADAS POR USUARIO
-        public List<EBroCotizacion> BroConsultaCotizacionesUsuario(string broker, string usuario)
+        public List<EBroCotizacion> BroConsultaCotizacionesUsuario(string idBroker, string idUsuario, string numeroPaginas, string tamanoPaginas, string estadoCotizacion)
         {
-            return CBroCotizacion.BroConsultaCotizacionesUsuario(Convert.ToInt32(broker), Convert.ToInt32(usuario));
+            return CBroCotizacion.BroConsultaCotizacionesUsuario(Convert.ToInt32(idBroker), Convert.ToInt32(idUsuario), Convert.ToInt32(numeroPaginas), Convert.ToInt32(tamanoPaginas), Convert.ToInt32(estadoCotizacion));
         }
 
         //CONSULTAR DERECHOS DE EMISION
@@ -577,5 +577,14 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
             return DBroExcepciones.BroGestionExcepciones(excepcion);
         }
 
+        public List<EBroCotizacion> BroReValidarEmpresaCotizacion(string ruc)
+        {
+            return CBroEmpresa.BroReValidarEmpresaCotizacion(ruc);
+        }
+
+        public List<EBroCotizacion> BroConsultaFiltroUsuario(EAuxiliares datos)
+        {
+            return CBroCotizacion.BroConsultaFiltroUsuario(datos);
+        }
     }
 }

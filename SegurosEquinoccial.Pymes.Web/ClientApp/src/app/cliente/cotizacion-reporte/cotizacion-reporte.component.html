@@ -20,7 +20,7 @@
               <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%">
-                  <i class="mdi mdi-mdi-email"></i>ENVIAR COTIZACIÓN
+                  <i class="mdi mdi-mdi-email"></i>ENVIAR COTIZACIÓN RESUMIDA
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   <a class="dropdown-item" (click)="enviarEmailReporteCliente()"><i class="mdi mdi-coin"></i> ENVIAR AL
@@ -34,14 +34,14 @@
             </div>
             <div class="col-md-4" style="text-align: right">
               <button class="btn btn-light" (click)="imprimirCotizacion()" style="width: 100%">
-                <i class="mdi mdi-printer"></i> IMPRIMIR/EXPORTAR COTIZACIÓN
+                <i class="mdi mdi-printer"></i> IMPRIMIR / EXPORTAR COTIZACIÓN
               </button>
               <br><br>
             </div>
             <div class="col-md-4" style="text-align: right">
               <button class="btn btn-light" (click)="enviarOpcionesPago()" style="width: 100%">
-                <span *ngIf="estadoPago < 2"><i class="mdi mdi-credit-card"></i> REDIRIGIR A OPCIONES PAGO</span>
-                <span *ngIf="estadoPago >= 2"><i class="mdi mdi-credit-card"></i> REDIRIGIR A OPCIONES PAGO</span>
+                <span *ngIf="estadoPago < 2"><i class="mdi mdi-credit-card"></i> PAGO / EMISIÓN</span>
+                <span *ngIf="estadoPago >= 2"><i class="mdi mdi-credit-card"></i> PAGO / EMISIÓN</span>
               </button>
               <br><br>
             </div>

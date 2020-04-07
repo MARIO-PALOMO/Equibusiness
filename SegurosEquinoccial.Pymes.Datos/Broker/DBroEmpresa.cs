@@ -207,11 +207,55 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                     rsEmpresa.Ruc = rdr["Ruc"].ToString();
                     rsBroker.IdBroker = Convert.ToInt32(rdr["IdBroker"]);
                     rsCotizacion.Antiguedad = rdr["Antiguedad"].ToString();
+                    rsCotizacion.IdUsuario = Convert.ToInt32(rdr["IdUsuario"]);
+
                     rsCotizacion.Broker = rsBroker;
                     rsCotizacion.Empresa = rsEmpresa;
                 }
                 rdr.Close();
                 return rsCotizacion;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            finally
+            {
+                Cerrar();
+            }
+        }
+
+        public static List<EBroCotizacion> BroReValidarEmpresaCotizacion(string ruc)
+        {
+            List<EBroCotizacion> lstDatos = new List<EBroCotizacion>();
+            EBroEmpresa rsEmpresa;
+            EAdmBroker rsBroker;
+            EBroCotizacion rsCotizacion;
+            try
+            {
+                Conectar();
+
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaValidarEmpresaCotizacion WHERE Ruc = @ruc", getCnn());
+                cmd.Parameters.AddWithValue("@ruc", ruc);
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    rsEmpresa = new EBroEmpresa();
+                    rsBroker = new EAdmBroker();
+                    rsCotizacion = new EBroCotizacion();
+
+                    rsEmpresa.Ruc = rdr["Ruc"].ToString();
+                    rsBroker.IdBroker = Convert.ToInt32(rdr["IdBroker"]);
+                    rsCotizacion.Antiguedad = rdr["Antiguedad"].ToString();
+                    rsCotizacion.IdUsuario = Convert.ToInt32(rdr["IdUsuario"]);
+
+                    rsCotizacion.Broker = rsBroker;
+                    rsCotizacion.Empresa = rsEmpresa;
+
+                    lstDatos.Add(rsCotizacion);
+                }
+                rdr.Close();
+                return lstDatos;
             }
             catch (SqlException)
             {

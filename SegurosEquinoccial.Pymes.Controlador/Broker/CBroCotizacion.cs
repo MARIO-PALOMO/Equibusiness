@@ -26,9 +26,14 @@ namespace SegurosEquinoccial.Pymes.Controlador.Broker
             return DBroCotizacion.BroGestionCotizacionCorredor(pCotizacion);
         }
 
-        public static List<EBroCotizacion> BroConsultaCotizacionesUsuario(int broker, int usuario)
+        public static List<EBroCotizacion> BroConsultaCotizacionesUsuario(int idBroker, int idUsuario, int numeroPaginas, int tamanoPaginas, int estadoCotizacion)
         {
-            return DBroCotizacion.BroConsultaCotizacionesUsuario(broker, usuario);
+            return DBroCotizacion.BroConsultaCotizacionesUsuario(idBroker, idUsuario, numeroPaginas, tamanoPaginas, estadoCotizacion);
+        }
+
+        public static List<EBroCotizacion> BroConsultaFiltroUsuario(EAuxiliares datos)
+        {
+            return DBroCotizacion.BroConsultaFiltroUsuario(datos);
         }
 
         public static EBroCotizacion ConsultaCotizacionEmpresaComplementos(int IdContenido, int IdCotizacion, int IdDireccion, int IdVehiculos, int IdEmpresa)

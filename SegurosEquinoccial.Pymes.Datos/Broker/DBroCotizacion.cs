@@ -146,7 +146,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             }
         }
 
-        public static List<EBroCotizacion> BroConsultaCotizacionesUsuario(int broker, int usuario)
+        public static List<EBroCotizacion> BroConsultaCotizacionesUsuario(int idBroker, int idUsuario, int numeroPaginas, int tamanoPaginas, int estadoCotizacion)
         {
             List<EBroCotizacion> lstCotizacion = new List<EBroCotizacion>();
 
@@ -164,10 +164,156 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
             {
                 Conectar();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaCotizacionEmpresaComplementos WHERE IdBroker = @broker AND IdUsuario = @usuario ORDER BY FechaCompleta DESC", getCnn());
-                cmd.Parameters.AddWithValue("@broker", broker);
-                cmd.Parameters.AddWithValue("@usuario", usuario);
+                SqlCommand cmd = new SqlCommand("GestionConsultaCotizacionEmpresaComplementos", getCnn());
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@idBroker", SqlDbType.Int);
+                cmd.Parameters.Add("@idUsuario", SqlDbType.Int);
+                cmd.Parameters.Add("@numeroPaginas", SqlDbType.Int);
+                cmd.Parameters.Add("@tamanoPaginas", SqlDbType.Int);
+                cmd.Parameters.Add("@estadoCotizacion", SqlDbType.Int);
+
+                cmd.Parameters["@idBroker"].Value = idBroker;
+                cmd.Parameters["@idUsuario"].Value = idUsuario;
+                cmd.Parameters["@numeroPaginas"].Value = numeroPaginas;
+                cmd.Parameters["@tamanoPaginas"].Value = tamanoPaginas;
+                cmd.Parameters["@estadoCotizacion"].Value = estadoCotizacion;
+
                 SqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    rsCotizacion = new EBroCotizacion();
+                    rsBroker = new EAdmBroker();
+                    rsEmpresa = new EBroEmpresa();
+                    rsContenido = new EBroContenido();
+                    rsDireccion = new EBroDireccion();
+                    rsVehiculos = new EBroVehiculo();
+                    rsCotizacionResultado = new EBroCotizacionResultado();
+                    rsFormaPago = new EBroFormaPago();
+                    rsContratante = new EBroContratante();
+                    rsPagador = new EBroPagador();
+
+                    rsCotizacion.IdCotizacion = rdr["IdCotizacion"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdCotizacion"]);
+                    rsCotizacion.PrimaTotal = rdr["PrimaTotal"] == DBNull.Value ? 0 : Convert.ToDouble(rdr["PrimaTotal"]);
+                    rsCotizacion.Codigo = rdr["Codigo"].ToString();
+                    rsCotizacion.Estado = rdr["Estado"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["Estado"]);
+                    rsCotizacion.IdUsuario = rdr["IdUsuario"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdUsuario"]);
+                    rsCotizacion.Fecha = rdr["Fecha"].ToString();
+                    rsCotizacion.Antiguedad = rdr["Antiguedad"].ToString();
+                    rsCotizacion.Corredor = rdr["Corredor"].ToString();
+                    rsCotizacion.FechaCompleta = rdr["FechaCompleta"].ToString();
+                    rsCotizacion.TotalRegistros = rdr["TotalRegistros"].ToString();
+
+                    rsEmpresa.IdEmpresa = rdr["IdEmpresa"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdEmpresa"]);
+                    rsEmpresa.Ruc = rdr["Ruc"].ToString();
+                    rsEmpresa.RazonSocial = rdr["RazonSocial"].ToString();
+                    rsEmpresa.Telefono = rdr["Telefono"].ToString();
+
+                    rsContratante.Cedula = rdr["CedulaContratante"].ToString();
+                    rsContratante.Nombre = rdr["NombreContratante"].ToString();
+                    rsContratante.PrimerApellido = rdr["PrimerApellidoContratante"].ToString();
+                    rsContratante.SegundoApellido = rdr["SegundoApellidoContratante"].ToString();
+
+                    rsPagador.Cedula = rdr["CedulaPagador"].ToString();
+                    rsPagador.Nombre = rdr["NombrePagador"].ToString();
+                    rsPagador.PrimerApellido = rdr["PrimerApellidoPagador"].ToString();
+                    rsPagador.SegundoApellido = rdr["SegundoApellidoPagador"].ToString();
+
+                    rsBroker.IdBroker = rdr["IdBroker"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdBroker"]);
+
+                    rsContenido.IdContenido = rdr["IdContenido"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdContenido"]);
+                    rsContenido.VistaValores = rdr["VistaValores"].ToString();
+                    rsContenido.EstadoGarantias = rdr["EstadoGarantia"].ToString();
+                    rsContenido.EstadoCondiciones = rdr["EstadoCondiciones"].ToString();
+
+                    rsFormaPago.Plataforma = rdr["Plataforma"].ToString();
+                    rsFormaPago.CodigoAutenticacion = rdr["CodigoAutenticacion"].ToString();
+                    rsFormaPago.Referencia = rdr["Referencia"].ToString();
+                    rsFormaPago.Lote = rdr["Lote"].ToString();
+                    rsFormaPago.Voucher = rdr["Voucher"].ToString();
+                    rsFormaPago.Diferidos = rdr["Diferidos"].ToString();
+                    rsFormaPago.Intereses = rdr["Intereses"].ToString();
+                    rsFormaPago.Trama = rdr["Trama"].ToString();
+                    rsFormaPago.Fecha = rdr["FechaPago"].ToString();
+                    rsFormaPago.Tipo = rdr["TipoPago"].ToString();
+
+                    rsDireccion.IdDireccion = rdr["IdDireccion"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdDireccion"]);
+
+                    rsVehiculos.IdVehiculos = rdr["IdVehiculos"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdVehiculos"]);
+
+                    rsCotizacionResultado.IdCotizacionResultado = rdr["IdCotizacionResultado"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["IdCotizacionResultado"]);
+
+                    rsCotizacionResultado.IdPvMultiriesgo = rdr["IdPvMultiriesgo"].ToString();
+                    rsCotizacionResultado.EstadoMultiriesgo = rdr["EstadoMultiriesgo"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoMultiriesgo"]);
+                    rsCotizacionResultado.IdPvEquipoMaquinaria = rdr["IdPvEquipoMaquinaria"].ToString();
+                    rsCotizacionResultado.EstadoEquipoMaquinaria = rdr["EstadoEquipoMaquinaria"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoEquipoMaquinaria"]);
+                    rsCotizacionResultado.IdPvResponsabilidadCivil = rdr["IdPvResponsabilidadCivil"].ToString();
+                    rsCotizacionResultado.EstadoResponsabilidadCivil = rdr["EstadoResponsabilidadCivil"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoResponsabilidadCivil"]);
+                    rsCotizacionResultado.IdPvFidelidad = rdr["IdPvFidelidad"].ToString();
+                    rsCotizacionResultado.EstadoFidelidad = rdr["EstadoFidelidad"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoFidelidad"]);
+                    rsCotizacionResultado.IdPvAccidentesPersonales = rdr["IdPvAccidentesPersonales"].ToString();
+                    rsCotizacionResultado.EstadoAccidentesPersonales = rdr["EstadoAccidentesPersonales"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoAccidentesPersonales"]);
+                    rsCotizacionResultado.IdPvTransInterno = rdr["IdPvTransInterno"].ToString();
+                    rsCotizacionResultado.EstadoTransInterno = rdr["EstadoTransInterno"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoTransInterno"]);
+                    rsCotizacionResultado.IdPvTransImportaciones = rdr["IdPvTransImportaciones"].ToString();
+                    rsCotizacionResultado.EstadoTransImportaciones = rdr["EstadoTransImportaciones"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoTransImportaciones"]);
+                    rsCotizacionResultado.IdPvVehiculos = rdr["IdPvVehiculos"].ToString();
+                    rsCotizacionResultado.EstadoVehiculos = rdr["EstadoVehiculos"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoVehiculos"]);
+                    rsCotizacionResultado.EstadoGlobal = rdr["EstadoGlobal"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoGlobal"]);
+                    rsCotizacionResultado.EstadoPagoGlobal = rdr["EstadoPagoGlobal"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoPagoGlobal"]);
+                    rsCotizacionResultado.FechaEmision = rdr["FechaEmision"].ToString();
+
+
+                    rsCotizacion.Broker = rsBroker;
+                    rsCotizacion.Empresa = rsEmpresa;
+                    rsCotizacion.Contratante = rsContratante;
+                    rsCotizacion.Pagador = rsPagador;
+                    rsCotizacion.Contenido = rsContenido;
+                    rsCotizacion.Vehiculo = rsVehiculos;
+                    rsCotizacion.Direccion = rsDireccion;
+                    rsCotizacion.CotizacionResultado = rsCotizacionResultado;
+                    rsCotizacion.FormaPago = rsFormaPago;
+
+                    lstCotizacion.Add(rsCotizacion);
+
+                }
+                rdr.Close();
+                return lstCotizacion;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            finally
+            {
+                Cerrar();
+            }
+        }
+
+        public static List<EBroCotizacion> BroConsultaFiltroUsuario(EAuxiliares datos)
+        {
+            List<EBroCotizacion> lstCotizacion = new List<EBroCotizacion>();
+
+            EBroCotizacion rsCotizacion;
+            EAdmBroker rsBroker;
+            EBroEmpresa rsEmpresa;
+            EBroContenido rsContenido;
+            EBroDireccion rsDireccion;
+            EBroVehiculo rsVehiculos;
+            EBroCotizacionResultado rsCotizacionResultado;
+            EBroFormaPago rsFormaPago;
+            EBroContratante rsContratante;
+            EBroPagador rsPagador;
+
+            try
+            {
+                Conectar();
+
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaCotizacionEmpresaComplementos WHERE IdBroker = @IdBroker AND IdUsuario = @IdUsuario " + datos.Cadena, getCnn());
+                cmd.Parameters.AddWithValue("@IdBroker", datos.IdBroker);
+                cmd.Parameters.AddWithValue("@IdUsuario", datos.IdUsuario);
+                SqlDataReader rdr = cmd.ExecuteReader();
+
                 while (rdr.Read())
                 {
                     rsCotizacion = new EBroCotizacion();
@@ -248,7 +394,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                     rsCotizacionResultado.EstadoVehiculos = rdr["EstadoVehiculos"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoVehiculos"]);
                     rsCotizacionResultado.EstadoGlobal = rdr["EstadoGlobal"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoGlobal"]);
                     rsCotizacionResultado.EstadoPagoGlobal = rdr["EstadoPagoGlobal"] == DBNull.Value ? 0 : Convert.ToInt32(rdr["EstadoPagoGlobal"]);
-
+                    rsCotizacionResultado.FechaEmision = rdr["FechaEmision"].ToString();
 
 
                     rsCotizacion.Broker = rsBroker;
@@ -276,7 +422,6 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
                 Cerrar();
             }
         }
-
 
         public static EBroCotizacion ConsultaCotizacionEmpresaComplementos(int IdContenido, int IdCotizacion, int IdDireccion, int IdVehiculos, int IdEmpresa)
         {
@@ -732,7 +877,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Broker
 
 
             string Body = ("<ObtenerDeudaCliente xmlns=\"http://www.segurosequinoccial.com/\">"
-                             + "<cod_aseg>"+ asegurado + "</cod_aseg>"
+                             + "<cod_aseg>" + asegurado + "</cod_aseg>"
                          + "</ObtenerDeudaCliente>");
 
             Resultado = DAdmConexionSOAP.BroEjecutarSolicitudWebSOAP(ServicioURL, AccionSOAP, Body);

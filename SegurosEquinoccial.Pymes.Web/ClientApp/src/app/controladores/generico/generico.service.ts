@@ -581,7 +581,7 @@ export class GenericoService {
         (res: any) => {
           var xml = $.parseXML(res);
           var deuda = $(xml).find('sn_tiene_deuda').text();
-
+          console.log(xml);
           resolve(deuda);
         },
         err => {
