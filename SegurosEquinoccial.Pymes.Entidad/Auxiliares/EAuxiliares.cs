@@ -258,5 +258,14 @@ namespace SegurosEquinoccial.Pymes.Entidad.Auxiliares
 
         [DataMember]
         public string CValor { get; set; }
+
+        //FILTRO INICIO EQUIBUSINESS
+
+        [DataMember]
+        public int IdUsuario { get; set; }
+
+        [DataMember]
+        public string Cadena { get; set; }
+
     }
 }

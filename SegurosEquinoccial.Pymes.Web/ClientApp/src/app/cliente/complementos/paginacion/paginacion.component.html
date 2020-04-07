@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-md-8">
+    <nav *ngIf="cotizacionesExistentes">
+      <ul class="pagination" style="padding: 0px !important; margin: 0px !important;">
+        <li *ngIf="pagina > 1" style="color: black !important;" class="page-item" (click)="anterior()">
+          <a class="page-link" [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">Anterior</a>
+        </li>
+        <li class="page-item" style="color: black !important;">
+          <a class="page-link">
+            Página {{pagina}} de {{paginasTotales}}
+          </a>
+        </li>
+        <li *ngIf="pagina < paginasTotales" class="page-item" (click)="siguiente()">
+          <a class="page-link" [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">Siguiente</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="col-md-4" style="text-align: right !important; line-height: 38px !important;">
+    <span>{{cotizacionesExistentes}} Ítems</span>
+  </div>
+</div>

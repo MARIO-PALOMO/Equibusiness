@@ -160,7 +160,11 @@ export class ResumenService {
               }
 
               var seguros = "NOTA ACLARATORIA PARA EL PROGRAMA DE SEGUROS:\n*********************************************\n\n- No se requiere inspección para la suscripción de programas de seguros cuya prima sea igual o menor a $ 5.000,00,  sin embargo la compañía podrá realizar inspecciones aleatorias a cualquier riesgo cuya prima sea igual o mayor a este valor y solicitar la implementación de garantías, inclusive después de emitidas las pólizas."
-              var final = "Para Seguros Equinoccial  es muy importante contar con su información actualizada para lo cual constantemente realizamos la confirmación de sus datos, además con la firma en su póliza nos autoriza a enviarle la información relacionada con su seguro y factura además de recolectar, digitalizar, mantener, enviar y recibir información comercial y promocional por canales ordinarios, digitales  y telefónicos\n\nLA PRESENTE PÓLIZA ESTA EMITIDA EN BASE A LAS CONDICIONES GENERALES, ESPECIALES Y  PARTICULARES, LAS MISMAS QUE ADJUNTAMOS Y, EL ASEGURADO DECLARA ESTAR CONFORME CON SU  CONTENIDO Y LO ACEPTA EN SU TOTALIDAD; SIN EMBARGO, LO QUE SE MODIFICA EXPRESAMENTE EN  CONDICIONES ESPECIALES PREVALECE SOBRE LAS CONDICIONES GENERALES, EL ASEGURADO DEBERÁ ENTREGARNOS LA COPIA DE LA PÓLIZA DEBIDAMENTE FIRMADA.";
+              var final = "* En caso de que el solicitante no sea el asegurado o beneficiario, el seguro será tomado en calidad de tercero\n\n" +
+              "* Para Seguros Equinoccial es muy importante contar con su información actualizada para lo cual constantemente realizamos la confirmación de sus datos, además con la firma en su póliza nos autoriza a enviarle la información relacionada con su seguro y factura además de recolectar, digitalizar, mantener, enviar y recibir información comercial y promocional por canales ordinarios, digitales y telefónicos.\n\n" +
+              "* Cláusula De Limitación Y Exclusión De Sanciones:\n" +
+              "La compañía de seguros no proporcionará cobertura ni será responsable de pagar cualquier reclamo o proporcionar ningún beneficio en el presente documento en la medida en que la provisión de dicha cobertura, el pago de dicho reclamo o la provisión de dicho beneficio la exponga a cualquier sanción, prohibición o restricción en virtud de las resoluciones de las Naciones Unidas o las sanciones, leyes o reglamentos comerciales o económicos de la Unión Europea, los Estados Unidos de América.\n\n" +
+              "LA PRESENTE PÓLIZA ESTA EMITIDA EN BASE A LAS CONDICIONES GENERALES, ESPECIALES Y  PARTICULARES, LAS MISMAS QUE ADJUNTAMOS Y, EL ASEGURADO DECLARA ESTAR CONFORME CON SU  CONTENIDO Y LO ACEPTA EN SU TOTALIDAD; SIN EMBARGO, LO QUE SE MODIFICA EXPRESAMENTE EN  CONDICIONES ESPECIALES PREVALECE SOBRE LAS CONDICIONES GENERALES, EL ASEGURADO DEBERÁ ENTREGARNOS LA COPIA DE LA PÓLIZA DEBIDAMENTE FIRMADA.";
 
               var aclaratorio =
                 (respuesta.deducibles == "" ? "" : "DEDUCIBLES\n**********\n\n") + respuesta.deducibles +
@@ -191,7 +195,7 @@ export class ResumenService {
                   item5: respuesta.textoIncisos.item5
                 }
               }
-
+           
               resolve(datos);
             },
             err => {
@@ -402,17 +406,17 @@ export class ResumenService {
       }
     }
 
-    //DEDUCIBLES
+    //DEDUCIBLES 
     for (let ramo of lstRamos) {
       if (ramo.visualizacion != 0) {
-        if (ramo.nombre != "Amparos Adicionales") {
+        if (true) { //ramo.nombre != "Amparos Adicionales"
           deducibles += "\n" + ramo.nombre.toUpperCase() + "\n" + this.gestionCaracteres("=", ramo.nombre) + "\n\n";
           if (ramo.identificador != "RIL1") {
             deducibles += "POR EVENTO\n\n"
           }
           for (let coberturas of ramo.ramo) {
             if (coberturas.Datos.RiesgoMayor != "" || coberturas.Datos.RiesgoMenor != "") {
-              if (coberturas.Datos.Ramo.Codigo != "RCA14") {
+              if (true) {//coberturas.Datos.Ramo.Codigo != "RCA14"
                 if (coberturas.Datos.Imprime == "-1") {
                   if (coberturas.Datos.NombreObjetoSeguro != "") {
                     deducibles += "*  " + coberturas.Datos.NombreObjetoSeguro + ":\n" + this.gestionCaracteres("-", "*   " + coberturas.Datos.NombreObjetoSeguro) + "\n\n" + (riesgo == 2 ? coberturas.Datos.RiesgoMayor + "\n\n" : coberturas.Datos.RiesgoMenor + "\n\n");
@@ -448,6 +452,7 @@ export class ResumenService {
         item5: item5
       }
     }
+
     return datos;
   }
 

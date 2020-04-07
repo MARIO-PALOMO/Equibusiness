@@ -128,5 +128,7 @@ namespace SegurosEquinoccial.Pymes.Entidad.Broker
 
         [DataMember]
         public string Datos { get; set; }
+        [DataMember]
+        public string TotalRegistros { get; set; }
     }
 }

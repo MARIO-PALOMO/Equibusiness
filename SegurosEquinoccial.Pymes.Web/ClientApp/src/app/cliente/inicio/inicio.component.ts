@@ -29,6 +29,7 @@ export class InicioClienteComponent implements OnInit {
   //public lstSectorEconomico = ["A - AGRICULTURA, GANADERÍA,  SILVICULTURA Y PESCA.", "B - EXPLOTACIÓN DE MINAS Y CANTERAS.", "C - INDUSTRIAS MANUFACTURERAS.", "D - SUMINISTRO DE ELECTRICIDAD, GAS, VAPOR Y AIRE ACONDICIONADO.", "E - DISTRIBUCIÓN DE AGUA; ALCANTARILLADO, GESTIÓN DE DESECHOS Y ACTIVIDADES DE SANEAMIENTO.", "F - CONSTRUCCIÓN.", "G - COMERCIO AL POR MAYOR Y AL POR MENOR; REPARACIÓN DE VEHÍCULOS AUTOMOTORES Y MOTOCICLETAS.", "H - TRANSPORTE Y ALMACENAMIENTO.", "I - ACTIVIDADES DE ALOJAMIENTO Y DE SERVICIO DE COMIDAS.", "J - INFORMACIÓN Y COMUNICACIÓN.", "K - ACTIVIDADES FINANCIERAS Y DE SEGUROS.", "L - ACTIVIDADES INMOBILIARIAS.", "M - ACTIVIDADES PROFESIONALES, CIENTÍFICAS Y TÉCNICAS.", "N - ACTIVIDADES DE SERVICIOS ADMINISTRATIVOS Y DE APOYO.", "O - ADMINISTRACIÓN PÚBLICA Y DEFENSA; PLANES DE SEGURIDAD SOCIAL DE AFILIACIÓN OBLIGATORIA.", "P - ENSEÑANZA.", "Q - ACTIVIDADES DE ATENCIÓN DE LA SALUD HUMANA Y DE ASISTENCIA SOCIAL.", "R - ARTES, ENTRETENIMIENTO Y RECREACIÓN.", "S - OTRAS ACTIVIDADES DE SERVICIOS.", "T - ACTIVIDADES DE LOS HOGARES COMO EMPLEADORES; ACTIVIDADES NO DIFERENCIADAS DE LOS HOGARES COMO PRODUCTORES DE BIENES Y SERVICIOS PARA USO PROPIO.", "U - ACTIVIDADES DE ORGANIZACIONES Y ÓRGANOS EXTRATERRITORIALES.", "R - BAJO RELACION DE DEPENDENCIA SECTOR PRIVADO", "S - BAJO RELACION DE DEPENDENCIA SECTOR PUBLICO", "V - SIN ACTIVIDAD ECONOMICA - CIIU"];
   public lstSectorEconomico = ["INDUSTRIAS MANUFACTURERAS", "COMERCIO", "SERVICIOS"];
   public lstCotizaciones = [];
+  public lstCotizacionesEmitidas = [];
   public listaRiesgo = [{ "Nombre": "Riesgos Menores (Entre US$ 0 y US$ 500.000 en Incendio)", "Valor": 1 }, { "Nombre": "Riesgos Mayores (Entre US$ 500.001 hasta US$ 5.000.000 en Incendio)", "Valor": 2 }];
   public panelEmpresa = {
     inicio: true,
@@ -144,19 +145,40 @@ export class InicioClienteComponent implements OnInit {
   public lstAgente = [];
   public dataAgente: any;
 
+  public lstCotizacionesFiltro = [];
+  public vistaFiltroInicio = true;
+  public lstFormaPago = ["TARJETA DE CRÉDITO", "TARJETA DE DÉBITO", "CONTADO", "DÉBITO BANCARIO"];
+  public fmrFlitro = {
+    ruc: "",
+    razonSocial: "",
+    fecha: "",
+    formaPago: ""
+  }
+
+  //PAGINACION 1
+  public pagina = 1;
+  public paginasTotales = 0;
+  public cotizacionesExistentes = 0;
+  public numeroResultados = 5;
+
+  //PAGINACION 2
+  public paginaE = 1;
+  public paginasTotalesE = 0;
+  public cotizacionesExistentesE = 0;
+  public numeroResultadosE = 5;
+
   globales: GlobalesPipe = new GlobalesPipe();
   constructor(private conexion: ApiService, private sesion: SesionService, private kcotizacion: VerificacionService, private generico: GenericoService,
-    private metodos: GlobalesPipe, private valCotizador: ValidacionCotizadorPipe, private router: Router, private generador: GeneradorService,
+    public metodos: GlobalesPipe, private valCotizador: ValidacionCotizadorPipe, private router: Router, private generador: GeneradorService,
     private spinner: NgxSpinnerService, private kramos: RamosService, private kcontenido: CotizacionService, private kfinalizacion: FinalizacionService) { }
 
   ngOnInit() {
     this.sesion.verificarCredencialesRutas();
     this.usuario = this.sesion.obtenerDatos();
     this.gestionColoresBroker();
-    this.buscarCotizacionesUsuario();
+    this.buscarCotizacionesUsuario(this.pagina);
     this.eliminarCache();
     var sesion = this.sesion;
-
     window.addEventListener("unload", function (e) {
       sesion.cerrarSesion();
     });
@@ -202,7 +224,7 @@ export class InicioClienteComponent implements OnInit {
       datos.texto = 'Cotización Vencida';
     } else if (numero > medio && numero < maximo) {
       datos.color = '#D4AC0D';
-      datos.texto = 'Cotización Vencerse';
+      datos.texto = 'Cotización por Vencerse';
     } else if (numero < medio) {
       datos.color = '#17AE22';
       datos.texto = 'Cotización Vigente';
@@ -210,16 +232,18 @@ export class InicioClienteComponent implements OnInit {
     return datos;
   }
 
-  public buscarCotizacionesUsuario() {
+  public buscarCotizacionesUsuario(pagina) {
     this.spinner.show();
-    this.conexion.get('Broker/SBroker.svc/cotizacion/consultar/usuario?broker=' + this.usuario.broker.IdBroker + '&usuario=' + this.usuario.IdUsuario + '', this.usuario.Uid).subscribe(
+    this.conexion.get('Broker/SBroker.svc/cotizacion/consultar/usuario?broker=' + this.usuario.broker.IdBroker + '&usuario=' + this.usuario.IdUsuario + '&num=' + pagina + '&tamano=' + this.numeroResultados + '&estado=0', this.usuario.Uid).subscribe(
       (res: any) => {
         this.spinner.hide();
-        this.lstCotizaciones = res;
-        this.gridData = process(this.lstCotizaciones, this.state);
-        this.consultarVencimientoCotizacion();
 
-        console.log(res);
+        this.lstCotizaciones = res;
+        this.cotizacionesExistentes = parseInt(this.lstCotizaciones[0] == undefined ? 0 : this.lstCotizaciones[0].TotalRegistros);
+        this.paginasTotales = Math.ceil(this.cotizacionesExistentes / this.numeroResultados);
+
+        this.buscarEmisionesUsuario();
+
       },
       err => {
         this.spinner.hide();
@@ -229,47 +253,134 @@ export class InicioClienteComponent implements OnInit {
     );
   }
 
-  public listarPolizas(id) {
+  public buscarEmisionesUsuario() {
+    this.spinner.show();
+    this.conexion.get('Broker/SBroker.svc/cotizacion/consultar/usuario?broker=' + this.usuario.broker.IdBroker + '&usuario=' + this.usuario.IdUsuario + '&num=' + this.paginaE + '&tamano=' + this.numeroResultados + '&estado=1', this.usuario.Uid).subscribe(
+      (res: any) => {
+        this.spinner.hide();
+        this.lstCotizacionesEmitidas = res;
+        this.cotizacionesExistentesE = parseInt(this.lstCotizacionesEmitidas[0] == undefined ? 0 : this.lstCotizacionesEmitidas[0].TotalRegistros);
+        this.paginasTotalesE = Math.ceil(this.cotizacionesExistentesE / this.numeroResultadosE);
+
+        this.consultarVencimientoCotizacion();
+
+      },
+      err => {
+        this.spinner.hide();
+        console.log(err);
+        this.conexion.error(err);
+      }
+    );
+  }
+
+  public buscarCotizacionesUsuarioSiguiente(pagina) {
+    this.pagina = pagina;
+    this.buscarCotizacionesUsuario(pagina);
+  }
+
+  public buscarEmisionesUsuarioSiguiente(paginaE) {
+    this.paginaE = paginaE;
+    this.buscarEmisionesUsuario();
+  }
+
+  public buscarFiltrosUsuario() {
+
+    var cadena = "";
+    var fmrFlitro = this.fmrFlitro;
+    var globales = this.globales;
+    var estado = false;
+    $("input:checkbox[name=parametro]:checked").each(function () {
+      var parametro = $(this).val();
+      if (parametro == 1) {
+        if (fmrFlitro.ruc != "") {
+          cadena += " AND Ruc LIKE '%" + fmrFlitro.ruc + "%'";
+          estado = true;
+        } else {
+          globales.mostarAlerta("", "Ingresar R.U.C / C.I", "info");
+          estado = false;
+        }
+      } if (parametro == 2) {
+        if (fmrFlitro.razonSocial != "") {
+          cadena += " AND RazonSocial LIKE '%" + fmrFlitro.razonSocial + "%'";
+          estado = true;
+        } else {
+          globales.mostarAlerta("", "Ingresar Razón Social", "info");
+          estado = false;
+        }
+      } if (parametro == 3) {
+        if (fmrFlitro.fecha != "") {
+          cadena += " AND Fecha = '" + fmrFlitro.fecha + "'";
+          estado = true;
+        } else {
+          globales.mostarAlerta("", "Ingresar Fecha Cotización", "info");
+          estado = false;
+        }
+      } if (parametro == 4) {
+        if (fmrFlitro.formaPago != "") {
+          cadena += " AND FormaPago = '" + fmrFlitro.formaPago + "'";
+          estado = true;
+        } else {
+          globales.mostarAlerta("", "Seleccionar Forma de Pago", "info");
+          estado = false;
+        }
+      }
+    });
+
+    if (estado) {
+      var parametros = {
+        IdBroker: this.usuario.broker.IdBroker,
+        IdUsuario: this.usuario.IdUsuario,
+        Cadena: cadena,
+      };
+      this.spinner.show();
+      this.conexion.post('Broker/SBroker.svc/cotizacion/consultar/usuario/filtro', parametros, this.usuario.Uid).subscribe(
+        (res: any) => {
+          this.spinner.hide();
+          this.lstCotizacionesFiltro = res;
+        },
+        err => {
+          this.spinner.hide();
+          console.log(err);
+          this.conexion.error(err);
+        }
+      );
+    }
+  }
+
+  public listarPolizas(CotizacionResultado) {
     var polizasCabezera = "";
     var polizasCuerpo = "";
     var polizasFin = "";
     var emision = "";
 
-    for (let cotizaciones of this.lstCotizaciones) {
-      if (cotizaciones.IdCotizacion == id) {
-        var ap = cotizaciones.CotizacionResultado.IdPvAccidentesPersonales == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvAccidentesPersonales);
-        var em = cotizaciones.CotizacionResultado.IdPvEquipoMaquinaria == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvEquipoMaquinaria);
-        var fi = cotizaciones.CotizacionResultado.IdPvFidelidad == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvFidelidad);
-        var multi = cotizaciones.CotizacionResultado.IdPvMultiriesgo == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvMultiriesgo);
-        var rc = cotizaciones.CotizacionResultado.IdPvResponsabilidadCivil == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvResponsabilidadCivil);
-        var train = cotizaciones.CotizacionResultado.IdPvTransImportaciones == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvTransImportaciones);
-        var traim = cotizaciones.CotizacionResultado.IdPvTransInterno == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvTransInterno);
-        var vh = cotizaciones.CotizacionResultado.IdPvVehiculos == "" ? "" : JSON.parse(cotizaciones.CotizacionResultado.IdPvVehiculos);
+    var ap = CotizacionResultado.IdPvAccidentesPersonales == "" ? "" : JSON.parse(CotizacionResultado.IdPvAccidentesPersonales);
+    var em = CotizacionResultado.IdPvEquipoMaquinaria == "" ? "" : JSON.parse(CotizacionResultado.IdPvEquipoMaquinaria);
+    var fi = CotizacionResultado.IdPvFidelidad == "" ? "" : JSON.parse(CotizacionResultado.IdPvFidelidad);
+    var multi = CotizacionResultado.IdPvMultiriesgo == "" ? "" : JSON.parse(CotizacionResultado.IdPvMultiriesgo);
+    var rc = CotizacionResultado.IdPvResponsabilidadCivil == "" ? "" : JSON.parse(CotizacionResultado.IdPvResponsabilidadCivil);
+    var train = CotizacionResultado.IdPvTransImportaciones == "" ? "" : JSON.parse(CotizacionResultado.IdPvTransImportaciones);
+    var traim = CotizacionResultado.IdPvTransInterno == "" ? "" : JSON.parse(CotizacionResultado.IdPvTransInterno);
+    var vh = CotizacionResultado.IdPvVehiculos == "" ? "" : JSON.parse(CotizacionResultado.IdPvVehiculos);
 
-        var polizasAux = [ap, em, fi, multi, rc, train, traim, vh];
-        polizasCabezera = `<table class="table" style="width: 100%">
+    var polizasAux = [ap, em, fi, multi, rc, train, traim, vh];
+    polizasCabezera = `<table style="width: 100% !important" border="1">
                           <thead>
                             <tr>
-                              <th>Certificado</th>
-                              <th>Código</th>
-                              <th>Total</th>
+                              <th style="padding: 12px">Certificado</th>
+                              <th style="padding: 12px">Código</th>
+                              <th style="padding: 12px">Total</th>
                             </tr>
                           </thead>
                           <tbody>`;
 
-        for (let pol of polizasAux) {
-          if (pol != "") {
-            polizasCuerpo += `
+    for (let pol of polizasAux) {
+      if (pol != "") {
+        polizasCuerpo += `
                             <tr>
-                              <td>`+ pol.polCertificado + `</td>
-                              <td>`+ pol.polIdPv + `</td>
-                              <td>$ `+ this.metodos.formatearNumero(pol.polTotal, 2) + `</td>
+                              <td style="padding: 12px">`+ pol.polCertificado + `</td>
+                              <td style="padding: 12px">`+ pol.polIdPv + `</td>
+                              <td style="padding: 12px">$ `+ this.metodos.formatearNumero(pol.polTotal, 2) + `</td>
                             </tr>`;
-          }
-        }
-        /*if (cotizaciones.CotizacionResultado.EstadoGlobal == 1 && cotizaciones.CotizacionResultado.EstadoPagoGlobal == 1) {
-          emision = '<tr style="text-align: center !important; background-color: #229954; color: #fff"><td colspan="3"><b>Pago Aplicado<b></td></tr>';
-        }*/
       }
     }
 
@@ -788,18 +899,29 @@ export class InicioClienteComponent implements OnInit {
         if (detalleVencimiento.texto == "Cotización Vencida") {
           this.actualizarAsegurado();
         } else {
-          if (datos.Broker == null && datos.Empresa == null) {
+          if (datos.Empresa == null) {
             this.actualizarAsegurado();
-          } else if (datos.Broker.IdBroker == this.usuario.broker.IdBroker && datos.Empresa.Ruc == this.fmrEmpresa.Ruc) {
-            this.actualizarAsegurado();
-          } else if (datos.Broker.IdBroker != this.usuario.broker.IdBroker && datos.Empresa.Ruc == this.fmrEmpresa.Ruc) {
-            this.valCotizador.mostrarAlerta("La cotización que desea realizar a la empresa con el N° de Identificación " + this.fmrEmpresa.Ruc
-              + " ya se encuentra cotizada por otro corredor.", this.usuario.broker.Color);
           } else {
-            this.valCotizador.mostrarAlerta("Ocurrio un error al validar la cotización, comuniquese con el administrador.", this.usuario.broker.Color);
+
+            this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, this.fmrEmpresa.Ruc + "-COTIZACION").then(regla => {
+
+              if (regla.Nombre == null) {
+                this.valCotizador.mostrarAlerta(
+                  this.fmrEmpresa.Ruc.length == 13 ? "La empresa " + this.fmrEmpresa.PrimerApellido + " tiene una cotización vigente en la herramienta." :
+                    "El cliente " + this.fmrEmpresa.Nombre + " " + this.fmrEmpresa.PrimerApellido + " " + this.fmrEmpresa.SegundoApellido + " tiene una cotización vigente en la herramienta.",
+                  this.usuario.broker.Color
+                );
+              } else {
+                this.actualizarAsegurado();
+              }
+
+            }).catch(err => {
+              this.spinner.hide();
+              this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error en la exepción del formulario", "error", "#E74C3C");
+            });
+
           }
         }
-
       },
       err => {
         this.spinner.hide();
@@ -1232,21 +1354,24 @@ export class InicioClienteComponent implements OnInit {
 
     if (vencimiento == true) {
 
+      var estadoVencimiento = 0;
       this.spinner.show();
-      this.conexion.get("Broker/SBroker.svc/empresa/cotizacion/validar/" + datos.Empresa.Ruc, this.usuario.Uid).subscribe(
+      this.conexion.get('Broker/SBroker.svc/empresa/cotizacion/revalidar/' + datos.Empresa.Ruc, this.usuario.Uid).subscribe(
         (res: any) => {
           this.spinner.hide();
-
-          if (datos.Broker == null && datos.Empresa == null) {
-            this.verificacionConVencimiento(datos, parametros);
-          } else if (datos.Broker.IdBroker == this.usuario.broker.IdBroker && datos.Empresa.Ruc == res.Empresa.Ruc) {
-            this.verificacionConVencimiento(datos, parametros);
-          } else if (datos.Broker.IdBroker != this.usuario.broker.IdBroker && datos.Empresa.Ruc == res.Empresa.Ruc) {
-            this.valCotizador.mostrarAlerta("La cotización que desea editar a la empresa con el N° de Identificación " + this.fmrEmpresa.Ruc
-              + " ya se encuentra cotizada por otro corredor.", this.usuario.broker.Color);
-          } else {
-            this.valCotizador.mostrarAlerta("Ocurrio un error al validar la cotización, comuniquese con el administrador.", this.usuario.broker.Color);
+          for (let cotizaciones of res) {
+            var detalle = this.verificarVencimientoCotizacion(cotizaciones.Antiguedad);
+            if (detalle.texto != "Cotización Vencida" && this.usuario.IdUsuario != cotizaciones.IdUsuario) {
+              estadoVencimiento++;
+            }
           }
+
+          if (estadoVencimiento != 0) {
+            this.globales.mostarAlerta("", "La cotización que intenta modificar ha caducado, y ya se encuentra cotizada por otro usuario.", "info");
+          } else {
+            this.verificacionConVencimiento(datos, parametros);
+          }
+
         },
         err => {
           this.spinner.hide();
@@ -1371,6 +1496,12 @@ export class InicioClienteComponent implements OnInit {
     });
   }
 
+  public detallesCotizacion(cotizacion) {
+    this.detalleCotizacion = cotizacion;
+    $('#ModalDetallesCotizacion').modal('toggle');
+    console.log(this.detalleCotizacion);
+  }
+
   public limpiarInformacion() {
     this.fmrEmpresa = {
       "Identificador": 1,
@@ -1459,11 +1590,19 @@ export class InicioClienteComponent implements OnInit {
     }
   }
 
-  public detallesCotizacion(cotizacion) {
-    this.detalleCotizacion = cotizacion;
-    $('#ModalDetallesCotizacion').modal('toggle');
-    console.log(this.detalleCotizacion);
+  public obtenerComision(dato) {
+
+    var comision = "";
+
+    if (dato == null || dato == "" || dato == undefined) {
+      comision = "";
+    } else {
+      var corredor = JSON.parse(dato);
+      comision = corredor.Comision;
+    }
+    return comision;
   }
+
   //***************************** FIN NUEVA LOGICA *****************************
 
 
@@ -1472,14 +1611,24 @@ export class InicioClienteComponent implements OnInit {
   public gestionPanelInicio() {
     this.panelEmpresa.formulario = true;
     this.panelEmpresa.inicio = false;
+    this.vistaFiltroInicio = true;
     this.gestionColoresBroker();
   }
 
   public gestionPanelFormulario() {
     this.panelEmpresa.formulario = false;
     this.panelEmpresa.inicio = true;
+    this.vistaFiltroInicio = true;
     this.gestionColoresBroker();
     this.limpiarInformacion();
+  }
+
+  public habilitarVistas() {
+    if (this.vistaFiltroInicio) {
+      this.vistaFiltroInicio = false;
+    } else {
+      this.vistaFiltroInicio = true;
+    }
   }
 
   //VISTA COLORES

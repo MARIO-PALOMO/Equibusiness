@@ -745,7 +745,7 @@ export class CotizacionComponent implements OnInit {
       this.contenido = this.kcontenido.obtenerKeyContenido();
       this.conexion.get("Broker/SBroker.svc/cotizacion/resgistros?idContenido=" + this.contenido.IdContenido + "&idCotizacion=" + this.contenido.IdCotizacion + "&idDireccion=" + this.contenido.IdDireccion + "&idVehiculos=" + this.contenido.IdVehiculos + "&idEmpresa=" + this.codigoCotizacion.idEmpresa + "", this.usuario.Uid).subscribe(
         (res: any) => {
-          
+
           this.spinner.hide();
 
           this.lstDirecciones = JSON.parse(res.Direccion.DatosDireccion);
@@ -892,7 +892,7 @@ export class CotizacionComponent implements OnInit {
           if (res.CotizacionResultado.FechaEmision != "") {
             this.fechaEmisionVigenciaSeleccionada = new Date(res.CotizacionResultado.FechaEmision);
           }
-          
+
           this.obtenerDatosPagoDebitoBancario(res.FormaPago);
 
           console.log(res);
@@ -2292,7 +2292,7 @@ export class CotizacionComponent implements OnInit {
       }
       console.log(XML);
 
-      this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, this.lstDirecciones, "MULTI", this.empresa.Riesgo);
+      this.poliza.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, XML, Certificado, Cotizacion, this.lstDirecciones, "MULTI", this.empresa.Riesgo);
 
     }).catch(err => {
       this.spinner.hide();
@@ -2324,7 +2324,7 @@ export class CotizacionComponent implements OnInit {
         , Total: equipoMaquinaria.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(equipoMaquinaria.xml);
-      this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, equipoMaquinaria.xml, Certificado, Cotizacion, this.lstDirecciones, "EM", this.empresa.Riesgo);
+      this.poliza.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, equipoMaquinaria.xml, Certificado, Cotizacion, this.lstDirecciones, "EM", this.empresa.Riesgo);
 
     }).catch(err => {
       this.spinner.hide();
@@ -2356,7 +2356,7 @@ export class CotizacionComponent implements OnInit {
         , Total: responsabilidadCivil.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(responsabilidadCivil.xml);
-      this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, responsabilidadCivil.xml, Certificado, Cotizacion, this.lstDirecciones, "RC", this.empresa.Riesgo);
+      this.poliza.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, responsabilidadCivil.xml, Certificado, Cotizacion, this.lstDirecciones, "RC", this.empresa.Riesgo);
 
     }).catch(err => {
       this.spinner.hide();
@@ -2386,7 +2386,7 @@ export class CotizacionComponent implements OnInit {
         , Total: fidelidad.validacion, Transportes: this.usuario.broker.Transporte, FechaEmision: moment(this.fechaEmisionVigenciaSeleccionada).format("YYYY-MM-DD")
       }
       console.log(fidelidad.xml);
-      this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, fidelidad.xml, Certificado, Cotizacion, this.lstDirecciones, "FI", this.empresa.Riesgo);
+      this.poliza.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, fidelidad.xml, Certificado, Cotizacion, this.lstDirecciones, "FI", this.empresa.Riesgo);
 
     }).catch(err => {
       this.spinner.hide();
@@ -2435,7 +2435,7 @@ export class CotizacionComponent implements OnInit {
       }
 
       console.log(accidentesPersonales.xml);
-      this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, accidentesPersonales.xml, Certificado, Cotizacion, this.lstDirecciones, "AP", this.empresa.Riesgo);
+      this.poliza.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, accidentesPersonales.xml, Certificado, Cotizacion, this.lstDirecciones, "AP", this.empresa.Riesgo);
 
     }).catch(err => {
       this.spinner.hide();
@@ -2478,7 +2478,7 @@ export class CotizacionComponent implements OnInit {
       }
       console.log(transporteInterno.xml);
 
-      this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, transporteInterno.xml, Certificado, Cotizacion, this.lstDirecciones, "TRIN", this.empresa.Riesgo);
+      this.poliza.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, transporteInterno.xml, Certificado, Cotizacion, this.lstDirecciones, "TRIN", this.empresa.Riesgo);
 
     }).catch(err => {
       this.spinner.hide();
@@ -2521,7 +2521,7 @@ export class CotizacionComponent implements OnInit {
       }
 
       console.log(transporteImportaciones.xml);
-      this.poliza.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, transporteImportaciones.xml, Certificado, Cotizacion, this.lstDirecciones, "TRIM", this.empresa.Riesgo);
+      this.poliza.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, transporteImportaciones.xml, Certificado, Cotizacion, this.lstDirecciones, "TRIM", this.empresa.Riesgo);
 
     }).catch(err => {
       console.log(err)
@@ -2774,7 +2774,7 @@ export class CotizacionComponent implements OnInit {
     console.log(JSON.stringify(this.tramaVehiculo));
 
     for (let vehiculo of this.tramaVehiculo) {
-      this.generadorVehiculos.verificarFormulario(DatosEmpresa, DatosContratante, DatosPagador, Cotizacion, vehiculo);
+      this.generadorVehiculos.excepcionFormulario(DatosEmpresa, DatosContratante, DatosPagador, Cotizacion, vehiculo);
     }
 
   }
@@ -4151,63 +4151,98 @@ export class CotizacionComponent implements OnInit {
     var formularioPagador = "false";
     var mensaje = "";
 
-    this.spinner.show();
-    if (DatosEmpresa.DocumentoCliente == DatosPagador.DocumentoCliente) {
-      this.generico.verificarFormulario(DatosEmpresa).then(res => {
-        this.spinner.hide();
 
-        if (res == "false") {
-          mensaje = mensaje + "<b>Contratante / Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
-          this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
+    if (DatosEmpresa.DocumentoCliente == DatosPagador.DocumentoCliente) {
+
+      this.spinner.show();
+      this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, DatosEmpresa.DocumentoCliente + "-FORMULARIO").then(regla => {
+        this.spinner.hide();
+        if (regla.Nombre == null) {
+          this.spinner.show();
+          this.generico.verificarFormulario(DatosEmpresa).then(res => {
+            this.spinner.hide();
+
+            if (res == "false") {
+              mensaje = mensaje + "<b>Contratante / Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+              this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
+            } else {
+              this.globales.mostrarNotificacion("Contratante / Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+              this.formaPagoSeleccionada(forma);
+              this.tipoPago = forma;
+            }
+
+          }).catch(err => {
+            this.spinner.hide();
+            this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+          });
         } else {
-          this.globales.mostrarNotificacion("Contratante / Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
           this.formaPagoSeleccionada(forma);
           this.tipoPago = forma;
         }
 
       }).catch(err => {
         this.spinner.hide();
-        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error en la exepción del formulario", "error", "#E74C3C");
       });
 
     } else {
+
       this.spinner.show();
-      this.generico.verificarFormulario(DatosEmpresa).then(res => {
-        this.spinner.hide();
-
-        formularioContratante = res;
-        if (formularioContratante == "false") {
-          mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
-        } else {
-          this.globales.mostrarNotificacion("Contratante: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
-        }
-
-        this.spinner.show();
-        this.generico.verificarFormulario(DatosPagador).then(res => {
+      this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, DatosEmpresa.DocumentoCliente + "-FORMULARIO").then(reglaEmpresa => {
+        this.generico.verificarReglasGenerales(this.usuario.broker.IdBroker, DatosPagador.DocumentoCliente + "-FORMULARIO").then(reglaPagador => {
           this.spinner.hide();
+          if (reglaEmpresa.Nombre == null || reglaPagador.Nombre == null) {
+            this.spinner.show();
+            this.generico.verificarFormulario(DatosEmpresa).then(res => {
+              this.spinner.hide();
 
-          formularioPagador = res;
-          if (formularioPagador == "false") {
-            mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+              formularioContratante = res;
+              if (formularioContratante == "false") {
+                mensaje = mensaje + "<b>Contratante </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+              } else {
+                this.globales.mostrarNotificacion("Contratante: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+              }
+
+              this.spinner.show();
+              this.generico.verificarFormulario(DatosPagador).then(res => {
+                this.spinner.hide();
+
+                formularioPagador = res;
+                if (formularioPagador == "false") {
+                  mensaje = mensaje + "<b>Pagador </b><br><u>Descripción:</u> El formulario de viculación no se encuentra firmado.<br><u>Gestión: </u>Se envió un correo electrónico para que el formulario de vinculación sea completado.<br><br>";
+                } else {
+                  this.globales.mostrarNotificacion("Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
+                }
+
+                if (formularioContratante == "true" && formularioPagador == "true") {
+                  this.formaPagoSeleccionada(forma);
+                  this.tipoPago = forma;
+                } else {
+                  this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
+                }
+
+              }).catch(err => {
+                this.spinner.hide();
+                this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+              });
+
+            }).catch(err => {
+              this.spinner.hide();
+              this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+            });
           } else {
-            this.globales.mostrarNotificacion("Pagador: El formulario de vinculación ya se encuentra firmado.", "success", "bottom");
-          }
-
-          if (formularioContratante == "true" && formularioPagador == "true") {
             this.formaPagoSeleccionada(forma);
             this.tipoPago = forma;
-          } else {
-            this.globales.mostarAlerta("", "<div style='text-align: left; font-size: 15px;'>" + mensaje + "</div>", "info");
           }
 
         }).catch(err => {
           this.spinner.hide();
-          this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+          this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error en la exepción del formulario", "error", "#E74C3C");
         });
 
       }).catch(err => {
         this.spinner.hide();
-        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error al verificar formulario | Pagador", "error", "#E74C3C");
+        this.globales.mostrarNotificacion("Problemas con el servidor de datos:<br>Error en la exepción del formulario", "error", "#E74C3C");
       });
     }
 

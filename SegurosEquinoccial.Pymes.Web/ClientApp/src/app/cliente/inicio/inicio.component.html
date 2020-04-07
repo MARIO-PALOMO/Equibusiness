@@ -208,14 +208,499 @@
           </div>
           <br>
           <div *ngIf="panelEmpresa.inicio">
-            <kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
+
+            <div>
+
+              <div *ngIf="vistaFiltroInicio" data-toggle="collapse" data-target="#collapseFiltro" aria-expanded="false"
+                aria-controls="collapseFiltro" class="filtro" (click)="habilitarVistas()">
+                <i class="mdi mdi-filter"></i> Filtros
+              </div>
+              <div *ngIf="!vistaFiltroInicio" data-toggle="collapse" data-target="#collapseFiltro" aria-expanded="false"
+                aria-controls="collapseFiltro" class="filtro" (click)="habilitarVistas()">
+                <i class="mdi mdi-close"></i> Cancelar
+              </div>
+              <div *ngIf="!vistaFiltroInicio" class="collapse" id="collapseFiltro">
+
+                <div class="filtro-datos">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <b>R.U.C / C.I</b>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <input type="checkbox" name="parametro" value="1">
+                          </div>
+                        </div>
+                        <input type="text" [(ngModel)]="fmrFlitro.ruc" class="form-control texto-busqueda" placeholder="Ingresar Número R.U.C / C.I">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <b>Razón Social</b>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <input type="checkbox" name="parametro" value="2">
+                          </div>
+                        </div>
+                        <input type="text" [(ngModel)]="fmrFlitro.razonSocial" class="form-control texto-busqueda" placeholder="Ingresar Razón Social">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <b>Fecha</b>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <input type="checkbox" name="parametro" value="3">
+                          </div>
+                        </div>
+                        <input type="date" [(ngModel)]="fmrFlitro.fecha" class="form-control texto-busqueda">
+
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <b>Forma Pago</b>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <input type="checkbox" name="parametro" value="4">
+                          </div>
+                        </div>
+                        <kendo-dropdownlist [data]="lstFormaPago" [(ngModel)]="fmrFlitro.formaPago"
+                          class="form-control texto-busqueda">
+                        </kendo-dropdownlist>
+                      </div>
+                    </div>
+                    <div class="col-md-12" style="text-align: right;">
+                      <br>
+                      <button class="btn" (click)="buscarFiltrosUsuario()"
+                        [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">
+                        Buscar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <table class="tabla">
+                      <thead [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">
+                        <tr class="tabla-web">
+                          <td class="tabla-i">Asegurado</td>
+                          <td>Fecha</td>
+                          <td>Vigencia</td>
+                          <td>Prima Total</td>
+                          <td>Estado</td>
+                          <td>Pago</td>
+                          <td></td>
+                          <td class="tabla-d"></td>
+                        </tr>
+                        <tr class="tabla-movil">
+                          <td>
+                            Cotizaciones
+                          </td>
+                        </tr>
+                      </thead>
+                      <tbody id="tablaCotizacion">
+                        <tr *ngIf="lstCotizacionesFiltro.length == 0">
+                          <td colspan="8">
+                            Sin Resultados
+                          </td>
+                        </tr>
+                        <tr *ngFor="let cotizacion of lstCotizacionesFiltro" class="tabla-web">
+                          <td>
+                            <span>{{ cotizacion.Empresa.Ruc }}</span><br>
+                            <small>{{ cotizacion.Empresa.RazonSocial }}</small>
+                          </td>
+                          <td>
+                            {{ cotizacion.Fecha }}
+                          </td>
+                          <td>
+                            <span [ngStyle]="{'color': verificarVencimientoCotizacion(cotizacion.Antiguedad).color}">
+                              {{cotizacion.Antiguedad}}<br>
+                              <small>{{ verificarVencimientoCotizacion(cotizacion.Antiguedad).texto }}</small>
+                            </span>
+                          </td>
+                          <td>
+                            $ {{ metodos.formatearNumero(cotizacion.PrimaTotal, 2) }}
+                          </td>
+                          <td>
+                            <span
+                              style="font-size: 13px !important; text-align: center !important; text-transform: uppercase !important;">
+                              {{ convertirNumeroEstado(cotizacion.Estado, cotizacion.CotizacionResultado.EstadoPagoGlobal)[3] }}
+                            </span>
+                          </td>
+                          <td>
+                            {{cotizacion.FormaPago.Tipo}}
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-icons btn-rounded btn-dark"
+                              (click)="verificarDeudaAsegurado(cotizacion)">
+                              <i class="mdi mdi-eye"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-icons btn-rounded btn-warning"
+                              (click)="detallesCotizacion(cotizacion)">
+                              <i class="mdi mdi-file"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        <tr *ngFor="let cotizacion of lstCotizacionesFiltro" class="tabla-movil">
+                          <td>
+                            <div style="text-align: center !important;">
+                              <h4><b>{{ cotizacion.Empresa.RazonSocial }}</b></h4>
+                            </div>
+                            <div class="form-group">
+                              <b>Identificación</b><br>
+                              <span>{{ cotizacion.Empresa.Ruc }}</span>
+                            </div>
+                            <div class="form-group">
+                              <b>Fecha Cotización</b><br>
+                              <span>{{ cotizacion.Fecha }}</span>
+                            </div>
+                            <div class="form-group">
+                              <b>Vigencia</b><br>
+                              <span [ngStyle]="{'color': verificarVencimientoCotizacion(cotizacion.Antiguedad).color}">
+                                {{cotizacion.Antiguedad}}<br>
+                                <small>{{ verificarVencimientoCotizacion(cotizacion.Antiguedad).texto }}</small>
+                              </span>
+                            </div>
+                            <div class="form-group">
+                              <b>Prima Total</b><br>
+                              $ {{ metodos.formatearNumero(cotizacion.PrimaTotal, 2) }}
+                            </div>
+                            <div class="form-group">
+                              <b>Estado</b><br>
+                              <span
+                                style="font-size: 13px !important; text-align: center !important; text-transform: uppercase !important;">
+                                {{ convertirNumeroEstado(cotizacion.Estado, cotizacion.CotizacionResultado.EstadoPagoGlobal)[3] }}
+                              </span>
+                            </div>
+                            <div class="form-group">
+                              <b>Forma de Pago</b><br>
+                              {{cotizacion.FormaPago.Tipo}}
+                            </div>
+                            <div class="form-group">
+                              <button type="button" class="btn btn-dark" (click)="verificarDeudaAsegurado(cotizacion)">
+                                <i class="mdi mdi-eye"></i> Editar
+                              </button>
+                            </div>
+                            <div class="form-group">
+                              <button type="button" class="btn btn-warning" (click)="detallesCotizacion(cotizacion)">
+                                <i class="mdi mdi-file"></i> Detalles
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="8" class="tabla-i-d"></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                    <br>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="vistaFiltroInicio" id="accordion">
+                <div id="headingOne" class="cabecera-tarjeta" data-toggle="collapse" data-target="#collapseOne"
+                  aria-expanded="false" aria-controls="collapseOne"
+                  [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">
+                  <h5 class="mb-0">
+                    <i class="mdi mdi-pencil"></i>&nbsp;&nbsp; Cotizaciones
+                    <i></i>
+                  </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div>
+
+                    <table class="tabla">
+                      <thead [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">
+                        <tr class="tabla-web">
+                          <td>Asegurado</td>
+                          <td>Fecha</td>
+                          <td>Vigencia</td>
+                          <td>Prima Total</td>
+                          <td>Estado</td>
+                          <td>Pago</td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr class="tabla-movil">
+                          <td>
+                            Cotizaciones
+                          </td>
+                        </tr>
+                      </thead>
+                      <tbody id="tablaCotizacion">
+
+                        <tr *ngIf="lstCotizaciones.length == 0">
+                          <td colspan="8">
+                            Sin Cotizaciones Realizadas
+                          </td>
+                        </tr>
+
+                        <tr *ngFor="let cotizacion of lstCotizaciones" class="tabla-web">
+                          <td>
+                            <span>{{ cotizacion.Empresa.Ruc }}</span><br>
+                            <small>{{ cotizacion.Empresa.RazonSocial }}</small>
+                          </td>
+                          <td>
+                            {{ cotizacion.Fecha }}
+                          </td>
+                          <td>
+                            <span [ngStyle]="{'color': verificarVencimientoCotizacion(cotizacion.Antiguedad).color}">
+                              {{cotizacion.Antiguedad}}<br>
+                              <small>{{ verificarVencimientoCotizacion(cotizacion.Antiguedad).texto }}</small>
+                            </span>
+                          </td>
+                          <td>
+                            $ {{ metodos.formatearNumero(cotizacion.PrimaTotal, 2) }}
+                          </td>
+                          <td>
+                            <span
+                              style="font-size: 13px !important; text-align: center !important; text-transform: uppercase !important;">
+                              {{ convertirNumeroEstado(cotizacion.Estado, cotizacion.CotizacionResultado.EstadoPagoGlobal)[3] }}
+                            </span>
+                          </td>
+                          <td>
+                            {{cotizacion.FormaPago.Tipo}}
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-icons btn-rounded btn-dark"
+                              (click)="verificarDeudaAsegurado(cotizacion)">
+                              <i class="mdi mdi-eye"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-icons btn-rounded btn-warning"
+                              (click)="detallesCotizacion(cotizacion)">
+                              <i class="mdi mdi-file"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        <tr *ngFor="let cotizacion of lstCotizaciones" class="tabla-movil">
+                          <td>
+                            <div style="text-align: center !important;">
+                              <h4><b>{{ cotizacion.Empresa.RazonSocial }}</b></h4>
+                            </div>
+                            <div class="form-group">
+                              <b>Identificación</b><br>
+                              <span>{{ cotizacion.Empresa.Ruc }}</span>
+                            </div>
+                            <div class="form-group">
+                              <b>Fecha Cotización</b><br>
+                              <span>{{ cotizacion.Fecha }}</span>
+                            </div>
+                            <div class="form-group">
+                              <b>Vigencia</b><br>
+                              <span [ngStyle]="{'color': verificarVencimientoCotizacion(cotizacion.Antiguedad).color}">
+                                {{cotizacion.Antiguedad}}<br>
+                                <small>{{ verificarVencimientoCotizacion(cotizacion.Antiguedad).texto }}</small>
+                              </span>
+                            </div>
+                            <div class="form-group">
+                              <b>Prima Total</b><br>
+                              $ {{ metodos.formatearNumero(cotizacion.PrimaTotal, 2) }}
+                            </div>
+                            <div class="form-group">
+                              <b>Estado</b><br>
+                              <span
+                                style="font-size: 13px !important; text-align: center !important; text-transform: uppercase !important;">
+                                {{ convertirNumeroEstado(cotizacion.Estado, cotizacion.CotizacionResultado.EstadoPagoGlobal)[3] }}
+                              </span>
+                            </div>
+                            <div class="form-group">
+                              <b>Forma de Pago</b><br>
+                              {{cotizacion.FormaPago.Tipo}}
+                            </div>
+                            <div class="form-group">
+                              <button type="button" class="btn btn-dark" (click)="verificarDeudaAsegurado(cotizacion)">
+                                <i class="mdi mdi-eye"></i> Editar
+                              </button>
+                            </div>
+                            <div class="form-group">
+                              <button type="button" class="btn btn-warning" (click)="detallesCotizacion(cotizacion)">
+                                <i class="mdi mdi-file"></i> Detalles
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+
+                      </tbody>
+                      <tfoot>
+                        <tr class="tabla-web">
+                          <td colspan="8">
+                            <app-paginacion (paginaEmitter)="buscarCotizacionesUsuarioSiguiente($event)"
+                              [pagina]="pagina" [paginasTotales]="paginasTotales"
+                              [cotizacionesExistentes]="cotizacionesExistentes">
+                            </app-paginacion>
+                          </td>
+                        </tr>
+                        <tr class="tabla-movil">
+                          <td>
+                            <app-paginacion (paginaEmitter)="buscarCotizacionesUsuarioSiguiente($event)"
+                              [pagina]="pagina" [paginasTotales]="paginasTotales"
+                              [cotizacionesExistentes]="cotizacionesExistentes">
+                            </app-paginacion>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+                <div id="headingTwo" class="cabecera--lineal-tarjeta" data-toggle="collapse" data-target="#collapseTwo"
+                  aria-expanded="false" aria-controls="collapseTwo"
+                  [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">
+                  <h5 class="mb-0">
+                    <i class="mdi mdi-file"></i>&nbsp;&nbsp; Emisiones
+                  </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                  <div>
+                    <table class="tabla">
+                      <thead [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">
+                        <tr class="tabla-web">
+                          <td>Asegurado</td>
+                          <td>Fecha</td>
+                          <td>Vigencia</td>
+                          <td>Prima Total</td>
+                          <td>Estado</td>
+                          <td>Pago</td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr class="tabla-movil">
+                          <td>
+                            Emisiones
+                          </td>
+                        </tr>
+                      </thead>
+                      <tbody id="tablaCotizacionE">
+                        <tr *ngIf="lstCotizacionesEmitidas.length == 0">
+                          <td colspan="8">
+                            Sin Emisiones Realizadas
+                          </td>
+                        </tr>
+                        <tr *ngFor="let cotizacion of lstCotizacionesEmitidas" class="tabla-web">
+                          <td>
+                            <span>{{ cotizacion.Empresa.Ruc }}</span><br>
+                            <small>{{ cotizacion.Empresa.RazonSocial }}</small>
+                          </td>
+                          <td>
+                            {{ cotizacion.CotizacionResultado.FechaEmision }}
+                          </td>
+                          <td>
+                            <span [ngStyle]="{'color': '#17AE22'}">
+                              Póliza Vigente
+                            </span>
+                          </td>
+                          <td>
+                            $ {{ metodos.formatearNumero(cotizacion.PrimaTotal, 2) }}
+                          </td>
+                          <td>
+                            <span
+                              style="font-size: 13px !important; text-align: center !important; text-transform: uppercase !important;">
+                              {{ convertirNumeroEstado(cotizacion.Estado, cotizacion.CotizacionResultado.EstadoPagoGlobal)[3] }}
+                            </span>
+                          </td>
+                          <td>
+                            {{cotizacion.FormaPago.Tipo}}
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-icons btn-rounded btn-dark"
+                              (click)="verificarDeudaAsegurado(cotizacion)">
+                              <i class="mdi mdi-eye"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-icons btn-rounded btn-warning"
+                              (click)="detallesCotizacion(cotizacion)">
+                              <i class="mdi mdi-file"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        <tr *ngFor="let cotizacion of lstCotizacionesEmitidas" class="tabla-movil">
+                          <td>
+                            <div style="text-align: center !important;">
+                              <h4><b>{{ cotizacion.Empresa.RazonSocial }}</b></h4>
+                            </div>
+                            <div class="form-group">
+                              <b>Identificación</b><br>
+                              <span>{{ cotizacion.Empresa.Ruc }}</span>
+                            </div>
+                            <div class="form-group">
+                              <b>Fecha Emisión</b><br>
+                              <span>{{ cotizacion.CotizacionResultado.FechaEmision }}</span>
+                            </div>
+                            <div class="form-group">
+                              <b>Vigencia</b><br>
+                              <span [ngStyle]="{'color': '#17AE22'}">
+                                Póliza Vigente
+                              </span>
+                            </div>
+                            <div class="form-group">
+                              <b>Prima Total</b><br>
+                              $ {{ metodos.formatearNumero(cotizacion.PrimaTotal, 2) }}
+                            </div>
+                            <div class="form-group">
+                              <b>Estado</b><br>
+                              <span
+                                style="font-size: 13px !important; text-align: center !important; text-transform: uppercase !important;">
+                                {{ convertirNumeroEstado(cotizacion.Estado, cotizacion.CotizacionResultado.EstadoPagoGlobal)[3] }}
+                              </span>
+                            </div>
+                            <div class="form-group">
+                              <b>Forma de Pago</b><br>
+                              {{cotizacion.FormaPago.Tipo}}
+                            </div>
+                            <div class="form-group">
+                              <button type="button" class="btn btn-dark" (click)="verificarDeudaAsegurado(cotizacion)">
+                                <i class="mdi mdi-eye"></i> Editar
+                              </button>
+                            </div>
+                            <div class="form-group">
+                              <button type="button" class="btn btn-warning" (click)="detallesCotizacion(cotizacion)">
+                                <i class="mdi mdi-file"></i> Detalles
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+
+                      </tbody>
+                      <tfoot>
+                        <tr class="tabla-web">
+                          <td colspan="8" class="redondeado-i">
+                            <app-paginacion (paginaEmitter)="buscarEmisionesUsuarioSiguiente($event)" [pagina]="paginaE"
+                              [paginasTotales]="paginasTotalesE" [cotizacionesExistentes]="cotizacionesExistentesE">
+                            </app-paginacion>
+                          </td>
+                        </tr>
+                        <tr class="tabla-movil">
+                          <td class="redondeado-i">
+                            <app-paginacion (paginaEmitter)="buscarEmisionesUsuarioSiguiente($event)" [pagina]="paginaE"
+                              [paginasTotales]="paginasTotalesE" [cotizacionesExistentes]="cotizacionesExistentesE">
+                            </app-paginacion>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!--<kendo-grid [data]="gridData" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort"
               [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)"
               style="border: none;">
 
               <kendo-grid-column media="(max-width: 800px)" title="Cotizaciones" [filterable]="true"
                 [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                  <!-- template for mobile -->
                   <h4 [class.discontinued]="dataItem.Empresa.RazonSocial" style="text-align: center; font-weight: bold">
                     {{ dataItem.Empresa.RazonSocial }}
                   </h4>
@@ -303,7 +788,7 @@
                 </ng-template>
               </kendo-grid-column>
 
-              <!--<kendo-grid-column media="(min-width: 800px)" field="Estado" title="Det" width="60" [filterable]="false"
+              <kendo-grid-column media="(min-width: 800px)" field="Estado" title="Det" width="60" [filterable]="false"
                 [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                 <ng-template kendoGridCellTemplate let-dataItem>
                   <button type="button" class="btn btn-icons btn-rounded btn-warning"
@@ -311,7 +796,7 @@
                     <i class="mdi mdi-file"></i>
                   </button>
                 </ng-template>
-              </kendo-grid-column>-->
+              </kendo-grid-column>
 
               <ng-template kendoGridDetailTemplate let-dataItem>
                 <table style="font-size: 12px !important">
@@ -396,38 +881,131 @@
                 filterAfterOperator="Es posterior a" filterAfterOrEqualOperator="Es posterior o igual a"
                 filterBeforeOrEqualOperator="Es anterior o igual a" filterBeforeOperator="Es antes">
               </kendo-grid-messages>
-            </kendo-grid>
-            <br><br>
+            </kendo-grid>-->
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!--<div class="modal fade" id="ModalDetallesCotizacion" tabindex="-1" role="dialog"
+
+
+<div class="modal fade" id="ModalDetallesCotizacion" tabindex="-1" role="dialog"
   aria-labelledby="ModalDetallesCotizacionTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Detalles de la cotizacion | {{ detalleCotizacion.Codigo }} </h5>
+      <div class="modal-header" [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}">
+        <h5 class="modal-title" id="exampleModalLongTitle">Detalles de la cotizacion | {{ detalleCotizacion.Codigo }}
+        </h5>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="font-size: 14px !important;">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <b><u>Asegurado</u></b>
+            </div>
+            <div>
+              <b>Razón Social:</b><br>
+              <span>{{ detalleCotizacion.Empresa.RazonSocial }}</span>
+            </div>
+            <div>
+              <b>R.U.C / C.I:</b><br>
+              <span>{{ detalleCotizacion.Empresa.Ruc }}</span>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <b><u>Pagador</u></b>
+            </div>
+            <div>
+              <b>Razón Social:</b><br>
+              <span>{{ detalleCotizacion.Pagador.Nombre }} {{ detalleCotizacion.Pagador.PrimerApellido }}
+                {{ detalleCotizacion.Pagador.SegundoApellido }}</span>
+            </div>
+            <div>
+              <b>R.U.C / C.I:</b><br>
+              <span>{{ detalleCotizacion.Pagador.Cedula }}</span>
+            </div>
+          </div>
+        </div>
+        <br>
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              <b>Contratante</b>
+              <b><u>Cotización</u></b>
             </div>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <b>Código</b><br>
+              <span>
+                {{ detalleCotizacion.Codigo }}
+              </span>
+            </div>
+            <div>
+              <b>Fecha</b><br>
+              <span>
+                {{ detalleCotizacion.Fecha }}
+              </span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <b>Comisión</b><br>
+              <span>
+                {{ obtenerComision(detalleCotizacion.Corredor) }} %
+              </span>
+            </div>
+            <div>
+              <b>Prima Total</b><br>
+              <span>
+                $ {{ metodos.formatearNumero(detalleCotizacion.PrimaTotal, 2) }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <br *ngIf="detalleCotizacion.Estado == 5">
+        <div *ngIf="detalleCotizacion.Estado == 5" class="row">
+          <div class="col-md-12">
             <div class="form-group">
-              <b>R.U.C / C.I: &nbsp;</b><span>{{ detalleCotizacion.Empresa.Ruc }}</span>
+              <b><u>Emisión</u></b>
+            </div>
+            <div>
+              <b>Fecha</b><br>
+              <span>
+                {{ detalleCotizacion.CotizacionResultado.FechaEmision }}
+              </span>
+            </div>
+            <div>
+              <br>
+              <span>
+                <div [innerHTML]="listarPolizas(detalleCotizacion.CotizacionResultado)"></div>
+              </span>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <b><u>Pago</u></b>
+            </div>
+            <div>
+              <b>Forma de Pago</b><br>
+              <span>
+                {{ detalleCotizacion.FormaPago.Tipo == null || detalleCotizacion.FormaPago.Tipo == '' ? 'SIN SELECCIONAR' : detalleCotizacion.FormaPago.Tipo }}
+              </span>
             </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-dark">
-          Cerrar
+        <button type="button" class="btn"
+          [ngStyle]="{'background-color': 'rgb(' + usuario.broker.Color + ')', 'color': 'white'}" data-dismiss="modal">
+          Aceptar
         </button>
       </div>
     </div>
   </div>
-</div>-->
+</div>
