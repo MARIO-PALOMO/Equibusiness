@@ -25,17 +25,24 @@ export class ValidacionComponent implements OnInit {
   public Identificacion: any;
   public lstBrokers = [];
   public lstUsuarioBroker = [];
+
+
   public brokerSeleccionado: any;
   public usuarioSeleccionado: any;
 
-  public archivo : any;
+
+  public dataBroker: any;
+  public dataUsuarios: any;
+
+
+  public archivo: any;
 
 
   public lstReglasGenerales: any = {
     "Identificador": 1,
     "IdBroker": 0,
     "Nombre": "",
-    "IdUsuario" : 0
+    "IdUsuario": 0
   }
 
   public lstExcepciones: Array<{ text: string, value: number }> = [
@@ -60,6 +67,8 @@ export class ValidacionComponent implements OnInit {
       (res: any) => {
         this.spinner.hide();
         this.lstBrokers = res;
+        this.dataBroker = this.lstBrokers.slice();
+
       },
       err => {
         this.spinner.hide();
@@ -70,19 +79,26 @@ export class ValidacionComponent implements OnInit {
   }
 
   // CARGAR USUARIOS POR BROKER 
-  public cargarUsuarios(){
-    this.spinner.show();
-    this.conexion.get('Broker/SBroker.svc/consultar/usuario/broker/'+ this.brokerSeleccionado.IdBroker, this.usuario.Uid).subscribe(
-      (res: any) => {
-        this.spinner.hide();
-        this.lstUsuarioBroker = res;
-      },
-      err => {
-        this.spinner.hide();
-        console.log(err);
-        this.conexion.error(err);
-      }
-    );
+  public cargarUsuarios() {
+
+    if (this.brokerSeleccionado == undefined) {
+      this.validador.mostrarAlerta("El Campo Versión de Uso no puede estar vacío.", this.usuario.broker.Color);
+    } else {
+      this.usuarioSeleccionado = {};
+      this.spinner.show();
+      this.conexion.get('Broker/SBroker.svc/consultar/usuario/broker/' + this.brokerSeleccionado.IdBroker, this.usuario.Uid).subscribe(
+        (res: any) => {
+          this.spinner.hide();
+          this.lstUsuarioBroker = res;
+          this.dataUsuarios = this.lstUsuarioBroker.slice();
+        },
+        err => {
+          this.spinner.hide();
+          console.log(err);
+          this.conexion.error(err);
+        }
+      );
+    }
   }
 
   // CREAR LAS VALIDACIONES EN LA BASE DE DATOS
@@ -100,25 +116,29 @@ export class ValidacionComponent implements OnInit {
         "Identificador": 1,
         "IdBroker": this.brokerSeleccionado.IdBroker,
         "Nombre": this.Identificacion + "-" + this.Excepciones.text,
-        "IdUsuario" : this.usuarioSeleccionado.IdUsuario    
+        "IdUsuario": this.usuarioSeleccionado.IdUsuario
       }
+      console.log(this.lstReglasGenerales);
+
       this.spinner.show();
-      this.generico.verificarReglasGenerales(this.brokerSeleccionado.IdBroker,  this.lstReglasGenerales.Nombre).then(excepcion => {
+      this.generico.verificarReglasGenerales(this.brokerSeleccionado.IdBroker, this.lstReglasGenerales.Nombre).then(excepcion => {
         if (excepcion.Broker == null) {
           this.conexion.post('Broker/SBroker.svc/gestion/excepciones/crear', this.lstReglasGenerales, this.usuario.Uid).subscribe(
             (res: any) => {
               this.spinner.hide();
-              this.validador.mostrarAlertaCorrecta("Se ha creado la excepción exitosamente para la versión de uso "+this.brokerSeleccionado.RazonSocial, this.usuario.broker.Color);
+              this.validador.mostrarAlertaCorrecta("Se ha creado la excepción correctamente para la versión de uso " + this.brokerSeleccionado.RazonSocial, this.usuario.broker.Color);
+              this.limpiarCampos();
+
             },
             err => {
               this.spinner.hide();
-              console.log(err);              
+              console.log(err);
               this.conexion.error(err);
             }
           );
         } else {
           this.spinner.hide();
-          this.validador.mostrarAlerta("El Cliente ya tiene registrada esta excepción para la vesión de uso "+this.brokerSeleccionado.RazonSocial, this.usuario.broker.Color);
+          this.validador.mostrarAlerta("El Cliente ya tiene registrada esta excepción para la vesión de uso " + this.brokerSeleccionado.RazonSocial, this.usuario.broker.Color);
         }
       }).catch(err => {
         this.spinner.hide();
@@ -128,6 +148,21 @@ export class ValidacionComponent implements OnInit {
     }
   }
 
+  public limpiarCampos() {
+    this.Identificacion = "";
+    this.brokerSeleccionado = {};
+    this.usuarioSeleccionado = {};
+    this.Excepciones = {};
+  }
+
+  public filtrarBroker(value: any) {
+    this.dataBroker = this.lstBrokers.filter((s) => s.RazonSocial.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+
+  public filtrarUsuarios(value: any) {
+    this.dataUsuarios = this.lstUsuarioBroker.filter((s) => s.Usuario.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+ 
   // GESTIÓN DE BOTON COLOR 
   public gesitonColoresBroker() {
     setTimeout(() => {

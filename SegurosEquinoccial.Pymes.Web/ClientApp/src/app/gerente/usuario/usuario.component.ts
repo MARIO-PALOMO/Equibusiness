@@ -234,20 +234,22 @@ export class UsuarioComponent implements OnInit {
 
       // PASO 2: GESTIÓN DEL MODAL PARA CREAR NUEVOS USUARIOS 
       public agregarUsuario() {
-            this.lstUsuarios = [];
+
+            this.gridData = process([], this.state2);
             this.limpiarCampos();
             this.contrasenaGuardar = true;
             this.contrasenaModificar = false;
             this.botonGuardar = true;
             this.botonModificar = false;
+
             this.fotoUsuarioAgregar = true;
             this.tabContrasenaAgregar = true;
             this.tabEliminarAgregar = true;
             this.fotoUsuarioModificar = false;
             this.tabContrasenaModificar = false;
             this.tabEliminarModificar = false;
-            this.abrirModalUsuario();
 
+            this.abrirModalUsuario();
       }
 
       // PASO 3: GESTIÓN DEL MODAL PARA CREAR NUEVO PERFIL 
@@ -274,6 +276,14 @@ export class UsuarioComponent implements OnInit {
                   this.contrasenaModificar = false;
                   this.botonGuardar = true;
                   this.botonModificar = false;
+
+                  this.fotoUsuarioAgregar = false;
+                  this.tabContrasenaAgregar = false;
+                  this.tabEliminarAgregar = false;
+
+                  this.fotoUsuarioModificar = true;
+                  this.tabContrasenaModificar = true;
+                  this.tabEliminarModificar = true;
 
                   if (this.lstUsuarios.length >= 1) {
                         this.fmrUsuario.Identificador = 11;
@@ -302,8 +312,6 @@ export class UsuarioComponent implements OnInit {
             this.fmrUsuario.Comision = this.fmrUsuario.broker.IdBroker == 1 ? 25 : this.fmrUsuario.CodigoAgente == "99" ? 0 : 20;
             this.fmrUsuario.IdUsuarioBroker = this.IdUsuarioCambio;
 
-            console.log(this.fmrUsuario);
-
             if (this.validador.gestionValidarFormularioUsuarios(this.fmrUsuario, this.usuario.broker.Color)) {
                   this.spinner.show();
                   this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', this.fmrUsuario, "").subscribe(
@@ -325,11 +333,6 @@ export class UsuarioComponent implements OnInit {
                         }
                   );
             }
-
-
-
-
-
       }
 
       // FINAL DE FUNCIONES PARA CREAR UN NUEVO USUARIO
@@ -342,13 +345,10 @@ export class UsuarioComponent implements OnInit {
             this.conexion.get('Broker/SBroker.svc/consultar/usuarios/' + datos.IdUsuario, this.usuario.Uid).subscribe(
                   (res: any) => {
                         this.spinner.hide();
-                        console.log("RES",res);
 
                         this.lstUsuarios = res;
                         this.fmrUsuario = datos;
 
-                        console.log(this.lstUsuarios); 
-                        
                         this.data = this.lstUsuarios.slice();
                         this.gridData = process(this.lstUsuarios, this.state2);
 
@@ -587,7 +587,6 @@ export class UsuarioComponent implements OnInit {
                               this.spinner.show();
                               this.conexion.post('Gestion/SGesTransacciones.svc/usuario/gestion', datos, "").subscribe(
                                     (res: any) => {
-                                          console.log(res);
                                           this.spinner.hide();
                                           this.validador.mostrarAlertaCorrecta("Perfil Eliminado Exitosamente", this.usuario.broker.Color);
                                           this.cerrarModalUsuario();
@@ -717,6 +716,7 @@ export class UsuarioComponent implements OnInit {
                   "broker": { "IdBroker": 0 },
                   "rol": { "IdRol": 0 }
             };
+            this.lstUsuarios = [];
             this.IdRol = {};
             this.IdBroker = {};
             this.IdPadre = {};
@@ -729,6 +729,19 @@ export class UsuarioComponent implements OnInit {
       }
 
       public limpiarCamposNuevo() {
+
+            this.fmrUsuario.Ciudad = "";
+            this.fmrUsuario.CodigoAgente= "";
+            this.fmrUsuario.CodigoPuntoVenta= "";
+            this.fmrUsuario.CodigoSucursal= "";
+            this.fmrUsuario.CodigoTipoAgente= "";
+            this.fmrUsuario.Comision = 0;
+            this.fmrUsuario.Corredores= "";
+            this.fmrUsuario.Uid= "";
+            this.fmrUsuario.UsuarioPadre= "";
+            this.fmrUsuario.broker = {"IdBroker": 0}
+            this.fmrUsuario.rol = {IdRol:0};
+
             this.IdRol = {};
             this.IdBroker = {};
             this.IdPadre = {};
@@ -768,7 +781,7 @@ export class UsuarioComponent implements OnInit {
       public dataStateChangePerfiles(state: DataStateChangeEvent): void {
             this.state2 = state;
             this.gridData = process(this.lstUsuarios, this.state2);
-            
+
       }
 
       // FINAL FUNCIONES VARIAS //

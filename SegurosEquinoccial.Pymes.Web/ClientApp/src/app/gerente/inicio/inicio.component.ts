@@ -78,7 +78,6 @@ export class InicioGerenciaComponent implements OnInit {
     };
     this.conexion.post('Broker/SBroker.svc/usuarios/consultar/dependientes/supervisor', parametros, this.usuario.Uid).subscribe(
       (res: any) => {
-        console.log(res);
         this.spinner.hide();
         this.lstUsuariosDependientesSupervisoresResumen = res;
         var dataset = {

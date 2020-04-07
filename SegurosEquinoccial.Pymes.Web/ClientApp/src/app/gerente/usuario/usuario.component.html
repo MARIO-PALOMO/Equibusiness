@@ -280,6 +280,7 @@
         <div class="modal-footer" style="border-top: solid 1px !important;"></div>
     </div>
 </div>
+
 <div id="modalPerfiles" class="modal">
     <div class="modal-content" style="width: 650px !important;">
         <div class="modal-header" style="border-bottom: solid 1px !important; margin-top: 0px !important; padding-top: 0px !important; padding-bottom: 5px !important;">
@@ -326,7 +327,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label><b>Versión de Uso</b></label>
-                        <kendo-dropdownlist [data]="dataBroker" [(ngModel)]="IdBroker" [filterable]="true" textField="RazonSocial" valueField="IdBroker" (ngModelChange)="obtenerUsuarioPadre(IdBroker)" (filterChange)="filtrarBroker($event)" style="font-size: 13px !important; height: 38px !important; width: 100%">
+                        <kendo-dropdownlist [data]="dataBroker" [(ngModel)]="IdBroker" [filterable]="true" textField="RazonSocial" valueField="IdBroker" (ngModelChange)="obtenerUsuarioPadre(IdBroker)" [filterable]="true" (filterChange)="filtrarBroker($event)" style="font-size: 13px !important; height: 38px !important; width: 100%">
                             <ng-template kendoDropDownListItemTemplate let-dataItem>
                                 <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.RazonSocial }}</span>
                             </ng-template>

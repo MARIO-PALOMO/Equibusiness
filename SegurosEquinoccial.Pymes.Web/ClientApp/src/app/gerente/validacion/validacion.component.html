@@ -1,103 +1,74 @@
 <app-top-bar-gerente></app-top-bar-gerente>
-<div class="content-wrapper"
-  style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
-  <div class="contenedor">
-    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..."
-      type="ball-atom"></ngx-spinner>
-    <div class="row" style="margin-top: 70px;">
-      <div class="col-md-12">
-        <div class="accordion" id="accordionExample">
-          <!-- INICIO REPORTE DETALLE DE VALORES DE COTIZACIONES Y EMISIONES -->
-          <div class="card">
-            <div class="card-header" id="headingFour">
-              <h2 class="mb-0">
-                <a class="titulo-tarjeta" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
-                  aria-controls="collapseFour">
-                  Administrar Excepciones
-                </a>
-              </h2>
-            </div>
-            <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordionExample">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-6" style="padding-top: 15px; padding-bottom: 15px;">
-                    <h5>Identificación del Cliente </h5>
-                  </div>
-                </div>
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" loadingText="Procesando Datos..." type="ball-atom">
+</ngx-spinner>
 
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <input kendoTextBox type="text" [(ngModel)]="Identificacion"
-                        placeholder="Ingrese el número de C.I o R.U.C"
-                        style="font-size: 13px !important; height: 38px !important; width: 100%;"
-                        (keyup)="Identificacion = validador.formatoCampo(Identificacion, '1234567890', 13, 2)" />
+<div class="content-wrapper" style="background-image: url('assets/images/fondos/cotizador.jpg'); background-repeat: no-repeat; background-position: center; background-size: cover; min-height: calc(100vh - 0px);">
+    <div class="container">
+        <div class="contenedor">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="background-color: #333333">
+                            <h5 class="mb-0" style="float: left">
+                                Administrar Excepciones
+                            </h5>
+                            <i style="float: right" class="mdi mdi-chevron-down"></i>
+                        </div>
+                        <div class="collapse" id="collapseExample" class="card-body" style="color: black">
+                            <div class="row">
+                                <br>
+                                <div class="col-md-12" style="margin-top: 15px !important; margin-bottom: 30px !important;">
+                                    <div class="form-group">
+                                        <label><b>Identificación del Cliente</b></label>
+                                        <input kendoTextBox type="text" [(ngModel)]="Identificacion" placeholder="Ingrese el número de C.I o R.U.C" style="font-size: 13px !important; height: 38px !important; width: 100%;" (keyup)="Identificacion = validador.formatoCampo(Identificacion, '1234567890', 13, 2)"
+                                        />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><b>Versión de Uso</b></label>
+                                        <kendo-dropdownlist [data]="dataBroker" [(ngModel)]="brokerSeleccionado" textField="RazonSocial" valueField="IdBroker" style="font-size: 13px !important; width: 100%" (filterChange)="filtrarBroker($event)" (ngModelChange)="cargarUsuarios()">
+                                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.RazonSocial }}</span>
+                                            </ng-template>
+                                        </kendo-dropdownlist>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><b>Usuario Solicitante</b></label>
+                                        <kendo-dropdownlist [data]="dataUsuarios" [(ngModel)]="usuarioSeleccionado" textField="Usuario" valueField="IdUsuario" [filterable]="true" style="font-size: 13px !important; width: 100%" (filterChange)="filtrarUsuarios($event)">
+                                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.Usuario }}</span>
+                                            </ng-template>
+                                        </kendo-dropdownlist>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 30px !important;">
+                                    <div class="form-group">
+                                        <label><b>Validaciones a Evadir</b></label>
+                                        <kendo-dropdownlist [data]="lstExcepciones" [(ngModel)]="Excepciones" textField="text" valueField="value" style="font-size: 13px !important; width: 100%">
+                                            <ng-template kendoDropDownListItemTemplate let-dataItem>
+                                                <span style="padding-left: 8px !important; font-size: 12px">{{ dataItem.text }}</span>
+                                            </ng-template>
+                                        </kendo-dropdownlist>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row" style="margin-top: 60px !important;">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <button class="btn-broker btn-effect-white btn btn-block" style="height: 35px !important; font-size: 15px !important;" (click)="crearExcepciones()">Registrar</button>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+                        </div>
+                        <div class="card-footer" style="padding: 20px !important;"></div>
                     </div>
-                  </div>
                 </div>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <h5>Seleccione la Versión de Uso</h5>
-                  </div>
-                  <div class="col-md-6">
-                    <h5>Seleccione el Usuario</h5>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <kendo-combobox [data]="lstBrokers" [(ngModel)]="brokerSeleccionado" [textField]="'RazonSocial'"
-                      [valueField]="'IdBroker'" style="width: 100%; font-size: 13px !important;" (ngModelChange)="cargarUsuarios()"
-                      [placeholder]="'Selecccione un Broker'">
-                      <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.RazonSocial }}</span>
-                      </ng-template>
-                    </kendo-combobox>
-                  </div>
-                  <div class="col-md-6">
-                    <kendo-combobox [data]="lstUsuarioBroker" [(ngModel)]="usuarioSeleccionado" [textField]="'Usuario'"
-                      [valueField]="'IdUsuario'" style="width: 100%; font-size: 13px !important;"
-                      [placeholder]="'Selecccione un Usuario'">
-                      <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.Usuario }}</span>
-                      </ng-template>
-                    </kendo-combobox>
-                  </div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-md-6">
-                    <h5>Seleccione las validaciones a evadir</h5>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <kendo-combobox [data]="lstExcepciones" [(ngModel)]="Excepciones" [textField]="'text'"
-                      [valueField]="'value'" [placeholder]="'Seleccionar la excepción'"
-                      style="width: 100%; font-size: 13px !important; ">
-                      <ng-template kendoComboBoxItemTemplate let-dataItem>
-                        <span style="padding-left: 15px !important; width: 100%;">{{ dataItem.text }}</span>
-                      </ng-template>
-                    </kendo-combobox>
-                  </div>
-                </div>
-
-                <br><br><br>
-                <div class="row" style="margin-top: 20px !important; margin-bottom: 20px !important;">
-                  <div class="col-md-4">
-                    <button class="btn-broker btn-effect-white btn btn-block"
-                      (click)="crearExcepciones()">Registrar</button>
-                  </div>
-                </div>
-                <br><br>
-              </div>
             </div>
-          </div>
-          <!-- FIN REPORTE DETALLE DE VALORES DE COTIZACIONES Y EMISIONES -->
         </div>
-      </div>
     </div>
-  </div>
 </div>

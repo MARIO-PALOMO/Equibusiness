@@ -112,7 +112,6 @@ export class PerfilClienteComponent implements OnInit {
         $('#modificarDatos').modal('toggle');
         this.notificacion("Datos Modificados Exitosamente, Sesión Reiniciada", "success");
         this.cerrarSesion();
-        console.log(res);
       },
       err => {
         this.spinner.hide();
@@ -177,7 +176,6 @@ export class PerfilClienteComponent implements OnInit {
         $('#modificarDatos').modal('toggle');
         this.notificacion("Constraseña Modificada Exitosamente, Sesión Reiniciada", "success");
         this.cerrarSesion();
-        console.log(res);
       },
       err => {
         this.spinner.hide();

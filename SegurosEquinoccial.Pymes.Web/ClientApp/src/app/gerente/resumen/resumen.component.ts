@@ -89,7 +89,6 @@ export class ResumenGerenteComponent implements OnInit {
 
     this.conexion.get('Broker/SBroker.svc/usuarios/consultar/dependientes?idPadre=' + this.usuario.IdUsuario + '&IdBroker='+ this.usuario.broker.IdBroker + '&IdRol=4', this.usuario.Uid).subscribe(
       (res: any) => {
-        console.log(res);
         this.spinner.hide();
         this.lstSupervisores = res;
         this.lstUsuariosSupervisores = "";
