@@ -219,8 +219,14 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         //CONSULTA LAS COTIZACIONES GENERADAS POR USUARIO
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
-        UriTemplate = "cotizacion/consultar/usuario?broker={broker}&usuario={usuario}")]
-        List<EBroCotizacion> BroConsultaCotizacionesUsuario(string broker, string usuario);
+        UriTemplate = "cotizacion/consultar/usuario?broker={idBroker}&usuario={idUsuario}&num={numeroPaginas}&tamano={tamanoPaginas}&estado={estadoCotizacion}")]
+        List<EBroCotizacion> BroConsultaCotizacionesUsuario(string idBroker, string idUsuario, string numeroPaginas, string tamanoPaginas, string estadoCotizacion);
+
+        //CONSULTA y FILTRA POR PARAMETROS LAS COTIZACIONES GENERADAS POR USUARIO
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "cotizacion/consultar/usuario/filtro")]
+        List<EBroCotizacion> BroConsultaFiltroUsuario(EAuxiliares datos);
 
         //COMPLEMENTOS
         //CONSULTAR LOS VALORES COMPLEMENTARIOS A LA COTZACION DEL BROKER (INICIO, GIROS, GARANTIAS, CONDICIONES, SINIESTROS)
@@ -637,6 +643,11 @@ namespace SegurosEquinoccial.Pymes.Servicio.Broker
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "gestion/excepciones/crear")]
         int BroGestionExcepciones(EBroExcepciones excepcion);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "empresa/cotizacion/revalidar/{ruc}")]
+        List<EBroCotizacion> BroReValidarEmpresaCotizacion(string ruc);
 
     }
 

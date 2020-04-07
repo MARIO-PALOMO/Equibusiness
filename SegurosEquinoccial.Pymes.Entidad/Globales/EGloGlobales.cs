@@ -16,10 +16,11 @@ namespace SegurosEquinoccial.Pymes.Entidad.Globales
             EAdmCatalogoCredenciales reCredenciales = new EAdmCatalogoCredenciales();
             if (ambiente == "DESARROLLO")
             {
-                reCredenciales.HostDB = "DESKTOP-LMT442K\\SQLEXPRESS";
-                reCredenciales.NameDB = "CotizadorPymes";
+                //reCredenciales.HostDB = "DESKTOP-LMT442K\\SQLEXPRESS";        // SERVIDOR MARIO
+                reCredenciales.HostDB = "10.10.30.32";                          // SERVIDOR DAVID     
+                reCredenciales.NameDB = "CotizadorBackup";
                 reCredenciales.UserDB = "sa";
-                reCredenciales.PasswordDB = "12345";
+                reCredenciales.PasswordDB = "123";
             }
             else if (ambiente == "PRUEBAS")
             {

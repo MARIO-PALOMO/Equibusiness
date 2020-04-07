@@ -54,6 +54,7 @@ export class InicioSesionComponent implements OnInit {
           this.spinner.hide();
           if (res != "") {
             this.usuario = res;
+            console.log(res);
             if (this.usuario.length == 1) {
               if (this.usuario[0].EstadoSesion == 0) {
                 this.gestionEstadoSesion(this.usuario[0].IdUsuario, this.usuario[0]);

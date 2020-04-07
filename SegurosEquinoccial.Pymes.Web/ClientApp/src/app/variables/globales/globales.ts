@@ -8,7 +8,7 @@ export class VariablesGlobales {
     
     if (this.ambiente == "DESARROLLO") {
       credenciales.conexionAPI = "http://localhost/SegurosEquinoccial.Pymes.Servicio/";
-      credenciales.conexionWeb = "https://localhost:44341";
+      credenciales.conexionWeb = "https://localhost:44330";
       credenciales.conexionLinkPago = "https://equi-prodbpaymentappservice.azurewebsites.net";
       credenciales.conexionAPILinkPago = "https://equi-prodbpaymentapiappservice.azurewebsites.net/";
     }
@@ -28,4 +28,3 @@ export class VariablesGlobales {
     return credenciales;
   }
 }
-
