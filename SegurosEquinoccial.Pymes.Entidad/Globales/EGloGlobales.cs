@@ -18,7 +18,7 @@ namespace SegurosEquinoccial.Pymes.Entidad.Globales
             {
                 //reCredenciales.HostDB = "DESKTOP-LMT442K\\SQLEXPRESS";        // SERVIDOR MARIO
                 reCredenciales.HostDB = "10.10.30.32";                          // SERVIDOR DAVID     
-                reCredenciales.NameDB = "CotizadorBackup";
+                reCredenciales.NameDB = "Pymes";
                 reCredenciales.UserDB = "sa";
                 reCredenciales.PasswordDB = "123";
             }
