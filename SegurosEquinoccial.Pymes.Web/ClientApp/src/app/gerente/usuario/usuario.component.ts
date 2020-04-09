@@ -772,16 +772,17 @@ export class UsuarioComponent implements OnInit {
 
       public dataStateChange(state: DataStateChangeEvent): void {
             this.state = state;
-            this.state2 = state;
-            this.gridData = process(this.lstUsuarios, this.state2);
             this.gridDataActivos = process(this.lstUsuariosActivos, this.state);
-            this.gridDataInactivos = process(this.lstUsuariosInactivos, this.state);
       }
 
       public dataStateChangePerfiles(state: DataStateChangeEvent): void {
             this.state2 = state;
             this.gridData = process(this.lstUsuarios, this.state2);
+      }
 
+      public dataStateChangeInactivos(state: DataStateChangeEvent): void {
+            this.state = state;
+            this.gridDataInactivos = process(this.lstUsuariosInactivos, this.state);
       }
 
       // FINAL FUNCIONES VARIAS //

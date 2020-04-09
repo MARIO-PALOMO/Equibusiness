@@ -277,7 +277,7 @@ namespace SegurosEquinoccial.Pymes.Datos.Administracion
             try
             {
                 Conectar();
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosCompleto WHERE IdBroker = @IdBroker AND (IdRol = 3 OR IdRol = 4)", getCnn());
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ConsultaUsuariosCompleto WHERE IdBroker = @IdBroker", getCnn());
                 cmd.Parameters.AddWithValue("@IdBroker", Convert.ToInt32(IdBroker));
                 SqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())

@@ -77,8 +77,8 @@
                                         <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
                                             <h5><b>Listado de Usuarios Inactivos</b></h5><br><br>
-                                            <kendo-grid [data]="gridDataInactivos" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort" [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChange($event)" style="border: none; font-size: 13px !important" scrollable="none"
-                                                [resizable]="true">
+                                            <kendo-grid [data]="gridDataInactivos" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort" [sortable]="true" [pageable]="true" filterable="menu" (dataStateChange)="dataStateChangeInactivos($event)" style="border: none; font-size: 13px !important"
+                                                scrollable="none" [resizable]="true">
 
                                                 <kendo-grid-column title="Foto" width="50" [filterable]="false" [headerStyle]="{'background-color': '#2C2C2C','color': '#fff'}">
                                                     <ng-template kendoGridCellTemplate let-dataItem>

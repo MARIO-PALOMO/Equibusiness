@@ -151,7 +151,6 @@ export class InicioSupervisionComponent implements OnInit {
       sinEmitir: []
     };
 
-    console.log(parametros);
     this.spinner.show();
     this.conexion.post('Broker/SBroker.svc/resumen/global/consultar/cotizaciones', parametros, this.usuario.Uid).subscribe(
       (res: any) => {
